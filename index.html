@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080f1d" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <title>Roll4Sanity — The Sunken Table</title>
+  </head>
+  <body>
+    <main class="cabinet">
+      <header class="masthead">
+        <a class="wordmark" href="https://www.roll4sanity.com/" aria-label="Roll4Sanity home">ROLL<span>4</span>SANITY<span class="wordmark-dot">®</span></a>
+        <div class="edition"><i></i> MECHANICAL PROTOTYPE <span>001</span></div>
+      </header>
+      <section class="game-layout" aria-label="Call of Cthulhu pinball">
+        <aside class="intro">
+          <div class="eyebrow">AN ARKHAM ARCADE EXPERIMENT</div>
+          <h1>THE<br>SUNKEN<br><em>TABLE.</em></h1>
+          <p class="deck">Something stirs beneath the playfield.<br>Keep the ball alive. Keep your sanity.</p>
+          <div class="rules"><div><span>01</span><p><strong>Wake the depths</strong>Strike the three illuminated pop bumpers.</p></div><div><span>02</span><p><strong>Follow the current</strong>Shoot either outer orbit for 1,000 points.</p></div><div><span>03</span><p><strong>Rise above it</strong>Take the elevated ramps for 2,500 points.</p></div></div>
+          <div class="status-note"><span class="pulse"></span> THREE BALLS. ONE DESCENT.</div>
+        </aside>
+        <section class="machine">
+          <div class="scoreboard" aria-live="polite" aria-atomic="true"><div><span>SCORE</span><strong id="score">000000</strong></div><div class="ball-counter"><span>BALL</span><strong id="ball">01 <small>/ 03</small></strong></div><button id="pause" aria-label="Pause game">II</button></div>
+          <div class="playfield"><div id="game" role="application" aria-label="Pinball table. Left and right Shift control flippers. Hold and release Space to launch. P pauses. R restarts." tabindex="0"></div><div class="table-message" id="message"><span id="message-title">THE DEEP IS WAITING</span><small id="message-detail">HOLD SPACE, THEN RELEASE TO LAUNCH</small></div></div>
+          <div class="touch-controls"><button id="left-flipper" aria-label="Left flipper">↖ <span>LEFT FLIPPER</span></button><button id="launch" aria-label="Hold to charge, release to launch">LAUNCH <span>HOLD & RELEASE</span></button><button id="right-flipper" aria-label="Right flipper"><span>RIGHT FLIPPER</span> ↗</button></div>
+        </section>
+        <aside class="instructions">
+          <div class="eyebrow">YOUR SURVIVAL KIT</div>
+          <div class="control-row"><div><kbd>⇧</kbd><kbd>⇧</kbd></div><p>Left / right Shift<span>Control the flippers</span></p></div>
+          <div class="control-row"><kbd class="space">SPACE</kbd><p>Hold, then release<span>Charge the plunger</span></p></div>
+          <div class="control-row"><kbd>P</kbd><p>Take a breath<span>Pause the table</span></p></div>
+          <div class="control-row"><kbd>R</kbd><p>Begin again<span>Restart your three balls</span></p></div>
+          <div class="legend"><div><i class="dot mint"></i> POP BUMPERS <strong>100</strong></div><div><i class="dot blue"></i> OUTER ORBITS <strong>1,000</strong></div><div><i class="dot amber"></i> ELEVATED RAMPS <strong>2,500</strong></div></div>
+          <button class="debug-toggle" id="debug" aria-pressed="false"><span>⊕</span> PHYSICS OVERLAY <small>D</small></button>
+          <div id="velocity" class="velocity" hidden>VELOCITY 0.0 / 0.0</div>
+          <p class="prototype-note">A study in momentum & madness.<br>Original mechanics. Work in progress.</p>
+        </aside>
+      </section>
+      <footer><span>CALL OF CTHULHU PINBALL</span><span>BUILT FOR THE LIVING. <i>FOR NOW.</i></span><button id="restart">NEW GAME ↗</button></footer>
+    </main>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
