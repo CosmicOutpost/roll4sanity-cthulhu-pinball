@@ -72,6 +72,20 @@ export class PinballPhysics {
     for (const f of this.flippers) { f.angle = f.rest; f.omega = 0; this.positionFlipper(f); }
   }
   releaseControls() { this.controls = { left: false, right: false, plunger: false }; this.charge = 0; }
+  parkAtPlunger(message) {
+    // Weak plunges and any unexpected shooter return must rearm the same ball.
+    // Recovery depends on position, not the flag cleared when the launch guide
+    // starts; otherwise a returning ball is left dynamic and cannot be launched.
+    if (!this.ball.isStatic) Body.setStatic(this.ball, true);
+    Body.setPosition(this.ball, SHOOTER);
+    Body.setVelocity(this.ball, { x: 0, y: 0 });
+    Body.setAngularVelocity(this.ball, 0);
+    this.ball.collisionFilter.mask = 0xFFFFFFFF;
+    this.shooter = true;
+    this.charge = 0;
+    this.state.phase = 'ready';
+    this.state.lastEvent = message;
+  }
   launch() {
     if (this.state.paused || this.charge <= 0) return false;
     if (!this.state.launch()) { this.charge = 0; return false; }
@@ -111,11 +125,9 @@ export class PinballPhysics {
       this.shooter = false;
       return;
     }
-    // A weak plunge falls back into the lane and can be charged again, without losing a ball.
-    if (this.shooter && x > 486 && y > 858 && this.ball.velocity.y > 0) {
-      Body.setStatic(this.ball, true);
-      Body.setPosition(this.ball, SHOOTER);
-      this.state.phase = 'ready';
+    if (x > 486 && x < 526 && y >= SHOOTER.y && this.ball.velocity.y >= 0) {
+      this.parkAtPlunger(this.shooter ? 'PLUNGE TOO SOFT' : 'BALL RETURNED TO PLUNGER');
+      return;
     }
     if (y > 942 || x < -30 || x > 570) {
       if (this.state.drain()) {

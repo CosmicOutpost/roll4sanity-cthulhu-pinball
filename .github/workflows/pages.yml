@@ -55,6 +55,8 @@ jobs:
           !contains(github.event.head_commit.message, '[skip pages]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       pages: write
       id-token: write
@@ -70,3 +72,29 @@ jobs:
       - name: Deploy the dist artifact
         id: deployment
         uses: actions/deploy-pages@v4
+
+  playtest-deployed:
+    name: Playtest deployed game
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out playtest checks
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install Chromium for live playtests
+        run: npx playwright install --with-deps chromium
+
+      - name: Play the published game with Space and the Launch button
+        env:
+          PINBALL_BASE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: npx playwright test tests/browser/play.spec.js --grep 'plays beyond the launch guide'

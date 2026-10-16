@@ -39,7 +39,7 @@ export function bindControls(physics, toggleDebug, refresh) {
     const button = document.getElementById(id);
     const down = e => {
       e.preventDefault();
-      if (physics.state.paused) return;
+      if (physics.state.paused || e.button !== 0) return;
       button.setPointerCapture(e.pointerId);
       pressed.set(`pointer:${e.pointerId}`, action);
       button.classList.add('active');
@@ -49,8 +49,12 @@ export function bindControls(physics, toggleDebug, refresh) {
       const had = pressed.delete(`pointer:${e.pointerId}`);
       recompute();
       if (![...pressed.values()].includes(action)) button.classList.remove('active');
-      if (had && action === 'plunger' && !physics.controls.plunger && e.type !== 'pointercancel') physics.launch();
-      if (e.type === 'pointercancel' && action === 'plunger') physics.charge = 0;
+      if (had && action === 'plunger' && !physics.controls.plunger) {
+        // Only a deliberate release fires. Cancellation or loss of capture must
+        // never turn an interrupted gesture into an unintended weak plunge.
+        if (e.type === 'pointerup') physics.launch();
+        else physics.charge = 0;
+      }
     };
     button.addEventListener('pointerdown', down);
     button.addEventListener('pointerup', up);

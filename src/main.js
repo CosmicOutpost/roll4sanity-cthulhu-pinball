@@ -20,15 +20,17 @@ class PinballScene extends Phaser.Scene {
   }
   refreshHUD() {
     const { state } = this.sim;
-    const signature = [state.score, state.ballNumber, state.phase, state.paused, state.lastEvent, this.table.debug].join('|');
+    const charging = !state.paused && state.phase === 'ready' && this.sim.controls.plunger;
+    const chargePercent = charging ? Math.round(this.sim.charge * 100) : 0;
+    const signature = [state.score, state.ballNumber, state.phase, state.paused, state.lastEvent, this.table.debug, charging, chargePercent].join('|');
     if (this.hudSignature === signature) return;
     this.hudSignature = signature;
     document.getElementById('score').textContent = String(state.score).padStart(6, '0');
     document.getElementById('ball').innerHTML = `${String(state.ballNumber).padStart(2, '0')} <small>/ 03</small>`;
     const show = state.paused || state.phase !== 'playing';
     document.getElementById('message').classList.toggle('visible', show);
-    document.getElementById('message-title').textContent = state.paused ? 'HOLD YOUR BREATH' : state.phase === 'gameover' ? 'CLAIMED BY THE DEEP' : state.lastEvent;
-    document.getElementById('message-detail').textContent = state.paused ? 'PRESS P OR Ⅱ TO RESUME' : state.phase === 'gameover' ? `FINAL SCORE ${state.score.toLocaleString()} · PRESS R TO BEGIN AGAIN` : 'HOLD SPACE, THEN RELEASE TO LAUNCH';
+    document.getElementById('message-title').textContent = state.paused ? 'HOLD YOUR BREATH' : state.phase === 'gameover' ? 'CLAIMED BY THE DEEP' : charging ? `PLUNGER CHARGING · ${chargePercent}%` : state.lastEvent;
+    document.getElementById('message-detail').textContent = state.paused ? 'PRESS P OR Ⅱ TO RESUME' : state.phase === 'gameover' ? `FINAL SCORE ${state.score.toLocaleString()} · PRESS R TO BEGIN AGAIN` : charging && chargePercent === 100 ? 'FULL CHARGE · RELEASE TO LAUNCH' : 'HOLD SPACE OR LAUNCH FOR 1.2s, THEN RELEASE';
     document.getElementById('pause').setAttribute('aria-label', state.paused ? 'Resume game' : 'Pause game');
     document.getElementById('pause').textContent = state.paused ? '▷' : 'II';
     document.getElementById('debug').setAttribute('aria-pressed', String(this.table.debug));

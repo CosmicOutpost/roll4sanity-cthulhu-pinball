@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import Matter from 'matter-js';
 import { PinballPhysics } from '../src/game/physics.js';
-import { FIXED_DT, BUMPERS, SHOTS, MAX_SPEED } from '../src/game/table.js';
+import { FIXED_DT, BUMPERS, SHOTS, MAX_SPEED, SHOOTER } from '../src/game/table.js';
 const { Body, Vector } = Matter;
 const step = (sim, count) => { for (let i = 0; i < count; i++) sim.update(FIXED_DT); };
 function liveBall(sim, position, velocity = { x: 0, y: 0 }) {
@@ -40,6 +40,48 @@ test('weak plunge returns to the plunger without losing a ball', () => {
   assert.equal(sim.state.phase, 'ready');
   assert.equal(sim.state.ballNumber, 1);
   assert.equal(sim.ball.isStatic, true);
+  sim.destroy();
+});
+
+test('a full plunge stays out of the shooter lane and reaches the lower playfield', () => {
+  const sim = new PinballPhysics();
+  sim.charge = 1;
+  sim.launch();
+  let leftGuide = false, reachedLowerPlayfield = false;
+  for (let i = 0; i < 1200 && sim.state.phase === 'playing'; i++) {
+    step(sim, 1);
+    if (!sim.shooter && !sim.travel) leftGuide = true;
+    if (leftGuide && sim.state.phase === 'playing' && !sim.travel) {
+      assert.ok(sim.ball.position.x < 486, 'live ball must not fall back into the enclosed shooter lane');
+      if (sim.ball.position.y > 740) reachedLowerPlayfield = true;
+    }
+    if (leftGuide && sim.state.phase === 'ready') {
+      assert.ok(sim.state.ballNumber > 1, 'a full plunge must not need reloading into the plunger');
+    }
+  }
+  assert.ok(reachedLowerPlayfield, 'follow the ball beyond the launch guide, through bumpers to the flippers');
+  assert.ok(sim.state.score > 100, 'ball should continue interacting with playfield mechanisms');
+  sim.destroy();
+});
+
+test('a ball returning to the plunger can be relaunched even after leaving shooter mode', () => {
+  const sim = new PinballPhysics();
+  liveBall(sim, { x: SHOOTER.x, y: SHOOTER.y + 4 }, { x: 0, y: 5 });
+  sim.state.addScore(100, 'bumper');
+  step(sim, 2);
+  assert.equal(sim.state.phase, 'ready');
+  assert.equal(sim.shooter, true);
+  assert.equal(sim.ball.isStatic, true);
+  assert.deepEqual(sim.ball.position, SHOOTER);
+  assert.equal(sim.state.ballNumber, 1);
+  assert.equal(sim.state.score, 100);
+  sim.controls.plunger = true;
+  step(sim, 150);
+  sim.controls.plunger = false;
+  assert.equal(sim.launch(), true);
+  step(sim, 250);
+  assert.equal(sim.shooter, false);
+  assert.equal(sim.state.phase, 'playing');
   sim.destroy();
 });
 

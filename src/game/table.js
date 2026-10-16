@@ -17,11 +17,16 @@ export const POSTS = [
 // Every point is both visible geometry and a solid collision rail.
 export const RAILS = [
   { points: [[25, 918], [25, 165], [35, 103], [69, 57], [125, 31], [400, 31], [465, 53], [505, 93], [526, 151], [526, 921]], width: 14 },
-  { points: [[478, 905], [478, 237]], width: 12 },
+  { points: [[478, 905], [478, 237], [484, 167]], width: 12 },
   { points: [[484, 167], [466, 124], [433, 91], [388, 77], [327, 77]], width: 10 },
+  // The launch guide crosses this closed gate with collisions disabled. Physical
+  // playfield balls must not roll over the top rail and back into the shooter.
+  { points: [[327, 31], [327, 77]], width: 10 },
   { points: [[45, 193], [60, 148], [96, 113], [139, 99]], width: 8 },
   { points: [[45, 526], [50, 588], [65, 624]], width: 9 },
-  { points: [[455, 526], [450, 588], [435, 624]], width: 9 },
+  // Join the return rail to the divider: an exposed end left a ball-sized trap
+  // between the orbit return and shooter wall.
+  { points: [[478, 470], [455, 526], [450, 588], [435, 624]], width: 9 },
   { points: [[78, 657], [78, 733], [110, 773], [143, 790]], width: 9 },
   { points: [[422, 657], [422, 733], [390, 773], [357, 790]], width: 9 },
   { points: [[34, 759], [58, 808], [151, 849], [194, 914]], width: 14 },

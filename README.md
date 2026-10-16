@@ -26,6 +26,10 @@ Open the address printed by Vite (default port 5173). Click the page to give it 
 
 The buttons below the table also operate the flippers and plunger, including simultaneous pointer controls. Losing focus automatically pauses and cancels held inputs so the plunger cannot accidentally fire. Resume with P or the pause button. `?debug=1` starts the overlay and exposes `window.pinball` for local inspection; ordinary sessions do not expose it.
 
+Hold Space or the Launch button until the message says **FULL CHARGE**, then
+release. A short plunge can roll back; **PLUNGE TOO SOFT** means the same ball is
+ready to charge again. Interrupted pointer gestures cancel rather than firing.
+
 ## Table rules
 
 - **One ball at a time, three balls per game.** Center and side outlane drains consume a ball. A weak plunge rolls back to the plunger for another try without consuming one.
@@ -42,6 +46,13 @@ Matter runs at a fixed **120 Hz** independently of rendering, with eight positio
 Flippers are solid rotating bats with fixed pivots and separate rise/return speeds. Matter resolves contact against their current geometry; a contact impulse adds the bat's angular surface velocity during a strike. Held flippers remain solid. This is a tuned kinematic model, rather than a full electromechanical coil simulation.
 
 **Both orbits and ramps use guided travel in this prototype.** Capture requires an upward-moving ball inside a visible entrance zone. While guided, the ball follows a sampled curve at constant arc-length speed, temporarily leaves collision response, then returns to physical simulation with a defined inlane velocity and short capture lockout. Ramps have raised deck borders, colors, and an elevated ball presentation. The shooter uses physical launch travel up the right lane, followed by a short one-way guide over its upper exit. There is no true 3D elevation.
+
+The shooter's upper rails form a closed return barrier: the guided plunge can
+cross it, but a physical playfield ball cannot fall back down the shooter lane.
+The right return rail joins the divider so there is no pocket at its exposed end.
+As a recovery safeguard, any ball that does return to the plunger is rearmed
+without changing its ball number or score. The launch velocity remains 12–22
+pixels per Matter base tick, depending on charge.
 
 ## Build and static hosting
 
@@ -109,7 +120,10 @@ as Cloudflare Pages if keeping free hosting and a private repository is required
    In this Codex workspace, ask the assistant to make that trigger commit after
    activation; do not run these commands until publication is approved.
 6. In **Actions → Pinball Pages**, wait for **Test and build** and **Deploy to
-   GitHub Pages** to succeed. The deployment output provides the actual site URL.
+   GitHub Pages** to succeed, followed by **Playtest deployed game**. The final
+   job uses Chromium to launch with both input methods, follow the ball into the
+   lower playfield, and operate the flippers on the actual published site. The
+   deployment output provides the actual site URL.
    Without a custom domain, the expected URL is
    `https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/`.
 
@@ -117,7 +131,8 @@ Future pushes to `pinball-playtest` deploy automatically while the variable is
 `true`, unless marked `[skip pages]`. Set the variable to `false` to stop future
 deployments; this does not remove an already published site. Publishing the game
 makes its browser assets public even though the GitHub repository stays private.
-The preparation task validates the URL path locally, not a live Pages deployment.
+The pre-deployment tests validate the URL path locally; the post-deployment job
+tests the live Pages URL independently.
 
 ## Validation
 
@@ -131,6 +146,17 @@ npm run check          # Unit/physics tests, then production build
 Browser checks use `/usr/bin/chromium` locally and Playwright's installed browser when `CI` is set. Override with `CHROMIUM_PATH=/path/to/chromium npm run test:browser`. On another machine, install Chromium using your platform's package manager, or run `npx playwright install chromium` and set `CHROMIUM_PATH` to that executable. Playwright starts Vite itself, using port 5173. Test reports are ignored; screenshots are written under `/tmp/roll4sanity-*.png`.
 
 The automated checks cover three-ball scoring and restart; full/weak plunges; all four shot entrances and live returns; downward-shot rejection; active bumpers/slings; both flippers' impulses and collision blocking; walls and shooter divider; center/outlane drains; pause; and frame-rate independence. Chromium checks render the table, exercise keyboard launch/flippers/pause/restart, verify a 390-pixel-wide layout and pointer controls, check focus-loss safety, and launch the actual production build from both a nested WordPress-style directory and the exact GitHub Pages repository path while verifying that every asset request stays local.
+
+Launch regressions follow the ball beyond the guide, reproduce a weak plunge
+and retry, check pointer-capture cancellation and release outside the button, and
+play with the actual Shift controls. They check for flipper-area rebounds and a
+ball stranded in the shooter, rather than accepting a page load or a transient
+`playing` state as a successful launch. The two longer playtests can also target
+an HTTP-hosted build or deployed site:
+
+```sh
+PINBALL_BASE_URL=https://example.com/roll4sanity-cthulhu-pinball/ npx playwright test tests/browser/play.spec.js --grep 'plays beyond the launch guide'
+```
 
 This is an initial mechanical prototype. Automated browser and simulation checks are not a substitute for sustained human playtesting, shot tuning, or testing every device. No claim of complete playtesting is made.
 
