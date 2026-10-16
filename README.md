@@ -56,6 +56,69 @@ For WordPress, upload the static build through your normal hosting process and e
 
 Vite reports a large-chunk advisory for the Phaser engine bundle. The engine is split from application and physics code for caching; the build succeeds. Bundle-size tuning is future work.
 
+## GitHub Pages playtest deployment
+
+The workflow in `.github/workflows/pages.yml` runs **only on pushes to
+`pinball-playtest`**. It installs the lockfile with Node 24, runs the physics/state
+tests, builds the game, runs Chromium tests, and uploads **only `dist/`** as a
+Pages artifact. `main` is not used or changed.
+
+Vite's existing `base: './'` supports the project-site path
+`/roll4sanity-cthulhu-pinball/` as well as WordPress subdirectories. The browser
+suite serves the built files at that exact Pages path, launches a ball, and checks
+that every asset request stays under it without HTTP or JavaScript errors.
+
+Deployment is **disabled by default**. The deploy job requires the repository
+Actions variable `PAGES_DEPLOY_ENABLED` to equal `true`. A commit message containing
+`[skip pages]` always skips deployment, even when that variable is enabled. The
+initial configuration commit uses this marker. `actions/configure-pages` explicitly
+has `enablement: false`, so the workflow cannot enable Pages on your behalf.
+
+### Activate later, after approving publication
+
+Private-repository Pages hosting requires an eligible GitHub Pro (personal),
+Team, or Enterprise plan. **GitHub Free cannot host Pages from this private
+repository.** These instructions do not change repository visibility or the plan.
+If GitHub requests an upgrade or visibility change, stop; use an alternative such
+as Cloudflare Pages if keeping free hosting and a private repository is required.
+
+1. In the repository, open **Settings → Actions → General**. Ensure GitHub Actions
+   is allowed, including the official `actions/*` actions. The workflow declares
+   its own least-privilege permissions; there is no need to grant all workflows
+   write permissions or add a personal access token.
+2. Open **Settings → Pages → Build and deployment** and choose **Source: GitHub
+   Actions**. Do not choose “Deploy from a branch” or generate another workflow.
+3. In **Settings → Environments → github-pages**, check deployment branch rules.
+   Allow the **branch** `pinball-playtest` (add it under **Selected branches and
+   tags** if restrictions are enabled). Preserve any required reviewers you want.
+   If the environment is not yet listed, create it with that name and branch rule.
+4. Open **Settings → Secrets and variables → Actions → Variables**. Create the
+   **repository variable** `PAGES_DEPLOY_ENABLED` with the value `true`. This is
+   a non-secret switch; no deployment credential is required.
+5. Trigger a new push to `pinball-playtest` after the settings are ready. The
+   preparation commit deliberately cannot deploy, and this workflow does not
+   depend on GitHub's manual “Run workflow” button (which would require a workflow
+   on the default branch). An authorized empty commit is sufficient:
+
+   ```sh
+   git switch pinball-playtest
+   git commit --allow-empty -m "Publish pinball playtest to GitHub Pages"
+   git push origin pinball-playtest
+   ```
+
+   In this Codex workspace, ask the assistant to make that trigger commit after
+   activation; do not run these commands until publication is approved.
+6. In **Actions → Pinball Pages**, wait for **Test and build** and **Deploy to
+   GitHub Pages** to succeed. The deployment output provides the actual site URL.
+   Without a custom domain, the expected URL is
+   `https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/`.
+
+Future pushes to `pinball-playtest` deploy automatically while the variable is
+`true`, unless marked `[skip pages]`. Set the variable to `false` to stop future
+deployments; this does not remove an already published site. Publishing the game
+makes its browser assets public even though the GitHub repository stays private.
+The preparation task validates the URL path locally, not a live Pages deployment.
+
 ## Validation
 
 ```sh
@@ -65,9 +128,9 @@ npm run test:browser   # Build, then Playwright with Chromium
 npm run check          # Unit/physics tests, then production build
 ```
 
-Browser checks use `/usr/bin/chromium` by default. Override with `CHROMIUM_PATH=/path/to/chromium npm run test:browser`. On another machine, install Chromium using your platform's package manager, or run `npx playwright install chromium` and set `CHROMIUM_PATH` to that executable. Playwright starts Vite itself, using port 5173. Test reports are ignored; screenshots are written under `/tmp/roll4sanity-*.png`.
+Browser checks use `/usr/bin/chromium` locally and Playwright's installed browser when `CI` is set. Override with `CHROMIUM_PATH=/path/to/chromium npm run test:browser`. On another machine, install Chromium using your platform's package manager, or run `npx playwright install chromium` and set `CHROMIUM_PATH` to that executable. Playwright starts Vite itself, using port 5173. Test reports are ignored; screenshots are written under `/tmp/roll4sanity-*.png`.
 
-The automated checks cover three-ball scoring and restart; full/weak plunges; all four shot entrances and live returns; downward-shot rejection; active bumpers/slings; both flippers' impulses and collision blocking; walls and shooter divider; center/outlane drains; pause; and frame-rate independence. Chromium checks render the table, exercise keyboard launch/flippers/pause/restart, verify a 390-pixel-wide layout and pointer controls, check focus-loss safety, and launch the actual production build from a nested WordPress-style directory while verifying that every asset request stays local.
+The automated checks cover three-ball scoring and restart; full/weak plunges; all four shot entrances and live returns; downward-shot rejection; active bumpers/slings; both flippers' impulses and collision blocking; walls and shooter divider; center/outlane drains; pause; and frame-rate independence. Chromium checks render the table, exercise keyboard launch/flippers/pause/restart, verify a 390-pixel-wide layout and pointer controls, check focus-loss safety, and launch the actual production build from both a nested WordPress-style directory and the exact GitHub Pages repository path while verifying that every asset request stays local.
 
 This is an initial mechanical prototype. Automated browser and simulation checks are not a substitute for sustained human playtesting, shot tuning, or testing every device. No claim of complete playtesting is made.
 

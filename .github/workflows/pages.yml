@@ -1,0 +1,72 @@
+name: Pinball Pages
+
+on:
+  push:
+    branches: [pinball-playtest]
+
+# Deployment is opt-in through a repository variable, after Pages is enabled.
+# A preparation commit marked [skip pages] can never deploy, even if the variable
+# already exists. Do not add automatic Pages enablement to this workflow.
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-pinball-playtest
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the playtest branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Test physics and game state
+        run: npm test
+
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Build and test the production game, including the Pages path
+        run: npm run test:browser
+
+      - name: Upload the static site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    if: >-
+      ${{ github.ref == 'refs/heads/pinball-playtest' &&
+          vars.PAGES_DEPLOY_ENABLED == 'true' &&
+          !contains(github.event.head_commit.message, '[skip pages]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check Pages configuration without enabling it
+        uses: actions/configure-pages@v5
+        with:
+          enablement: false
+
+      - name: Deploy the dist artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
