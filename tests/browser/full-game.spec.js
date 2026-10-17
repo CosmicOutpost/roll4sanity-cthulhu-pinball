@@ -97,9 +97,9 @@ for (const player of players) {
   test(`full three-ball game with ${player.name}, natural drains and restart`, async ({ page }, testInfo) => {
     test.setTimeout(240000);
     const errors = [], failures = [], inputs = [], balls = [];
-    const held = { ShiftLeft: false, ShiftRight: false };
-    const nextRelease = { ShiftLeft: 0, ShiftRight: 0 };
-    const nextPress = { ShiftLeft: 0, ShiftRight: 0 };
+    const held = { KeyZ: false, Slash: false };
+    const nextRelease = { KeyZ: 0, Slash: 0 };
+    const nextPress = { KeyZ: 0, Slash: 0 };
     const changeKey = async (key, down) => {
       if (held[key] === down) return;
       if (down) await page.keyboard.down(key); else await page.keyboard.up(key);
@@ -132,8 +132,8 @@ for (const player of players) {
           // Check both ordinary controls before serving. A late player's live
           // trajectory may never approach one bat, so coverage must not depend
           // on chance. No ball/physics state is changed by the test.
-          await changeKey('ShiftLeft', true);
-          await changeKey('ShiftRight', true);
+          await changeKey('KeyZ', true);
+          await changeKey('Slash', true);
           await page.waitForFunction(() => window.pinball.flippers.every(f => Math.abs(f.angle - f.raised) < .001));
           await releaseBats();
         }
@@ -161,7 +161,7 @@ for (const player of players) {
           if (s.phase !== 'playing' || s.ball !== number) break;
           expect(s.body.id).toBe(ready.body.id);
           const now = Date.now();
-          for (const [key, left] of [['ShiftLeft', true], ['ShiftRight', false]]) {
+          for (const [key, left] of [['KeyZ', true], ['Slash', false]]) {
             if (held[key] && now >= nextRelease[key]) {
               await changeKey(key, false);
               nextPress[key] = now + player.pause;
@@ -201,8 +201,8 @@ for (const player of players) {
         expect(live.every(s => s.x < 486), `ball ${number} must stay out of dead shooter lane`).toBe(true);
         expect(new Set(live.map(s => s.id))).toEqual(new Set([balls[number - 1].id]));
       }
-      expect(inputs.filter(i => i.down && i.key === 'ShiftLeft').length).toBeGreaterThan(0);
-      expect(inputs.filter(i => i.down && i.key === 'ShiftRight').length).toBeGreaterThan(0);
+      expect(inputs.filter(i => i.down && i.key === 'KeyZ').length).toBeGreaterThan(0);
+      expect(inputs.filter(i => i.down && i.key === 'Slash').length).toBeGreaterThan(0);
       // The reactive player must demonstrate a useful shot. The deliberately
       // late player may miss; its contract is a complete, controllable game,
       // not a guaranteed successful shot from poor timing. Both bats' contacts

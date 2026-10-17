@@ -1,6 +1,6 @@
 export function bindControls(physics, toggleDebug, refresh) {
   const pressed = new Map();
-  const actions = { ShiftLeft: 'left', ShiftRight: 'right', Space: 'plunger' };
+  const actions = { KeyZ: 'left', Slash: 'right', Space: 'plunger' };
   const recompute = () => {
     for (const action of Object.values(actions)) physics.controls[action] = [...pressed.values()].includes(action);
   };
@@ -12,7 +12,7 @@ export function bindControls(physics, toggleDebug, refresh) {
   const pause = () => { physics.state.togglePause(); clear(); refresh(); };
   const restart = () => { clear(); physics.restart(); refresh(); };
   const keydown = e => {
-    if (['ShiftLeft', 'ShiftRight', 'Space', 'KeyP', 'KeyR', 'KeyD'].includes(e.code)) e.preventDefault();
+    if (['KeyZ', 'Slash', 'Space', 'KeyP', 'KeyR', 'KeyD'].includes(e.code)) e.preventDefault();
     if (e.repeat) return;
     if (e.code === 'KeyP') return pause();
     if (e.code === 'KeyR') return restart();

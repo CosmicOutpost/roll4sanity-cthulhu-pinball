@@ -45,9 +45,9 @@ test('Stage 1 audio unlocks on real input, produces signal, mutes immediately an
   page.on('pageerror', e => errors.push(e.message));
   await open(page);
   expect(await page.evaluate(() => window.pinballPresentation.sound.context)).toBe(null);
-  await page.keyboard.down('ShiftLeft');
+  await page.keyboard.down('KeyZ');
   await page.waitForFunction(() => window.pinballPresentation.sound.context?.state === 'running');
-  await page.keyboard.up('ShiftLeft');
+  await page.keyboard.up('KeyZ');
   await page.waitForTimeout(100);
   // Measure the real Web Audio graph rather than stubbing play() or accepting
   // only a running AudioContext as evidence of generated sound.
@@ -92,7 +92,7 @@ test('Stage 1 audio unlocks on real input, produces signal, mutes immediately an
   });
   expect(muted.gain).toBe(0);
   expect(muted.voices).toBe(0);
-  await page.keyboard.press('ShiftRight');
+  await page.keyboard.press('Slash');
   expect(await page.evaluate(() => window.pinballPresentation.sound.played)).toBe(muted.played);
   await page.reload();
   await page.waitForFunction(() => !!window.pinballPresentation);
@@ -102,11 +102,11 @@ test('Stage 1 audio unlocks on real input, produces signal, mutes immediately an
   await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'false');
   await page.waitForFunction(() => window.pinballPresentation.sound.context?.state === 'running');
   // Pause cancels active effects; it must not leave delayed notes playing.
-  await page.keyboard.down('ShiftLeft');
+  await page.keyboard.down('KeyZ');
   await page.keyboard.press('p');
   await page.waitForFunction(() => window.pinballPresentation.sound.paused);
   expect(await page.evaluate(() => window.pinballPresentation.sound.voices.size)).toBe(0);
-  await page.keyboard.up('ShiftLeft');
+  await page.keyboard.up('KeyZ');
   await page.keyboard.press('p');
   await page.waitForFunction(() => !window.pinballPresentation.sound.paused);
   await page.evaluate(() => {
@@ -178,4 +178,61 @@ test('Stage 1 actual phone touch input launches and flips with sound unlocked', 
     await page.locator('#right-flipper').tap();
     expect(await page.evaluate(() => window.pinball.controls.right)).toBe(false);
   } finally { await context.close(); }
+});
+
+test('Stage 1 Z and Slash replace Shift with independent, repeat-safe and focus-safe flippers', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('#game')).toHaveAttribute('aria-label', /Z controls the left flipper\. Slash controls the right flipper/);
+  await expect(page.locator('.control-row').first()).toContainText('Z left · / right');
+  await page.evaluate(() => {
+    window.keyDefaults = [];
+    // Registered after the game's listener, so this sees its default prevention.
+    for (const type of ['keydown', 'keyup']) window.addEventListener(type, e => {
+      window.keyDefaults.push({ code: e.code, type, repeat: e.repeat, prevented: e.defaultPrevented });
+    });
+  });
+  const controls = () => page.evaluate(() => ({ ...window.pinball.controls }));
+  for (const key of ['ShiftLeft', 'ShiftRight']) {
+    await page.keyboard.down(key);
+    expect(await controls()).toEqual({ left: false, right: false, plunger: false });
+    await page.waitForTimeout(100);
+    expect(await page.evaluate(() => window.pinball.flippers.every(f => f.angle === f.rest))).toBe(true);
+    await page.keyboard.up(key);
+  }
+  await page.keyboard.down('KeyZ');
+  await page.waitForFunction(() => {
+    const [l, r] = window.pinball.flippers;
+    return Math.abs(l.angle - l.raised) < .001 && r.angle === r.rest;
+  });
+  await page.keyboard.down('KeyZ'); // actual repeated keyboard event while held
+  await page.keyboard.down('Slash');
+  await page.waitForFunction(() => window.pinball.flippers.every(f => Math.abs(f.angle - f.raised) < .001));
+  expect(await controls()).toEqual({ left: true, right: true, plunger: false });
+  await page.keyboard.up('KeyZ');
+  await page.waitForFunction(() => {
+    const [l, r] = window.pinball.flippers;
+    return l.angle === l.rest && Math.abs(r.angle - r.raised) < .001;
+  });
+  expect(await controls()).toEqual({ left: false, right: true, plunger: false });
+  await page.keyboard.up('Slash');
+  await page.waitForFunction(() => window.pinball.flippers.every(f => f.angle === f.rest));
+  await page.keyboard.down('KeyZ');
+  await page.keyboard.down('Slash');
+  await page.keyboard.down('Space');
+  await page.waitForFunction(() => window.pinball.charge > .1);
+  expect(await controls()).toEqual({ left: true, right: true, plunger: true });
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  expect(await controls()).toEqual({ left: false, right: false, plunger: false });
+  expect(await page.evaluate(() => ({ paused: window.pinball.state.paused, phase: window.pinball.state.phase, charge: window.pinball.charge }))).toEqual({ paused: true, phase: 'ready', charge: 0 });
+  for (const key of ['KeyZ', 'Slash', 'Space']) await page.keyboard.up(key);
+  const events = await page.evaluate(() => window.keyDefaults);
+  expect(events.some(e => e.code === 'KeyZ' && e.repeat)).toBe(true);
+  expect(events.filter(e => ['KeyZ', 'Slash', 'Space'].includes(e.code)).every(e => e.prevented)).toBe(true);
+  expect(events.filter(e => e.code.startsWith('Shift')).every(e => !e.prevented)).toBe(true);
+  await page.keyboard.press('p');
+  await page.keyboard.down('Slash');
+  await page.waitForFunction(() => window.pinball.controls.right);
+  await page.keyboard.up('Slash');
+  expect(await controls()).toEqual({ left: false, right: false, plunger: false });
 });

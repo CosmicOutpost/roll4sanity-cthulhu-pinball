@@ -17,11 +17,11 @@ test('renders, charges, launches, flips, pauses, and restarts without runtime er
   await page.keyboard.up('Space');
   await expect(page.locator('#message')).not.toHaveClass(/visible/);
   await page.waitForFunction(() => !window.pinball.shooter && !window.pinball.travel);
-  await page.keyboard.down('ShiftLeft');
-  await page.keyboard.down('ShiftRight');
+  await page.keyboard.down('KeyZ');
+  await page.keyboard.down('Slash');
   await page.waitForFunction(() => window.pinball.flippers.every(f => Math.abs(f.angle - f.raised) < .001));
-  await page.keyboard.up('ShiftLeft');
-  await page.keyboard.up('ShiftRight');
+  await page.keyboard.up('KeyZ');
+  await page.keyboard.up('Slash');
   await page.keyboard.press('p');
   const before = await page.evaluate(() => ({ ...window.pinball.ball.position }));
   await page.waitForTimeout(150);
@@ -150,7 +150,7 @@ for (const source of ['Space', 'Launch button']) {
     await page.waitForFunction(() => window.plungeTrace.some(s => s.ball === 1 && !s.shooter && !s.guided && s.y > 740));
     // Play with the actual keyboard, watching the live simulation instead of
     // injecting velocity/position or advancing the physics manually.
-    const held = { ShiftLeft: false, ShiftRight: false };
+    const held = { KeyZ: false, Slash: false };
     const end = Date.now() + 4000;
     while (Date.now() < end) {
       const b = await page.evaluate(() => {
@@ -158,7 +158,7 @@ for (const source of ['Space', 'Launch button']) {
         return p.state.phase === 'playing' && !p.travel && p.ball
           ? { x: p.ball.position.x, y: p.ball.position.y, vy: p.ball.velocity.y } : null;
       });
-      for (const [key, side] of [['ShiftLeft', 'left'], ['ShiftRight', 'right']]) {
+      for (const [key, side] of [['KeyZ', 'left'], ['Slash', 'right']]) {
         const press = !!b && b.y > 735 && b.vy > 0 && (side === 'left' ? b.x < 250 : b.x >= 250);
         if (press !== held[key]) {
           if (press) await page.keyboard.down(key); else await page.keyboard.up(key);

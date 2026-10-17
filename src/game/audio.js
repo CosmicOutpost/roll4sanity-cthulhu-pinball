@@ -24,7 +24,7 @@ export class ArcadeAudio {
     try { this.muted = host.localStorage.getItem('roll4sanity-muted') === 'true'; }
     catch { this.muted = false; }
     this.onGesture = event => {
-      if (event.isTrusted && (['pointerdown', 'pointerup'].includes(event.type) || ['ShiftLeft', 'ShiftRight', 'Space', 'KeyP', 'KeyR'].includes(event.code))) this.unlock();
+      if (event.isTrusted && (['pointerdown', 'pointerup'].includes(event.type) || ['KeyZ', 'Slash', 'Space', 'KeyP', 'KeyR'].includes(event.code))) this.unlock();
     };
     // Hidden tabs may stop Phaser updates before the feedback observer runs.
     // Silence directly on focus/visibility loss as well as ordinary pause.

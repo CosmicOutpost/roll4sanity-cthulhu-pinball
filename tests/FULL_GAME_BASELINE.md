@@ -46,7 +46,7 @@ test browser's local game; there is no database or remote score submission.
 
 ## What is exercised
 
-- Two fallible player policies: reactive Shift flippers and slower, late Shift
+- Two fallible player policies: reactive Z and / flippers and slower, late Z and /
   taps. Space launches the first scenario; the on-screen Launch button, released
   outside its bounds using pointer capture, launches the second.
 - Three full-charge launches per game, distinct served balls, physical travel
@@ -89,7 +89,7 @@ shot; the deliberately late player is allowed to miss, while still completing
 all lifecycle/control checks. Both bats' physical contacts and normal shots
 remain covered independently by the Matter regressions. This distinction avoids
 requiring a lucky successful shot from intentionally poor timing.
-Both ordinary Shift controls are explicitly checked before the first plunge,
+Both ordinary Z and / controls are explicitly checked before the first plunge,
 including the bats reaching their raised positions. Live-play input counts can
 otherwise be one-sided when the ball never approaches the other bat; counting
 only opportunistic commands made this coverage assertion nondeterministic.
@@ -179,3 +179,23 @@ persistence, focus/pause silence, real scoring captions, unsupported audio and
 blocked-storage fallback, and Chromium touch input. The Pages workflow repeats
 these Stage 1 checks on the published site alongside the launch playtests.
 Original sounds are generated locally; no audio sample licence is required.
+
+## Desktop control follow-up
+
+The default flipper keys now use Z (left) and / (right), avoiding repeated Shift
+presses and Windows Sticky Keys prompts. Historical results above used the
+bindings recorded at that time. The same player policies and assertions now
+exercise the new keys, with dedicated browser checks for independent presses,
+repeat, release, focus loss and browser default prevention. Space and touchscreen
+controls are retained. See `SLINGSHOT_REVIEW.md` for the separate mechanical
+investigation; no mechanical repair is included in this control change.
+
+Validation: the unchanged baseline at `4027595` passed 24 Matter/state tests and
+23 browser tests. After remapping, `npm run check` passed all 24 Matter/state
+tests and built successfully. All 24 browser tests passed against the production
+build served at `/roll4sanity-cthulhu-pinball/`, including both complete games:
+reactive input 55.2 simulation seconds / 4,450 points; slower input 61.7 seconds /
+5,750 points. Both had no runtime, request or physics-invariant violations.
+Scores and trajectories are observations, not fixed expectations. The built
+physics chunk remains `physics-D8iP4ekj.js`. Native Windows accessibility dialogs
+were not tested; Chromium verifies Shift no longer actuates either bat.

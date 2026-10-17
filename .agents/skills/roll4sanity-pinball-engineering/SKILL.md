@@ -49,7 +49,7 @@ Read the actual code before relying on these descriptions or changing constants.
   They are an arcade model, not a full simulation of coils and mechanical recoil.
 - Both orbits and ramps use guided travel. Ramps are visibly elevated but are
   not physical 3D surfaces. A short guide also carries the launch over its exit.
-- Left/Right Shift operate the bats; hold/release Space or Launch to plunge;
+- Z and / operate the left/right bats; hold/release Space or Launch to plunge;
   P pauses, R restarts, D toggles debug. Pointer controls and focus safety work.
 - Three balls, 50-point slings, 100-point bumpers, 1,000-point orbits and
   2,500-point ramps are established behaviour. Check source for later revisions.

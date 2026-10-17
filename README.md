@@ -17,8 +17,8 @@ Open the address printed by Vite (default port 5173). Click the page to give it 
 
 | Key | Action |
 | --- | --- |
-| Left Shift | Left flipper |
-| Right Shift | Right flipper |
+| Z | Left flipper |
+| / | Right flipper |
 | Space, hold then release | Compress and release the plunger; a full charge takes 1.2 seconds |
 | P | Pause / resume |
 | R | Restart the three-ball game |
@@ -202,7 +202,7 @@ teleport.
 
 Launch regressions follow the ball beyond the guide, reproduce a weak plunge
 and retry, check pointer-capture cancellation and release outside the button, and
-play with the actual Shift controls. They check for flipper-area rebounds and a
+play with the actual Z and / controls. They check for flipper-area rebounds and a
 ball stranded in the shooter, rather than accepting a page load or a transient
 `playing` state as a successful launch. The two longer playtests can also target
 an HTTP-hosted build or deployed site:
