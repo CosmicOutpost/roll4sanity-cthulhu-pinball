@@ -70,6 +70,8 @@ new Phaser.Game({
   width: WIDTH,
   height: HEIGHT,
   backgroundColor: '#0c2330',
+  // Load the local artwork directly, without an intermediate blob URL.
+  loader: { imageLoadType: 'HTMLImageElement' },
   antialias: true,
   banner: false,
   scene: PinballScene,
