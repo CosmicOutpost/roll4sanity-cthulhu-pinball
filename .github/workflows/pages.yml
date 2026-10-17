@@ -98,3 +98,11 @@ jobs:
         env:
           PINBALL_BASE_URL: ${{ needs.deploy.outputs.page_url }}
         run: npx playwright test tests/browser/play.spec.js tests/browser/feedback.spec.js --grep 'plays beyond the launch guide|Stage 1'
+
+      - name: Save live browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: published-browser-evidence
+          path: test-results/
+          retention-days: 7

@@ -3,6 +3,38 @@ import { test, expect } from '@playwright/test';
 const gameURL = process.env.PINBALL_BASE_URL
   ? `./?debug=1&deployment=${process.env.GITHUB_SHA || 'stage1'}` : './?debug=1';
 
+test('Stage 1 cabinet displays the emerald and brass subscriber design', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(gameURL);
+  await page.waitForFunction(() => !!window.pinball);
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('.edition')).toHaveText('SUBSCRIBER EDITION 500');
+  await expect(page.locator('canvas')).toBeVisible();
+  const appearance = await page.evaluate(() => {
+    const style = selector => getComputedStyle(document.querySelector(selector));
+    return {
+      frame: style('.machine').borderTopColor,
+      cabinet: style('.machine').backgroundImage,
+      score: style('#score').color,
+      title: style('h1').fontFamily,
+      fontLoaded: document.fonts.check('350 48px "Josefin Sans"'),
+    };
+  });
+  expect(appearance.frame).toBe('rgb(169, 139, 80)');
+  expect(appearance.cabinet).toContain('rgb(38, 67, 56)');
+  expect(appearance.cabinet).toContain('rgb(16, 39, 31)');
+  expect(appearance.score).toBe('rgb(241, 234, 216)');
+  expect(appearance.title).toContain('Josefin Sans');
+  expect(appearance.fontLoaded).toBe(true);
+  await testInfo.attach('published-cabinet-appearance', {
+    body: JSON.stringify({ url: page.url(), ...appearance }, null, 2), contentType: 'application/json',
+  });
+  await page.keyboard.press('d'); // Hide the inspection overlay in the evidence image.
+  await testInfo.attach('published-cabinet-screenshot', {
+    body: await page.screenshot({ fullPage: true }), contentType: 'image/png',
+  });
+});
+
 async function open(page) {
   await page.goto(gameURL);
   await page.waitForFunction(() => !!window.pinballPresentation);
