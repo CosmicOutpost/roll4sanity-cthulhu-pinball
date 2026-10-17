@@ -3,12 +3,17 @@ import { test, expect } from '@playwright/test';
 const gameURL = process.env.PINBALL_BASE_URL
   ? `./?debug=1&deployment=${process.env.GITHUB_SHA || 'stage1'}` : './?debug=1';
 
-test('Stage 1 cabinet displays the emerald and brass subscriber design', async ({ page }, testInfo) => {
+test('Stage 1 cabinet displays the emerald and brass design with playfield artwork', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(gameURL);
   await page.waitForFunction(() => !!window.pinball);
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator('.edition')).toHaveText('SUBSCRIBER EDITION 500');
+  await expect(page.locator('.edition')).toHaveText('THE SUNKEN TABLE R4S');
+  expect(await page.evaluate(() => {
+    const art = window.pinballPresentation.table.artwork;
+    return { loaded: art.texture.key === 'playfield-art', width: art.displayWidth,
+      height: art.displayHeight, behindMechanisms: art.depth < 0, physicsBody: !!art.body };
+  })).toEqual({ loaded: true, width: 540, height: 960, behindMechanisms: true, physicsBody: false });
   await expect(page.locator('canvas')).toBeVisible();
   const appearance = await page.evaluate(() => {
     const style = selector => getComputedStyle(document.querySelector(selector));

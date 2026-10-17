@@ -4,6 +4,9 @@ export class TableRenderer {
   constructor(scene, physics) {
     this.scene = scene;
     this.physics = physics;
+    // Printed artwork sits behind every real mechanism. It has no physics body.
+    this.artwork = scene.add.image(WIDTH / 2, HEIGHT / 2, 'playfield-art')
+      .setDisplaySize(WIDTH, HEIGHT).setDepth(-1);
     this.base = scene.add.graphics();
     this.moving = scene.add.graphics().setDepth(5);
     this.overlay = scene.add.graphics().setDepth(10);
@@ -14,7 +17,8 @@ export class TableRenderer {
     this.debugText = this.text(250, 917, '', 10, '#f0e49b').setDepth(11);
   }
   text(x, y, value, size = 11, color = '#789e9d') {
-    return this.scene.add.text(x, y, value, { fontFamily: 'monospace', fontSize: `${size}px`, color, align: 'center', letterSpacing: 1 }).setOrigin(.5);
+    return this.scene.add.text(x, y, value, { fontFamily: 'monospace', fontSize: `${size}px`, color, align: 'center', letterSpacing: 1,
+      stroke: '#04130e', strokeThickness: size >= 11 ? 3 : 0 }).setOrigin(.5);
   }
   stroke(points, width, color, alpha = 1, graphic = this.base) {
     graphic.lineStyle(width, color, alpha);
@@ -28,13 +32,6 @@ export class TableRenderer {
   }
   drawTable() {
     const g = this.base;
-    g.fillStyle(0x102b36).fillRect(0, 0, WIDTH, HEIGHT);
-    // Restrained technical grid and tiny stars: no external art or fonts.
-    for (let x = 30; x < 480; x += 22) for (let y = 42; y < 925; y += 22) {
-      g.fillStyle(0x6eaaa0, .08).fillCircle(x, y, .75);
-    }
-    this.stroke([[250, 150], [250, 880]], 1, 0x7cafa2, .1);
-    for (const x of [60, 440]) this.stroke([[x, 470], [x, 590]], 1, 0x7cafa2, .15);
     // Outer cabinet metalwork.
     g.lineStyle(2, 0x52716d, .5).strokeRoundedRect(12, 13, 516, 935, 38);
     for (const [x, y] of [[19, 28], [520, 28], [19, 932], [520, 932]]) {
@@ -75,17 +72,6 @@ export class TableRenderer {
       this.stroke([[x + 15, 458], [x + 15, 443]], 3, color);
       this.stroke([[x - 7, 439], [x, 431], [x + 7, 439]], 2, color, .9);
     }
-    // A simple compass medallion, rather than finished character artwork.
-    const cx = 250, cy = 541;
-    this.circle(cx, cy, 43, 0x0d2730, 0x36594f, g, .6);
-    this.circle(cx, cy, 35, 0x0d2730, 0x34574e, g, .7);
-    const star = Array.from({ length: 9 }, (_, i) => {
-      const a = i * Math.PI / 4 - Math.PI / 2, r = i % 2 ? 12 : 28;
-      return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
-    });
-    this.stroke(star, 1, 0x96c9af, .65);
-    this.text(250, 611, 'THE SUNKEN TABLE', 13, '#82bda8');
-    this.text(250, 630, 'KEEP YOUR SANITY', 7, '#517b7a');
     for (const rail of RAILS) {
       this.stroke(rail.points, rail.width + 5, 0x03111a, .8);
       this.stroke(rail.points, rail.width, 0x456069);

@@ -233,3 +233,10 @@ Copyright 2010 The Josefin Sans Project Authors. It is distributed under the SIL
 Open Font License 1.1; the full notice is in `public/fonts/JosefinSans-OFL.txt`.
 Scores and functional labels retain system-font fallbacks. `src/cabinet.css`
 contains the cabinet/HUD treatment separately from the playfield renderer.
+
+## Playfield illustration
+
+`src/assets/playfield-art.png` is original AI-generated occult artwork created
+for this project. It is bundled locally and rendered as one static image beneath
+the existing mechanisms. Artwork has no collision body and does not alter the
+ball, table geometry, scoring or controls.
