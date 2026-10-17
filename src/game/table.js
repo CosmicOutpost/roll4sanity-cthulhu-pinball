@@ -27,8 +27,8 @@ export const RAILS = [
   // Join the return rail to the divider: an exposed end left a ball-sized trap
   // between the orbit return and shooter wall.
   { points: [[478, 470], [455, 526], [450, 588], [435, 624]], width: 9 },
-  { points: [[78, 657], [78, 733], [110, 773], [143, 790]], width: 9 },
-  { points: [[422, 657], [422, 733], [390, 773], [357, 790]], width: 9 },
+  { points: [[78, 657], [78, 733], [110, 773], [143, 790]], width: 9, flipperFeed: 'left' },
+  { points: [[422, 657], [422, 733], [390, 773], [357, 790]], width: 9, flipperFeed: 'right' },
   { points: [[34, 759], [58, 808], [151, 849], [194, 914]], width: 14 },
   { points: [[466, 759], [442, 808], [349, 849], [306, 914]], width: 14 },
   { points: [[491, 894], [517, 894]], width: 10 },

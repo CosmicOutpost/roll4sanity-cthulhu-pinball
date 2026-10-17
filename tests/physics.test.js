@@ -230,3 +230,101 @@ test('flippers block a normal-speed falling ball at rest and when held raised', 
     sim.destroy();
   }
 });
+
+test('stationary and nearly stationary balls escape both former heel traps after repeated activation', () => {
+  for (const side of ['left', 'right']) for (const slowVelocity of [0, .05]) {
+    const sim = new PinballPhysics();
+    // Recorded equilibrium from an actual full plunge, mirrored for the left.
+    const start = { x: side === 'left' ? 143.4436245866962 : 356.5563754133038, y: 775.5288042036972 };
+    liveBall(sim, start, { x: slowVelocity, y: 0 });
+    const originalBall = sim.ball;
+    let displacement = 0;
+    for (let i = 0; i < 360 && sim.state.ballNumber === 1; i++) {
+      sim.controls[side] = i % 36 < 10;
+      step(sim, 1);
+      displacement = Math.max(displacement, Vector.magnitude(Vector.sub(originalBall.position, start)));
+    }
+    assert.ok(displacement > 40, `${side}, vx=${slowVelocity}: the heel must not imprison the ball`);
+    sim.destroy();
+  }
+});
+
+test('stationary contacts on both bats respond to repeated rise and return strokes', () => {
+  for (const side of ['left', 'right']) for (const returning of [false, true]) {
+    const sim = new PinballPhysics(), f = sim.flippers.find(f => f.side === side);
+    const originalBall = sim.ball;
+    for (let repeat = 0; repeat < 3; repeat++) for (const distance of [5, 22, 55, 75]) {
+      // Fixture setup only: rest the same dynamic ball on either side of the
+      // actual collision shape, then let Matter resolve the entire stroke.
+      Body.setPosition(originalBall, { x: 250, y: 600 });
+      Body.setVelocity(originalBall, { x: 0, y: 0 });
+      sim.controls[side] = returning;
+      step(sim, 20);
+      const axis = { x: Math.cos(f.angle), y: Math.sin(f.angle) };
+      const normal = side === 'left' ? { x: axis.y, y: -axis.x } : { x: -axis.y, y: axis.x };
+      const offset = returning ? -17.1 : 17.1;
+      const start = { x: f.pivot.x + axis.x * distance + normal.x * offset, y: f.pivot.y + axis.y * distance + normal.y * offset };
+      liveBall(sim, start, { x: 0, y: repeat === 1 ? .03 : 0 });
+      Body.setAngularVelocity(sim.ball, 0);
+      const ball = sim.ball;
+      assert.equal(ball, originalBall, 'repeat strokes on the same ball, not a newly spawned one');
+      sim.controls[side] = !returning;
+      step(sim, 4);
+      assert.equal(sim.ball, ball, 'contact must not replace or rescue the ball');
+      assert.equal(ball.isStatic, false);
+      assert.ok(returning ? ball.velocity.y > .5 : ball.velocity.y < -1, `${side} ${returning ? 'return' : 'rise'}, d=${distance}: contact must transfer the moving surface velocity`);
+      assert.ok(Vector.magnitude(ball.velocity) <= MAX_SPEED + .001);
+    }
+    sim.destroy();
+  }
+});
+
+test('a nearby ball receives no proximity kick before the moving bat touches it', () => {
+  for (const side of ['left', 'right']) {
+    const sim = new PinballPhysics(), f = sim.flippers.find(f => f.side === side);
+    const axis = { x: Math.cos(f.angle), y: Math.sin(f.angle) };
+    const normal = side === 'left' ? { x: axis.y, y: -axis.x } : { x: -axis.y, y: axis.x };
+    liveBall(sim, { x: f.pivot.x + axis.x * 60 + normal.x * 30, y: f.pivot.y + axis.y * 60 + normal.y * 30 });
+    sim.controls[side] = true;
+    step(sim, 1);
+    assert.ok(sim.ball.velocity.y > 0, 'only gravity should act before contact');
+    sim.destroy();
+  }
+});
+
+test('slow ball sweep around heels, feeds, and tips introduces no permanent pockets', () => {
+  for (const side of ['left', 'right']) for (const distance of [-25, -15, -8, 0, 8, 20, 40, 60, 80, 90]) for (const vx of [0, .05]) {
+    const sim = new PinballPhysics(), f = sim.flippers.find(f => f.side === side);
+    const axis = { x: Math.cos(f.angle), y: Math.sin(f.angle) };
+    const normal = side === 'left' ? { x: axis.y, y: -axis.x } : { x: -axis.y, y: axis.x };
+    const start = { x: f.pivot.x + axis.x * distance + normal.x * 20, y: f.pivot.y + axis.y * distance + normal.y * 20 };
+    liveBall(sim, start, { x: vx, y: 0 });
+    const ball = sim.ball;
+    let displacement = 0;
+    for (let i = 0; i < 720 && sim.state.ballNumber === 1; i++) {
+      sim.controls[side] = i % 60 < 30;
+      step(sim, 1);
+      displacement = Math.max(displacement, Vector.magnitude(Vector.sub(ball.position, start)));
+      assert.ok(Number.isFinite(ball.position.x) && Number.isFinite(ball.position.y));
+      assert.ok(Vector.magnitude(ball.velocity) <= MAX_SPEED + .001);
+      if (sim.state.ballNumber === 1) {
+        assert.equal(sim.ball, ball);
+        assert.equal(sim.shooter, false);
+        assert.ok(!ball.isStatic || sim.travel, 'no artificial rescue or parking');
+      }
+    }
+    assert.ok(displacement > 40, `${side}, distance=${distance}, vx=${vx}: the ball must leave the contact pocket`);
+    if (sim.state.ballNumber > 1) assert.ok(ball.position.y > 942, 'a normal drain must precede the next ball');
+    sim.destroy();
+  }
+});
+
+test('rounded flipper tips still leave the central drain open', () => {
+  for (const x of [248, 250, 252]) {
+    const sim = new PinballPhysics();
+    liveBall(sim, { x, y: 760 });
+    step(sim, 600);
+    assert.equal(sim.state.ballNumber, 2, 'an unflipped center ball must drain rather than bridge the tips');
+    sim.destroy();
+  }
+});

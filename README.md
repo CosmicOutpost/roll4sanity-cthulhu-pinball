@@ -43,7 +43,20 @@ ready to charge again. Interrupted pointer gestures cancel rather than firing.
 
 Matter runs at a fixed **120 Hz** independently of rendering, with eight position and velocity solver iterations. A render stall is limited to 100 ms of catch-up; the engine never takes an oversized physics step. Velocity is capped at 22 pixels per Matter base tick, giving roughly 11 pixels of travel per step against a 9-pixel-radius ball and thick rails.
 
-Flippers are solid rotating bats with fixed pivots and separate rise/return speeds. Matter resolves contact against their current geometry; a contact impulse adds the bat's angular surface velocity during a strike. Held flippers remain solid. This is a tuned kinematic model, rather than a full electromechanical coil simulation.
+Flippers are solid rotating capsules with fixed pivots and separate rise/return
+speeds. Their previous/current poses supply the actual linear and angular contact
+velocity to Matter's solver on both strokes; there is no separate proximity kick.
+Held bats have zero surface velocity. This is a kinematic model, rather than a
+full electromechanical coil simulation.
+
+The collision capsules include the rounded heels visible in the artwork. Pivot
+covers are decorative parts of the flipper assembly, rather than larger fixed
+colliders that can shelter a ball from the bat. Inlane collision rails continue
+under the rubber with their upper surfaces aligned, removing the old rail/pivot
+cup without changing the drawn rails or pivots. The steel ball uses a 32-sided
+collision outline instead of Matter's default small-circle decagon, so broad
+facets cannot balance on shallow slopes. There is no flipper ball rescue,
+teleport, timer, or stationary-ball boost.
 
 **Both orbits and ramps use guided travel in this prototype.** Capture requires an upward-moving ball inside a visible entrance zone. While guided, the ball follows a sampled curve at constant arc-length speed, temporarily leaves collision response, then returns to physical simulation with a defined inlane velocity and short capture lockout. Ramps have raised deck borders, colors, and an elevated ball presentation. The shooter uses physical launch travel up the right lane, followed by a short one-way guide over its upper exit. There is no true 3D elevation.
 
@@ -146,6 +159,13 @@ npm run check          # Unit/physics tests, then production build
 Browser checks use `/usr/bin/chromium` locally and Playwright's installed browser when `CI` is set. Override with `CHROMIUM_PATH=/path/to/chromium npm run test:browser`. On another machine, install Chromium using your platform's package manager, or run `npx playwright install chromium` and set `CHROMIUM_PATH` to that executable. Playwright starts Vite itself, using port 5173. Test reports are ignored; screenshots are written under `/tmp/roll4sanity-*.png`.
 
 The automated checks cover three-ball scoring and restart; full/weak plunges; all four shot entrances and live returns; downward-shot rejection; active bumpers/slings; both flippers' impulses and collision blocking; walls and shooter divider; center/outlane drains; pause; and frame-rate independence. Chromium checks render the table, exercise keyboard launch/flippers/pause/restart, verify a 390-pixel-wide layout and pointer controls, check focus-loss safety, and launch the actual production build from both a nested WordPress-style directory and the exact GitHub Pages repository path while verifying that every asset request stays local.
+
+Heel-trap regressions use the equilibrium position recorded from an actual full
+plunge, mirrored to both sides. They exercise stationary and nearly stationary
+balls, repeated rise/return contacts at four points on each bat, and 40 slow-ball
+cases around the heels, feeds, and tips. They also check that the central drain
+stays open, normal shots still work, and a bat cannot kick a nearby ball before
+physical contact.
 
 Launch regressions follow the ball beyond the guide, reproduce a weak plunge
 and retry, check pointer-capture cancellation and release outside the button, and
