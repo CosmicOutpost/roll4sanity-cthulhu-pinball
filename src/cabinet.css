@@ -1,0 +1,155 @@
+/* Cabinet study: presentation only. Playfield drawing and geometry stay in
+   render.js/table.js. Keep the existing height-aware layout and touch targets. */
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('./assets/fonts/JosefinSans-Variable.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: swap;
+}
+
+:root {
+  --mint: #d9bc7b;
+  --muted: #91a59a;
+  --brass: #ac8d50;
+  --brass-light: #e1c991;
+  --ivory: #f1ead8;
+  --enamel: #102d25;
+  color: var(--ivory);
+  background: #070e0c;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 50% 42%, #16332980, transparent 65%),
+    linear-gradient(110deg, #070e0c, #0c1712 48%, #070e0c);
+}
+
+.masthead, footer { border-color: #ad8e503b; }
+.wordmark { color: var(--ivory); letter-spacing: -.7px; }
+.wordmark > span:first-child { color: var(--brass-light); }
+.edition { color: #c6b88f; letter-spacing: 1.5px; }
+.edition > span { border-color: #ac8d5059; color: var(--brass-light); }
+.edition i, .pulse {
+  background: var(--brass-light);
+  box-shadow: 0 0 7px #d7bb7733;
+  border-radius: 0;
+  transform: rotate(45deg);
+}
+
+.eyebrow, .status-note { color: #c3ad7c; }
+.eyebrow { letter-spacing: 2px; }
+h1 {
+  font-family: 'Josefin Sans', 'Trebuchet MS', sans-serif;
+  font-weight: 350;
+  letter-spacing: .045em;
+  line-height: 1.08;
+  color: var(--ivory);
+}
+h1 em { color: var(--brass-light); }
+.deck { color: #a1b1a6; }
+.rules > div > span { color: var(--brass); }
+.rules strong { color: #e2dcc7; }
+.rules p { color: #98a99e; }
+.status-note { letter-spacing: 1.6px; }
+
+.machine {
+  position: relative;
+  border-color: #a98b50;
+  border-radius: 3px;
+  background: linear-gradient(115deg, #264338, #10271f 40%, #19382b 80%, #304438);
+  box-shadow: inset 0 0 0 2px #07130e, inset 0 0 0 3px #aa8b504a,
+    0 18px 60px #0007;
+}
+.machine::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid #c8aa6540;
+  border-radius: 1px;
+  pointer-events: none;
+}
+.scoreboard {
+  background: linear-gradient(#0a1912, #07110d);
+  border-color: #a98b5073;
+  border-radius: 0;
+  box-shadow: inset 0 1px #d4bb7340, inset 0 -1px #0009;
+}
+.scoreboard span { color: #c4b184; }
+.scoreboard strong {
+  font-family: 'Courier New', monospace;
+  font-weight: 400;
+  color: var(--ivory);
+  text-shadow: 0 0 8px #efe0b526;
+}
+.scoreboard small { color: #a3aa91; }
+.scoreboard button {
+  border-color: #b99d625e;
+  border-radius: 1px;
+  color: #e4d8b7;
+  background: #183026;
+  box-shadow: inset 0 1px #d9c18813;
+}
+.scoreboard #score-feedback { color: #e5ce91; }
+#sound[aria-pressed=true] { color: #9b9c88; }
+.table-message {
+  background: #091a14f2;
+  border-color: #b4995d99;
+  box-shadow: 0 5px 20px #0008, inset 0 0 0 3px #ab8c4c16;
+}
+.table-message span { color: #efe4c7; }
+.table-message small { color: #c0c5ac; }
+
+.touch-controls button {
+  border-color: #ac8d5069;
+  border-radius: 1px;
+  background: linear-gradient(#1b3529, #11271d);
+  color: #e5deca;
+  box-shadow: inset 0 1px #dfc48914;
+}
+.touch-controls button:nth-child(2) {
+  color: #f2e0b4;
+  border-color: #c0a264a6;
+  background: linear-gradient(#3b4329, #273722);
+}
+.touch-controls button.active {
+  color: #fff6df;
+  border-color: #e3ca8e;
+  background: #40553a;
+}
+button:focus-visible, a:focus-visible, #game:focus-visible {
+  outline-color: #f0d99b;
+}
+@media (hover:hover) {
+  .scoreboard button:hover, .touch-controls button:hover {
+    border-color: var(--brass-light);
+    color: #fff3d2;
+  }
+}
+
+.control-row p { color: #e0d8c1; }
+.control-row p span { color: #9ba99c; }
+kbd {
+  border-color: #aa915b80;
+  border-radius: 1px;
+  background: #14271e;
+  color: #eadbbc;
+}
+.legend { border-color: #ac8d503b; }
+.legend > div { color: #a9b3a2; }
+.legend strong { color: #e3d7b6; }
+/* Keep the established shot colours: the legend must match the playfield. */
+.debug-toggle { color: #b3b8a3; }
+.debug-toggle small { border-color: #aa915b70; }
+.debug-toggle[aria-pressed=true] { color: var(--brass-light); }
+.prototype-note { color: #a3ac98; }
+footer { color: #a0aa99; }
+footer i { color: #c5b382; }
+footer button { color: #e4d6af; letter-spacing: 1px; }
+
+@media (max-width:650px) {
+  .edition { letter-spacing: .5px; }
+}
+@media (max-height:500px) {
+  footer button { border-color: #ac8d5069; background: #10271d; }
+}

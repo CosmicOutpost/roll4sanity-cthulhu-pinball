@@ -224,3 +224,12 @@ This is an initial mechanical prototype. Automated browser and simulation checks
 - `src/game/controls.js` — keyboard and pointer input, focus safety.
 - `src/main.js` — Phaser scene and HTML scoreboard integration.
 - `tests/` — physics/state checks and browser checks.
+
+## Cabinet typography
+
+The cabinet display title uses a locally bundled, unmodified Josefin Sans variable
+font from [Google Fonts](https://github.com/google/fonts/tree/main/ofl/josefinsans),
+Copyright 2010 The Josefin Sans Project Authors. It is distributed under the SIL
+Open Font License 1.1; the full notice is in `public/fonts/JosefinSans-OFL.txt`.
+Scores and functional labels retain system-font fallbacks. `src/cabinet.css`
+contains the cabinet/HUD treatment separately from the playfield renderer.

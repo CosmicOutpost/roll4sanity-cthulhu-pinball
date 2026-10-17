@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import './style.css';
+import './cabinet.css';
 import { PinballPhysics } from './game/physics.js';
 import { TableRenderer } from './game/render.js';
 import { bindControls } from './game/controls.js';
