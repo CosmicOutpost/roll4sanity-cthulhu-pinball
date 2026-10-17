@@ -26,6 +26,26 @@ Open the address printed by Vite (default port 5173). Click the page to give it 
 
 The buttons below the table also operate the flippers and plunger, including simultaneous pointer controls. Losing focus automatically pauses and cancels held inputs so the plunger cannot accidentally fire. Resume with P or the pause button. `?debug=1` starts the overlay and exposes `window.pinball` for local inspection; ordinary sessions do not expose it.
 
+The cabinet fits both the available screen height and width, keeping the full
+portrait table and essential controls in view. Very short landscape screens use
+compact surrounding UI; portrait remains preferable for a larger playfield.
+
+**SFX** beside Pause mutes/unmutes the arcade sounds. The preference is remembered
+locally when browser storage is available. Audio starts only after a real player
+gesture (a game key, pointer or touch); the browser may require another gesture
+after an interruption. Effects are original, generated locally with Web Audio:
+flipper clicks, bumper/slings, quiet rubber-post ticks, launch and orbit/ramp
+chimes. No audio downloads, third-party samples, music or runtime service is used.
+Unsupported or blocked audio/storage does not stop the game. Pause/focus loss
+silences active effects; there is no delayed sound replay on resume.
+
+Scoring shows a short **+points** caption in the scoreboard and playfield for
+about 0.95 seconds, with a restrained fade. Multiple awards within a rendered
+frame are displayed together; the score itself updates immediately. Ramp/orbit
+entrances, scoring bumpers and in/out lanes have clearer labels. The steel ball
+has stronger contrast at its existing radius. These are presentation changes;
+physics, geometry, shot timing and point values remain unchanged.
+
 Hold Space or the Launch button until the message says **FULL CHARGE**, then
 release. A short plunge can roll back; **PLUNGE TOO SOFT** means the same ball is
 ready to charge again. Interrupted pointer gestures cancel rather than firing.
@@ -37,7 +57,7 @@ ready to charge again. Interrupted pointer gestures cancel rather than firing.
 - Each of the three green pop bumpers has an active radial kick and awards **100** points.
 - Shoot upward through either blue outer orbit entrance for **1,000** points. The shot wraps around the upper table and returns down the opposite inlane.
 - Shoot upward between either pair of ramp entrance posts for **2,500** points. The amber and pale green ramp decks lead to opposite inlanes. The ball appears larger, with an elevated shadow, while on a ramp.
-- Inlanes feed the flippers; lanes outside the dividing posts drain. No ball saver, extra balls, multiball, tilt, missions, audio, or persistent high scores are implemented yet.
+- Inlanes feed the flippers; lanes outside the dividing posts drain. No ball saver, extra balls, multiball, tilt, missions, or persistent high scores are implemented yet.
 
 ### Prototype physics
 
@@ -199,6 +219,8 @@ This is an initial mechanical prototype. Automated browser and simulation checks
 - `src/game/physics.js` — fixed-step Matter simulation, flippers, plunger, kickers, guided travel.
 - `src/game/state.js` — scoring, ball count, pause, restart.
 - `src/game/render.js` — procedural table visuals and debug overlay.
+- `src/game/audio.js` — original generated effects, gesture unlock, bounded voices and mute preference.
+- `src/game/feedback.js` — observes existing inputs/scoring for sound and readable captions; never changes the simulation.
 - `src/game/controls.js` — keyboard and pointer input, focus safety.
 - `src/main.js` — Phaser scene and HTML scoreboard integration.
 - `tests/` — physics/state checks and browser checks.

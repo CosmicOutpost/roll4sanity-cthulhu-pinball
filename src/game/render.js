@@ -8,7 +8,9 @@ export class TableRenderer {
     this.moving = scene.add.graphics().setDepth(5);
     this.overlay = scene.add.graphics().setDepth(10);
     this.drawTable();
-    this.eventText = this.text(250, 584, '', 11, '#a7d6be').setDepth(6);
+    // One reusable caption, below the ball's rendering depth. No particle pool
+    // or animations that change collision positions, sizes or simulation time.
+    this.eventText = this.text(250, 584, '', 17, '#dbfadd').setStroke('#071a24', 4).setDepth(4);
     this.debugText = this.text(250, 917, '', 10, '#f0e49b').setDepth(11);
   }
   text(x, y, value, size = 11, color = '#789e9d') {
@@ -54,10 +56,18 @@ export class TableRenderer {
       }
     }
     this.text(250, 106, 'ARKHAM  /  MASSACHUSETTS', 8, '#6b9f9b');
-    this.text(58, 488, 'O\nR\nB\nI\nT', 8, '#73b2ca');
-    this.text(441, 488, 'O\nR\nB\nI\nT', 8, '#73b2ca');
-    this.text(185, 491, 'RAMP I', 9, '#d8b887');
-    this.text(315, 491, 'RAMP II', 9, '#a4d9b0');
+    this.text(58, 486, 'ORBIT', 14, '#9de0f2').setAngle(-90);
+    this.text(441, 486, 'ORBIT', 14, '#9de0f2').setAngle(90);
+    this.text(185, 490, 'RAMP I', 15, '#f1d09a');
+    this.text(315, 490, 'RAMP II', 15, '#c2f4cd');
+    this.text(185, 510, '2,500', 12, '#c9b994');
+    this.text(315, 510, '2,500', 12, '#a6c9b1');
+    for (const [x, direction] of [[59, -1], [441, 1]]) {
+      this.stroke([[x - 6, 420], [x, 413], [x + 6, 420]], 2, 0x9de0f2, .85);
+      this.text(x - direction * 28, 547, '1,000', 11, '#8dc8d7');
+    }
+    // These are the existing three scoring bumpers, not a new target bank.
+    for (const { x, y } of BUMPERS) this.text(x, y + 44, 'POP 100', 12, '#b6dfc3');
     // Ramp mouths: clear broad arrowheads and raised lips.
     for (const [x, color] of [[185, 0xe6b981], [315, 0xb7edbd]]) {
       g.fillStyle(color, .1).fillTriangle(x - 16, 466, x + 16, 466, x, 429);
@@ -93,10 +103,10 @@ export class TableRenderer {
       this.circle(x, y, r, 0xcee0ba, 0x74b7a0);
       this.circle(x, y, 2.5, 0x45695e);
     });
-    this.text(48, 697, 'OUT', 8, '#8d8f82').setAngle(-90);
-    this.text(451, 697, 'OUT', 8, '#8d8f82').setAngle(90);
-    this.text(105, 748, 'IN', 8, '#90c1b2').setAngle(46);
-    this.text(395, 748, 'IN', 8, '#90c1b2').setAngle(-46);
+    this.text(48, 697, 'OUT', 12, '#d0baa0').setAngle(-90);
+    this.text(451, 697, 'OUT', 12, '#d0baa0').setAngle(90);
+    this.text(105, 748, 'IN', 12, '#c0e1ce').setAngle(46);
+    this.text(395, 748, 'IN', 12, '#c0e1ce').setAngle(-46);
     // Lower apron leaves the central drain open in both geometry and drawing.
     g.fillStyle(0x102831).fillTriangle(30, 818, 194, 930, 30, 930);
     g.fillStyle(0x102831).fillTriangle(470, 818, 306, 930, 470, 930);
@@ -145,13 +155,14 @@ export class TableRenderer {
       const r = raised ? 11 : 9;
       this.circle(x + (raised ? 7 : 3), y + (raised ? 12 : 4), r + 1, 0x020b13, null, g, .55);
       if (p.travel) this.circle(x, y, r + 7, raised ? 0xf4e1ad : 0x8ed9ed, null, g, .1);
-      this.circle(x, y, r, 0x758e9a, 0xc4dbdc, g);
-      this.circle(x - 1, y - 2, r - 2, 0xc5d7d8, null, g);
-      this.circle(x - 3, y - 4, 3, 0xf5fff4, null, g);
+      // Crisp dark separation and a brighter steel highlight, at the original
+      // 9px physical / 11px guided-ramp presentation radii. No flashing/trail.
+      this.circle(x, y, r + 1, 0x05101b, null, g, .9);
+      this.circle(x, y, r, 0x91aebd, 0xf0ffff, g);
+      this.circle(x - 1, y - 2, r - 2, 0xd9e9ec, null, g);
+      this.circle(x - 3, y - 4, 3, 0xffffff, null, g);
       this.circle(x + 2, y + 4, 3, 0x526f81, null, g, .8);
     }
-    const latestFlash = Math.max(0, ...p.flashes.values());
-    this.eventText.setText(latestFlash > p.elapsed ? p.state.lastEvent : '');
     this.drawDebug();
   }
   drawDebug() {

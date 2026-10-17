@@ -94,7 +94,7 @@ jobs:
       - name: Install Chromium for live playtests
         run: npx playwright install --with-deps chromium
 
-      - name: Play the published game with Space and the Launch button
+      - name: Play the published game and verify Stage 1 feedback and fitting
         env:
           PINBALL_BASE_URL: ${{ needs.deploy.outputs.page_url }}
-        run: npx playwright test tests/browser/play.spec.js --grep 'plays beyond the launch guide'
+        run: npx playwright test tests/browser/play.spec.js tests/browser/feedback.spec.js --grep 'plays beyond the launch guide|Stage 1'

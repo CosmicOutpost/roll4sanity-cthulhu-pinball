@@ -83,6 +83,17 @@ Each scenario prints a summary and attaches:
   every 75ms of simulation, including on assertion failure.
 - `full-game-screen`: the final or failing browser screen.
 
+Rebound observation runs every rendered frame, while saved trajectory samples
+remain about 75ms apart. The reactive player must demonstrate an upward flipper
+shot; the deliberately late player is allowed to miss, while still completing
+all lifecycle/control checks. Both bats' physical contacts and normal shots
+remain covered independently by the Matter regressions. This distinction avoids
+requiring a lucky successful shot from intentionally poor timing.
+Both ordinary Shift controls are explicitly checked before the first plunge,
+including the bats reaching their raised positions. Live-play input counts can
+otherwise be one-sided when the ball never approaches the other bat; counting
+only opportunistic commands made this coverage assertion nondeterministic.
+
 Playwright stores attachments under ignored `test-results/`. For a persistent
 machine-readable report, run with `--reporter=json` and redirect stdout to a file
 outside the tracked source tree. Preserve exit status and inspect failed/skipped
@@ -137,3 +148,34 @@ Phaser bundle-size advisory remains; no bundle or engine changes were made.
 
 No gameplay repair is authorised by a baseline failure; preserve diagnostics and
 report the problem before making further gameplay changes.
+
+## Stage 1 visibility and feedback validation (2026-10-17)
+
+The presentation pass preserves `physics.js`, `state.js`, `table.js` and
+`controls.js` byte-for-byte. The built physics chunk remains `physics-D8iP4ekj.js`.
+The standard 24 Matter/state checks pass. The production-browser scenarios
+complete both three-ball games with ordinary input, natural drains, pause, game
+over and restart; no runtime, network or physics-invariant violations were found.
+
+| Player | Simulated time | Final score | Observed shots beyond launch |
+| --- | ---: | ---: | --- |
+| Reactive keyboard | 89.3 s | 10,650 | Right orbit, both ramps |
+| Launch button / late taps | 57.4 s | 5,150 | Left ramp, right orbit |
+
+These are observations, not golden expectations. An earlier reactive run also
+reached both orbits and the right ramp. Full-game routes vary with input timing.
+
+Before implementation, the deliberately late player's successful-shot assertion
+failed on the unchanged game. During validation another run completed normally
+without needing the left bat, failing an input-count assertion. The tests now
+observe brief rebounds every frame, require a successful shot for the reactive
+policy, and explicitly verify both bats with normal Shift input before serving.
+The late player may miss. No ball placement, rescue, velocity, score or physics
+change was used to address these test-controller assumptions.
+
+`tests/browser/feedback.spec.js` adds eight screen-fitting checks (including New
+Game), real Web Audio waveform/volume checks, voice bounds and cleanup, mute
+persistence, focus/pause silence, real scoring captions, unsupported audio and
+blocked-storage fallback, and Chromium touch input. The Pages workflow repeats
+these Stage 1 checks on the published site alongside the launch playtests.
+Original sounds are generated locally; no audio sample licence is required.

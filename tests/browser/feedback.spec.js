@@ -1,0 +1,181 @@
+import { test, expect } from '@playwright/test';
+
+const gameURL = process.env.PINBALL_BASE_URL
+  ? `./?debug=1&deployment=${process.env.GITHUB_SHA || 'stage1'}` : './?debug=1';
+
+async function open(page) {
+  await page.goto(gameURL);
+  await page.waitForFunction(() => !!window.pinballPresentation);
+}
+
+for (const [width, height] of [[1280, 720], [1440, 900], [1920, 1080], [768, 1024], [390, 844], [360, 640], [320, 568], [844, 390]]) {
+  test(`Stage 1 table and essential controls fit ${width}x${height}`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await open(page);
+    const layout = await page.evaluate(() => ({
+      width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight,
+      items: ['game', 'launch', 'left-flipper', 'right-flipper', 'sound', 'pause', 'restart', 'score', 'ball'].map(id => {
+        const r = document.getElementById(id).getBoundingClientRect();
+        return { id, x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: r.width, height: r.height };
+      }),
+      canvas: [document.querySelector('canvas').width, document.querySelector('canvas').height],
+      radius: window.pinball.ball.circleRadius,
+    }));
+    expect(layout.width).toBeLessThanOrEqual(width);
+    expect(layout.height).toBeLessThanOrEqual(height + 1);
+    for (const item of layout.items) {
+      expect(item.x, item.id).toBeGreaterThanOrEqual(0);
+      expect(item.y, item.id).toBeGreaterThanOrEqual(0);
+      expect(item.right, item.id).toBeLessThanOrEqual(width + 1);
+      expect(item.bottom, item.id).toBeLessThanOrEqual(height + 1);
+      expect(item.width, item.id).toBeGreaterThan(0);
+      if (['launch', 'left-flipper', 'right-flipper'].includes(item.id)) expect(item.height).toBeGreaterThanOrEqual(44);
+    }
+    const table = layout.items.find(item => item.id === 'game');
+    expect(table.width / table.height).toBeCloseTo(9 / 16, 2);
+    expect(layout.canvas).toEqual([540, 960]);
+    expect(layout.radius).toBe(9);
+    await page.keyboard.press('d');
+    await page.screenshot({ path: `/tmp/roll4sanity-stage1-${width}x${height}.png`, fullPage: true });
+  });
+}
+
+test('Stage 1 audio unlocks on real input, produces signal, mutes immediately and remembers preference', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await open(page);
+  expect(await page.evaluate(() => window.pinballPresentation.sound.context)).toBe(null);
+  await page.keyboard.down('ShiftLeft');
+  await page.waitForFunction(() => window.pinballPresentation.sound.context?.state === 'running');
+  await page.keyboard.up('ShiftLeft');
+  await page.waitForTimeout(100);
+  // Measure the real Web Audio graph rather than stubbing play() or accepting
+  // only a running AudioContext as evidence of generated sound.
+  await page.evaluate(() => {
+    const sound = window.pinballPresentation.sound;
+    const analyser = sound.context.createAnalyser();
+    analyser.fftSize = 256;
+    sound.master.connect(analyser);
+    window.audioProbe = { analyser, data: new Float32Array(256) };
+  });
+  const signal = await page.evaluate(async () => {
+    const sound = window.pinballPresentation.sound, probe = window.audioProbe;
+    const results = {};
+    for (const kind of ['flipper', 'bumper', 'sling', 'post', 'launch', 'orbit', 'ramp']) {
+      let peak = 0;
+      sound.play(kind);
+      for (let frame = 0; frame < 8; frame++) {
+        await new Promise(requestAnimationFrame);
+        probe.analyser.getFloatTimeDomainData(probe.data);
+        peak = Math.max(peak, ...probe.data.map(Math.abs));
+      }
+      results[kind] = peak;
+    }
+    return results;
+  });
+  for (const [kind, peak] of Object.entries(signal)) {
+    expect(peak, `${kind} should generate audible signal`).toBeGreaterThan(.001);
+    expect(peak, `${kind} should have conservative output level`).toBeLessThan(.2);
+  }
+  expect(await page.evaluate(() => {
+    const sound = window.pinballPresentation.sound;
+    for (let i = 0; i < 50; i++) sound.play(['flipper', 'bumper', 'sling', 'post', 'launch', 'orbit', 'ramp'][i % 7]);
+    return sound.voices.size;
+  })).toBeLessThanOrEqual(10);
+  await page.waitForFunction(() => window.pinballPresentation.sound.voices.size === 0);
+  await page.evaluate(() => window.pinballPresentation.sound.play('launch'));
+  await page.locator('#sound').click();
+  await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'true');
+  const muted = await page.evaluate(() => {
+    const sound = window.pinballPresentation.sound;
+    return { gain: sound.master.gain.value, voices: sound.voices.size, played: sound.played };
+  });
+  expect(muted.gain).toBe(0);
+  expect(muted.voices).toBe(0);
+  await page.keyboard.press('ShiftRight');
+  expect(await page.evaluate(() => window.pinballPresentation.sound.played)).toBe(muted.played);
+  await page.reload();
+  await page.waitForFunction(() => !!window.pinballPresentation);
+  await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'true');
+  expect(await page.evaluate(() => window.pinballPresentation.sound.context)).toBe(null);
+  await page.locator('#sound').click();
+  await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'false');
+  await page.waitForFunction(() => window.pinballPresentation.sound.context?.state === 'running');
+  // Pause cancels active effects; it must not leave delayed notes playing.
+  await page.keyboard.down('ShiftLeft');
+  await page.keyboard.press('p');
+  await page.waitForFunction(() => window.pinballPresentation.sound.paused);
+  expect(await page.evaluate(() => window.pinballPresentation.sound.voices.size)).toBe(0);
+  await page.keyboard.up('ShiftLeft');
+  await page.keyboard.press('p');
+  await page.waitForFunction(() => !window.pinballPresentation.sound.paused);
+  await page.evaluate(() => {
+    window.pinballPresentation.sound.play('ramp');
+    window.dispatchEvent(new Event('blur'));
+  });
+  expect(await page.evaluate(() => ({ voices: window.pinballPresentation.sound.voices.size, gain: window.pinballPresentation.sound.master.gain.value }))).toEqual({ voices: 0, gain: 0 });
+  expect(errors).toEqual([]);
+});
+
+test('Stage 1 real bumper scoring has readable feedback and sound without changing points or ball size', async ({ page }) => {
+  await open(page);
+  await page.keyboard.down('Space');
+  await page.waitForFunction(() => window.pinball.charge === 1);
+  await page.keyboard.up('Space');
+  await page.waitForFunction(() => window.pinball.state.score > 0 && document.getElementById('score-feedback').classList.contains('visible'));
+  const award = await page.locator('#score-feedback').textContent();
+  expect(award).toMatch(/^(BUMPER|SLING|ORBIT|RAMP|POINTS) \+[\d,]+$/);
+  await page.waitForTimeout(350);
+  await expect(page.locator('#score-feedback')).toHaveClass(/visible/);
+  expect(await page.evaluate(() => window.pinballPresentation.sound.lastPlayed.has('launch'))).toBe(true);
+  expect(await page.evaluate(() => window.pinballPresentation.sound.lastPlayed.has('bumper'))).toBe(true);
+  const before = await page.evaluate(() => ({ score: window.pinball.state.score, radius: window.pinball.ball.circleRadius }));
+  expect(before.score).toBeGreaterThanOrEqual(100);
+  expect(before.radius).toBe(9);
+  await page.keyboard.press('p');
+  await expect(page.locator('#score-feedback')).not.toHaveClass(/visible/);
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.pinball.state.score)).toBe(before.score);
+  await page.keyboard.press('r');
+  await expect(page.locator('#score-feedback')).not.toHaveClass(/visible/);
+  await expect(page.locator('#score')).toHaveText('000000');
+});
+
+test('Stage 1 remains playable without browser audio support or accessible storage', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.AudioContext = undefined;
+    window.webkitAudioContext = undefined;
+    Object.defineProperty(window, 'localStorage', { get() { throw new Error('Storage blocked'); } });
+  });
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await open(page);
+  await expect(page.locator('#sound')).toBeDisabled();
+  await page.keyboard.down('Space');
+  await page.waitForFunction(() => window.pinball.charge === 1);
+  await page.keyboard.up('Space');
+  await page.waitForFunction(() => !window.pinball.shooter && !window.pinball.travel);
+  expect(await page.evaluate(() => window.pinball.state.phase)).toBe('playing');
+  expect(errors).toEqual([]);
+});
+
+test('Stage 1 actual phone touch input launches and flips with sound unlocked', async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  try {
+    const page = await context.newPage();
+    await open(page);
+    // Touchscreen.tap is a trusted gesture and checks the actual touch target.
+    await page.locator('#left-flipper').tap();
+    await page.waitForFunction(() => window.pinballPresentation.sound.context?.state === 'running');
+    // A held touch is sent through Chromium's touch input, not dispatchEvent.
+    const client = await context.newCDPSession(page);
+    const button = await page.locator('#launch').boundingBox();
+    await client.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: button.x + button.width / 2, y: button.y + button.height / 2 }] });
+    await page.waitForFunction(() => window.pinball.charge === 1);
+    await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await page.waitForFunction(() => !window.pinball.shooter && !window.pinball.travel);
+    expect(await page.evaluate(() => window.pinball.state.phase)).toBe('playing');
+    await page.locator('#right-flipper').tap();
+    expect(await page.evaluate(() => window.pinball.controls.right)).toBe(false);
+  } finally { await context.close(); }
+});

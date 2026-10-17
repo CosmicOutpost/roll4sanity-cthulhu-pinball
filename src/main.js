@@ -3,6 +3,7 @@ import './style.css';
 import { PinballPhysics } from './game/physics.js';
 import { TableRenderer } from './game/render.js';
 import { bindControls } from './game/controls.js';
+import { ArcadeFeedback } from './game/feedback.js';
 import { WIDTH, HEIGHT } from './game/table.js';
 
 class PinballScene extends Phaser.Scene {
@@ -13,9 +14,16 @@ class PinballScene extends Phaser.Scene {
     this.table.debug = new URLSearchParams(location.search).get('debug') === '1';
     const toggleDebug = () => { this.table.debug = !this.table.debug; this.refreshHUD(); };
     this.unbind = bindControls(this.sim, toggleDebug, () => this.refreshHUD());
+    this.feedback = new ArcadeFeedback(this.sim, this.table);
     // Opt-in inspection for physics diagnostics and automated browser checks.
-    if (new URLSearchParams(location.search).get('debug') === '1') window.pinball = this.sim;
-    this.events.once('shutdown', () => { this.unbind(); this.sim.destroy(); delete window.pinball; });
+    if (new URLSearchParams(location.search).get('debug') === '1') {
+      window.pinball = this.sim;
+      window.pinballPresentation = this.feedback;
+    }
+    this.events.once('shutdown', () => {
+      this.unbind(); this.feedback.destroy(); this.sim.destroy();
+      delete window.pinball; delete window.pinballPresentation;
+    });
     this.refreshHUD();
   }
   refreshHUD() {
@@ -41,6 +49,7 @@ class PinballScene extends Phaser.Scene {
   update(_time, delta) {
     this.sim.update(delta);
     this.table.draw();
+    this.feedback.update(_time);
     this.refreshHUD();
     if (this.table.debug && (!this.lastVelocityUpdate || _time - this.lastVelocityUpdate > 120)) {
       this.lastVelocityUpdate = _time;

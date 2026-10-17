@@ -22,7 +22,7 @@
           <div class="status-note"><span class="pulse"></span> THREE BALLS. ONE DESCENT.</div>
         </aside>
         <section class="machine">
-          <div class="scoreboard" aria-live="polite" aria-atomic="true"><div><span>SCORE</span><strong id="score">000000</strong></div><div class="ball-counter"><span>BALL</span><strong id="ball">01 <small>/ 03</small></strong></div><button id="pause" aria-label="Pause game">II</button></div>
+          <div class="scoreboard"><div class="score-value"><span>SCORE</span><strong id="score">000000</strong><span id="score-feedback" class="score-feedback" role="status" aria-live="polite"></span></div><div class="ball-counter"><span>BALL</span><strong id="ball">01 <small>/ 03</small></strong></div><button id="sound" aria-label="Mute sound" aria-pressed="false" title="Arcade sounds">SFX</button><button id="pause" aria-label="Pause game">II</button></div>
           <div class="playfield"><div id="game" role="application" aria-label="Pinball table. Left and right Shift control flippers. Hold and release Space to launch. P pauses. R restarts." tabindex="0"></div><div class="table-message" id="message"><span id="message-title">THE DEEP IS WAITING</span><small id="message-detail">HOLD SPACE, THEN RELEASE TO LAUNCH</small></div></div>
           <div class="touch-controls"><button id="left-flipper" aria-label="Left flipper">↖ <span>LEFT FLIPPER</span></button><button id="launch" aria-label="Hold to charge, release to launch">LAUNCH <span>HOLD & RELEASE</span></button><button id="right-flipper" aria-label="Right flipper"><span>RIGHT FLIPPER</span> ↗</button></div>
         </section>
