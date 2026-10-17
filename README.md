@@ -58,6 +58,13 @@ collision outline instead of Matter's default small-circle decagon, so broad
 facets cannot balance on shallow slopes. There is no flipper ball rescue,
 teleport, timer, or stationary-ball boost.
 
+The upper-left curve also keeps a full ball-width return gap. Its former lower
+corner narrowed the opening to about 9px and wedged the 18px ball near `(41, 163)`.
+The corner is offset inward, both orbit guides follow the available clearance,
+and a connected lead-in on the next left return rail prevents a second catch
+farther down the wall. These are local mechanical rail adjustments, with the
+existing theme and table layout retained.
+
 **Both orbits and ramps use guided travel in this prototype.** Capture requires an upward-moving ball inside a visible entrance zone. While guided, the ball follows a sampled curve at constant arc-length speed, temporarily leaves collision response, then returns to physical simulation with a defined inlane velocity and short capture lockout. Ramps have raised deck borders, colors, and an elevated ball presentation. The shooter uses physical launch travel up the right lane, followed by a short one-way guide over its upper exit. There is no true 3D elevation.
 
 The shooter's upper rails form a closed return barrier: the guided plunge can
@@ -166,6 +173,12 @@ balls, repeated rise/return contacts at four points on each bat, and 40 slow-bal
 cases around the heels, feeds, and tips. They also check that the central drain
 stays open, normal shots still work, and a bat cannot kick a nearby ball before
 physical contact.
+
+Upper-left return regressions reproduce the screenshot-location equilibrium,
+exercise 25 approach/velocity combinations through the full downstream return,
+and check both sampled orbit curves against the actual ball and rail colliders.
+The stationary ball clears the curve under gravity without a rescue impulse or
+teleport.
 
 Launch regressions follow the ball beyond the guide, reproduce a weak plunge
 and retry, check pointer-capture cancellation and release outside the button, and

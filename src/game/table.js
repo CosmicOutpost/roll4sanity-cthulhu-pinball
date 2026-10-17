@@ -22,8 +22,12 @@ export const RAILS = [
   // The launch guide crosses this closed gate with collisions disabled. Physical
   // playfield balls must not roll over the top rail and back into the shooter.
   { points: [[327, 31], [327, 77]], width: 10 },
-  { points: [[45, 193], [60, 148], [96, 113], [139, 99]], width: 8 },
-  { points: [[45, 526], [50, 588], [65, 624]], width: 9 },
+  // Preserve a full ball-width return corridor against the outer curve. The old
+  // 45px lower endpoint converged to a 9px opening around the 18px steel ball.
+  { points: [[60, 193], [60, 148], [96, 113], [139, 99]], width: 8 },
+  // A continuous lead-in feeds the left return instead of catching its ball on
+  // an exposed end in the next narrow gap farther down the outer wall.
+  { points: [[25, 470], [45, 526], [50, 588], [65, 624]], width: 9 },
   // Join the return rail to the divider: an exposed end left a ball-sized trap
   // between the orbit return and shooter wall.
   { points: [[478, 470], [455, 526], [450, 588], [435, 624]], width: 9 },
@@ -34,8 +38,8 @@ export const RAILS = [
   { points: [[491, 894], [517, 894]], width: 10 },
 ];
 export const SHOTS = [
-  { id: 'left-orbit', name: 'WESTERN CURRENT', kind: 'orbit', entry: { x: 59, y: 432, radius: 24 }, points: [[59, 432], [55, 320], [58, 184], [103, 85], [235, 57], [368, 66], [437, 142], [451, 312], [445, 501], [406, 718]], exitVelocity: { x: -1.5, y: 8 }, color: 0x72cde9, duration: 1550, score: 1000 },
-  { id: 'right-orbit', name: 'EASTERN CURRENT', kind: 'orbit', entry: { x: 441, y: 432, radius: 24 }, points: [[441, 432], [448, 310], [438, 154], [361, 72], [235, 57], [108, 83], [59, 181], [53, 349], [57, 501], [94, 718]], exitVelocity: { x: 1.5, y: 8 }, color: 0x72cde9, duration: 1550, score: 1000 },
+  { id: 'left-orbit', name: 'WESTERN CURRENT', kind: 'orbit', entry: { x: 59, y: 432, radius: 24 }, points: [[59, 432], [55, 320], [45, 184], [45, 151], [70, 112], [103, 85], [235, 57], [368, 66], [437, 142], [451, 312], [445, 501], [406, 718]], exitVelocity: { x: -1.5, y: 8 }, color: 0x72cde9, duration: 1550, score: 1000 },
+  { id: 'right-orbit', name: 'EASTERN CURRENT', kind: 'orbit', entry: { x: 441, y: 432, radius: 24 }, points: [[441, 432], [448, 310], [438, 154], [361, 72], [235, 57], [108, 83], [70, 112], [45, 151], [45, 181], [53, 349], [57, 501], [94, 718]], exitVelocity: { x: 1.5, y: 8 }, color: 0x72cde9, duration: 1550, score: 1000 },
   { id: 'left-ramp', name: 'RLYEH ASCENT', kind: 'ramp', entry: { x: 185, y: 455, radius: 17 }, points: [[185, 455], [180, 406], [137, 339], [124, 236], [160, 159], [253, 137], [346, 175], [386, 288], [398, 494], [406, 718]], exitVelocity: { x: -1.5, y: 7 }, color: 0xe6b981, duration: 1950, score: 2500 },
   { id: 'right-ramp', name: 'ARKHAM ASCENT', kind: 'ramp', entry: { x: 315, y: 455, radius: 17 }, points: [[315, 455], [320, 406], [363, 339], [376, 236], [340, 159], [247, 137], [154, 175], [114, 288], [102, 494], [94, 718]], exitVelocity: { x: 1.5, y: 7 }, color: 0xb7edbd, duration: 1950, score: 2500 },
 ];

@@ -328,3 +328,57 @@ test('rounded flipper tips still leave the central drain open', () => {
     sim.destroy();
   }
 });
+
+test('the screenshot upper-left pinch releases a stationary ball under gravity', () => {
+  const sim = new PinballPhysics();
+  // Equilibrium reproduced between the outer wall and curved inner rail.
+  liveBall(sim, { x: 41.42304501804256, y: 163.00602621931975 });
+  const ball = sim.ball;
+  for (let i = 0; i < 360 && ball.position.y < 250; i++) {
+    const before = { ...ball.position };
+    step(sim, 1);
+    assert.equal(sim.ball, ball);
+    assert.equal(ball.isStatic, false);
+    assert.equal(sim.travel, null, 'gravity and collision geometry must clear the curve');
+    assert.ok(Vector.magnitude(Vector.sub(ball.position, before)) < 20, 'no teleport or automatic rescue');
+  }
+  assert.ok(ball.position.y > 250, 'the ball must fall through the curved rail gap');
+  sim.destroy();
+});
+
+test('upper-left curve and downstream return remain open at slow and normal speeds', () => {
+  for (const [x, y] of [[70, 85], [65, 100], [55, 120], [45, 150], [43, 165]]) {
+    for (const velocity of [{ x: 0, y: 0 }, { x: -.05, y: 0 }, { x: -3, y: 3 }, { x: 3, y: 3 }, { x: 0, y: 22 }]) {
+      const sim = new PinballPhysics();
+      liveBall(sim, { x, y }, velocity);
+      const ball = sim.ball;
+      let maxY = y;
+      for (let i = 0; i < 960 && sim.state.ballNumber === 1; i++) {
+        step(sim, 1);
+        maxY = Math.max(maxY, ball.position.y);
+        assert.ok(Number.isFinite(ball.position.x) && Number.isFinite(ball.position.y));
+        assert.ok(Vector.magnitude(ball.velocity) <= MAX_SPEED + .001);
+        if (sim.state.ballNumber === 1) {
+          assert.equal(sim.ball, ball);
+          assert.equal(sim.shooter, false);
+        }
+      }
+      assert.ok(maxY > 650, `start ${x},${y}, velocity ${velocity.x},${velocity.y}: must not transfer the trap to the next rail`);
+      sim.destroy();
+    }
+  }
+});
+
+test('both guided orbits fit through the corrected upper-left rail curve', () => {
+  const sim = new PinballPhysics();
+  const rails = sim.rails.filter(body => body.bounds.min.x < 100 && body.bounds.min.y < 194 && body.bounds.max.y > 145);
+  for (const shot of sim.shots.filter(shot => shot.kind === 'orbit')) {
+    const points = shot.path.points.filter(point => point.x < 100 && point.y >= 148 && point.y <= 193);
+    assert.ok(points.length > 10, 'check the sampled curve, not just its endpoints');
+    for (const point of points) {
+      Body.setPosition(sim.ball, point);
+      assert.equal(Matter.Query.collides(sim.ball, rails).length, 0, `${shot.id}: the ball outline must clear the visible rails`);
+    }
+  }
+  sim.destroy();
+});
