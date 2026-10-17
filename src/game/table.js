@@ -6,8 +6,8 @@ export const MAX_SPEED = 22;
 export const SHOOTER = { x: 504, y: 863 };
 export const BUMPERS = [{ x: 250, y: 250 }, { x: 185, y: 335 }, { x: 315, y: 335 }];
 export const SLINGS = [
-  [{ x: 110, y: 604 }, { x: 178, y: 715 }, { x: 100, y: 687 }],
-  [{ x: 390, y: 604 }, { x: 400, y: 687 }, { x: 322, y: 715 }],
+  [{ x: 110, y: 604 }, { x: 178, y: 715 }, { x: 105, y: 687 }],
+  [{ x: 390, y: 604 }, { x: 395, y: 687 }, { x: 322, y: 715 }],
 ];
 export const POSTS = [
   [76, 638, 8], [424, 638, 8], [90, 710, 7], [410, 710, 7],

@@ -96,3 +96,91 @@ For this small celebration game, prioritise reducing unintended rebound loops
 and assessing repeatable aimed shots/returns with human playtests. Keep the
 current audiovisual feedback; postpone missions, engine replacement and major
 layout changes. Automated game completion alone is not a measure of enjoyment.
+
+## Approved face correction and clearance repair
+
+Baseline `dc17bed` passed 24 Matter/state and 24 browser tests before physics
+edits. Mirrored regressions were added first: main-face hits passed; outer,
+underside and tip contacts incorrectly fired, and the corridor tests failed.
+
+The scoped correction checks the actual Matter contact normal against the long
+playfield-facing edge and checks that contact lies between its endpoints. Only
+that face activates the existing coil. Kick vector, speed, cooldown and the
+50-point valid-hit award are unchanged. Other faces keep existing passive
+restitution, without coil lighting, sound or points. No rule values changed.
+
+### Clearance blocker discovered by regression testing
+
+Contact fixtures pass, but making back contacts passive exposes an existing
+physical wedge. The right lower outer triangle vertex is `(400,687)`; the
+inlane rail is centred at x=422 with width 9, leaving only 17.5 px before its
+inner surface at x=417.5. The ball is 18 px across. The left side is mirrored.
+
+A ball initially at `(405,600)` with velocity `(2,4)` settles at
+`(408.6797485546,685.2424188865)`. The mirrored fixture settles at
+`(91.3202514454,685.2424188865)`. After 20 simulation seconds, both remain in
+playing phase with zero velocity, touching the sling and the vertical inlane
+rail. `tests/slingshot.test.js` retains these failures and the stationary cases.
+The incorrect back-face kicks had been dislodging balls from this wedge.
+
+A proposed clearance-only change is to move the two lower outer vertices from
+`(100,687)` / `(400,687)` to `(105,687)` / `(395,687)`, giving 22.5 px clearance.
+This would keep both active faces, rail paths, controls, launcher, ramps and
+point values unchanged. Geometry changes require the user's specific approval;
+the user subsequently approved these exact two changes, which are now applied.
+The matching outer triangle outlines follow the same vertices; no artwork
+styles or other table geometry changed.
+
+Validation of the face-only draft: 33/37 Node tests pass; four mirrored corridor
+and stationary-wedge regressions fail as intended. Build succeeds. Chromium
+reports 24/25 tests passing: the reactive three-ball game fails its existing
+six-second pocket detector near `(91.31,685.27)`, while the slower three-ball
+game completes. The new ordinary-Space launch contact trace passes (back-face
+contacts stay passive, a main-face hit remains active, and the ball reaches the
+flippers and drains naturally). No assertion was removed to hide the wedge.
+Those failures describe the intermediate face-only draft, which was not
+committed, pushed or deployed. The approved clearance repair is validated below.
+
+### Final repair and gameplay observations
+
+With both approved vertices changed, `npm run check` passes all 37 Node tests
+and builds successfully. The 13 new sling checks cover 18 main-face approaches,
+36 outer/underside approaches, 18 tip approaches, two stationary wedge positions,
+48 corridor approaches and mirrored response comparisons. Every corridor case
+drains naturally without rescue; both sides include returns into the physical
+flipper area. Main-face kick velocity and 50-point awards are unchanged.
+
+An exploratory actual-Matter comparison ran eight complete three-ball games per
+version (baseline `dc17bed` versus repaired physics). Each uses ordinary control
+booleans, full-charge plunges, reactive pulses checked every 60 or 140 simulation
+ms at y thresholds 720/735/750/765, 160 ms pulse targets with 260 ms release gaps,
+and releases after 22 seconds per ball. Only fixed steps advance play; no ball
+placement, forced drains or rescue. All eight games complete in each version.
+
+| Observation across eight games | Before | Repaired |
+| --- | ---: | ---: |
+| Outer-face coil activations | 81 | 0 |
+| Completed ramps/orbits | 34 | 22 |
+| Distinct ramp/orbit routes across all games | 4 | 4 |
+
+The incorrect circulation is removed, and all routes remain available. These
+automated players do not demonstrate increased shot variety: completed shots
+actually decrease in this sample. This is a narrowly scoped mechanical repair,
+not evidence that the table is now more exciting. Human assessment of deliberate
+shot timing and satisfying returns remains necessary before further tuning.
+
+The deterministic normal-launch trace now contacts the right back at 6,692 ms,
+then its corner at 6,850 and 6,942 ms, all passively, and drains naturally at
+9,183 ms. The earlier repeated right-side coil kicks are absent. The left
+main-face coil still fires at 5,067 ms. This trace uses the same full-charge
+launch and no flipper inputs as the original reproduction; faster drainage is
+not itself a measure of better gameplay.
+
+Final production-browser run: all 25 tests pass at
+`/roll4sanity-cthulhu-pinball/`, including both complete three-ball games, real
+keyboard/touch controls, scoring/audio feedback, both static hosting paths and
+the new passive-back contact trace. Reactive game: 75.1 simulation seconds,
+7,800 points, both orbits and right ramp; slower game: 77.9 seconds, 5,950 points.
+Both finish with natural drains, restart and no runtime/request/physics-invariant
+violations. Scores are observations, not fixed assertions. The existing Vite
+large-bundle advisory remains; no dependencies or artwork styles changed.

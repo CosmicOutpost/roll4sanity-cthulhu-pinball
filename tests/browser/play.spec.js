@@ -183,3 +183,48 @@ for (const source of ['Space', 'Launch button']) {
     await page.screenshot({ path: `/tmp/roll4sanity-launch-${source === 'Space' ? 'keyboard' : 'pointer'}.png`, fullPage: true });
   });
 }
+
+test('Space plays beyond the launch guide with passive slingshot backs and a playable return', async ({ page }, testInfo) => {
+  await page.goto(gameURL);
+  await page.waitForFunction(() => !!window.pinball);
+  await page.evaluate(() => {
+    const p = window.pinball;
+    const observation = window.slingObservation = { contacts: [], reachedBats: false };
+    // Passive Matter listener observes real contact normals and coil events;
+    // it never writes to ball state, control state, or the solver.
+    p.engine.events.collisionStart.push(event => {
+      for (const pair of event.pairs) {
+        const other = pair.bodyA === p.ball ? pair.bodyB : pair.bodyB === p.ball ? pair.bodyA : null;
+        if (!other?.label.startsWith('sling:')) continue;
+        const sign = pair.collision.bodyA === p.ball ? 1 : -1;
+        observation.contacts.push({
+          side: other.label, t: p.elapsed, id: p.ball.id,
+          x: p.ball.position.x, y: p.ball.position.y,
+          nx: sign * pair.collision.normal.x, ny: sign * pair.collision.normal.y,
+          coil: p.flashes.get(other.label) === p.elapsed + 180,
+        });
+      }
+    });
+    const sample = () => {
+      if (p.state.phase === 'playing' && !p.travel && !p.shooter && p.ball.position.y > 740 && p.ball.position.x > 75 && p.ball.position.x < 425) observation.reachedBats = true;
+      observation.frame = requestAnimationFrame(sample);
+    };
+    sample();
+  });
+  await page.keyboard.down('Space');
+  await page.waitForFunction(() => window.pinball.charge === 1);
+  await page.keyboard.up('Space');
+  await page.waitForFunction(() => window.pinball.state.ballNumber === 2, null, { timeout: 22000 });
+  const observation = await page.evaluate(() => {
+    cancelAnimationFrame(window.slingObservation.frame);
+    return { contacts: window.slingObservation.contacts, reachedBats: window.slingObservation.reachedBats };
+  });
+  await testInfo.attach('slingshot-contact-trace', { body: JSON.stringify(observation, null, 2), contentType: 'application/json' });
+  const backs = observation.contacts.filter(c => c.side === 'sling:1' ? c.nx > .9 : c.nx < -.9);
+  expect(backs.length, 'ordinary full launch must exercise the reported back-face route').toBeGreaterThan(0);
+  expect(backs.every(c => !c.coil)).toBe(true);
+  expect(observation.contacts.some(c => c.coil), 'normal main-face sling hit remains active').toBe(true);
+  expect(observation.reachedBats).toBe(true);
+  expect(new Set(observation.contacts.map(c => c.id)).size).toBe(1);
+  expect(await page.evaluate(() => ({ phase: window.pinball.state.phase, ball: window.pinball.state.ballNumber }))).toEqual({ phase: 'ready', ball: 2 });
+});

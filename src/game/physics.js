@@ -182,14 +182,30 @@ export class PinballPhysics {
       this.positionFlipper(f, true);
     }
   }
+  isActiveSlingFace(sling, collision) {
+    const side = Number(sling.label.split(':')[1]);
+    const points = SLINGS[side];
+    const start = points[0], end = points[side === 0 ? 1 : 2];
+    const edge = Vector.sub(end, start);
+    const normal = Vector.normalise(side === 0
+      ? { x: edge.y, y: -edge.x } : { x: -edge.y, y: edge.x });
+    // Matter's normal points from body B to A. Orient it out of the rubber,
+    // then require the long, playfield-facing edge rather than either back edge.
+    const outward = Vector.mult(collision.normal, collision.bodyA === this.ball ? 1 : -1);
+    const along = Vector.dot(Vector.sub(this.ball.position, start), edge) / Vector.dot(edge, edge);
+    // Exclude contacts beyond the sharp tips even if a ball facet supplies an
+    // almost parallel normal. Other faces retain Matter's passive restitution.
+    return along > 0 && along < 1 && Vector.dot(outward, normal) > .99;
+  }
   onCollision(event) {
     if (this.state.phase !== 'playing' || this.travel || !this.ball) return;
-    for (const { bodyA, bodyB } of event.pairs) {
+    for (const { bodyA, bodyB, collision } of event.pairs) {
       const other = bodyA === this.ball ? bodyB : bodyB === this.ball ? bodyA : null;
       if (!other) continue;
       const bumper = other.label.startsWith('bumper:');
       const sling = other.label.startsWith('sling:');
       if (!bumper && !sling) continue;
+      if (sling && !this.isActiveSlingFace(other, collision)) continue;
       if ((this.cooldowns.get(other.id) ?? 0) > this.elapsed) continue;
       this.cooldowns.set(other.id, this.elapsed + 160);
       this.flashes.set(other.label, this.elapsed + 180);
