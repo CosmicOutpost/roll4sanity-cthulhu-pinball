@@ -1,0 +1,168 @@
+{
+  "baseline": "c1fa06903324554f4ea39044c42065a4654890c0",
+  "policy": "Full normal charge; imperfect 60/140ms ball reads and 160ms bat pulses, then hands off after 22s per ball; fixed-step real Matter, no fixture/rescue. Rapid hits means adjacent different scoring mechanisms within 1000ms on the same ball; no combo scoring rule.",
+  "games": [
+    {
+      "threshold": 720,
+      "intervalMs": 60,
+      "before": {
+        "score": 5400,
+        "elapsedMs": 76683,
+        "rapidDifferentHits": 5
+      },
+      "after": {
+        "score": 11925,
+        "elapsedMs": 73708,
+        "rapidDifferentHits": 11,
+        "wardHits": 5,
+        "shots": [
+          "right-ramp",
+          "left-orbit",
+          "right-orbit"
+        ]
+      },
+      "violations": []
+    },
+    {
+      "threshold": 720,
+      "intervalMs": 140,
+      "before": {
+        "score": 9050,
+        "elapsedMs": 76250,
+        "rapidDifferentHits": 1
+      },
+      "after": {
+        "score": 9050,
+        "elapsedMs": 76250,
+        "rapidDifferentHits": 1,
+        "wardHits": 0,
+        "shots": [
+          "right-ramp",
+          "right-orbit",
+          "left-orbit"
+        ]
+      },
+      "violations": []
+    },
+    {
+      "threshold": 735,
+      "intervalMs": 60,
+      "before": {
+        "score": 5100,
+        "elapsedMs": 66650,
+        "rapidDifferentHits": 11
+      },
+      "after": {
+        "score": 12075,
+        "elapsedMs": 80033,
+        "rapidDifferentHits": 13,
+        "wardHits": 5,
+        "shots": [
+          "right-ramp",
+          "left-ramp",
+          "right-orbit"
+        ]
+      },
+      "violations": []
+    },
+    {
+      "threshold": 735,
+      "intervalMs": 140,
+      "before": {
+        "score": 8150,
+        "elapsedMs": 78167,
+        "rapidDifferentHits": 2
+      },
+      "after": {
+        "score": 6300,
+        "elapsedMs": 79092,
+        "rapidDifferentHits": 3,
+        "wardHits": 4,
+        "shots": [
+          "left-ramp",
+          "right-ramp"
+        ]
+      },
+      "violations": []
+    },
+    {
+      "threshold": 750,
+      "intervalMs": 60,
+      "before": {
+        "score": 8600,
+        "elapsedMs": 79317,
+        "rapidDifferentHits": 5
+      },
+      "after": {
+        "score": 12300,
+        "elapsedMs": 72133,
+        "rapidDifferentHits": 8,
+        "wardHits": 4,
+        "shots": [
+          "right-ramp"
+        ]
+      },
+      "violations": []
+    },
+    {
+      "threshold": 750,
+      "intervalMs": 140,
+      "before": {
+        "score": 4550,
+        "elapsedMs": 77017,
+        "rapidDifferentHits": 0
+      },
+      "after": {
+        "score": 3950,
+        "elapsedMs": 76592,
+        "rapidDifferentHits": 5,
+        "wardHits": 4,
+        "shots": [
+          "right-ramp"
+        ]
+      },
+      "violations": []
+    },
+    {
+      "threshold": 765,
+      "intervalMs": 60,
+      "before": {
+        "score": 4850,
+        "elapsedMs": 78217,
+        "rapidDifferentHits": 11
+      },
+      "after": {
+        "score": 8150,
+        "elapsedMs": 51850,
+        "rapidDifferentHits": 14,
+        "wardHits": 6,
+        "shots": [
+          "right-ramp",
+          "left-ramp",
+          "right-orbit"
+        ]
+      },
+      "violations": []
+    },
+    {
+      "threshold": 765,
+      "intervalMs": 140,
+      "before": {
+        "score": 9850,
+        "elapsedMs": 82925,
+        "rapidDifferentHits": 6
+      },
+      "after": {
+        "score": 9875,
+        "elapsedMs": 77658,
+        "rapidDifferentHits": 11,
+        "wardHits": 3,
+        "shots": [
+          "left-ramp",
+          "right-ramp"
+        ]
+      },
+      "violations": []
+    }
+  ]
+}

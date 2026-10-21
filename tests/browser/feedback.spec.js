@@ -98,7 +98,7 @@ test('Stage 1 audio unlocks on real input, produces signal, mutes immediately an
   const signal = await page.evaluate(async () => {
     const sound = window.pinballPresentation.sound, probe = window.audioProbe;
     const results = {};
-    for (const kind of ['flipper', 'bumper', 'sling', 'post', 'launch', 'orbit', 'ramp']) {
+    for (const kind of ['flipper', 'bumper', 'sling', 'ward', 'post', 'launch', 'orbit', 'ramp']) {
       let peak = 0;
       sound.play(kind);
       for (let frame = 0; frame < 8; frame++) {
@@ -116,7 +116,7 @@ test('Stage 1 audio unlocks on real input, produces signal, mutes immediately an
   }
   expect(await page.evaluate(() => {
     const sound = window.pinballPresentation.sound;
-    for (let i = 0; i < 50; i++) sound.play(['flipper', 'bumper', 'sling', 'post', 'launch', 'orbit', 'ramp'][i % 7]);
+    for (let i = 0; i < 50; i++) sound.play(['flipper', 'bumper', 'sling', 'ward', 'post', 'launch', 'orbit', 'ramp'][i % 8]);
     return sound.voices.size;
   })).toBeLessThanOrEqual(10);
   await page.waitForFunction(() => window.pinballPresentation.sound.voices.size === 0);
@@ -161,7 +161,7 @@ test('Stage 1 real bumper scoring has readable feedback and sound without changi
   await page.keyboard.up('Space');
   await page.waitForFunction(() => window.pinball.state.score > 0 && document.getElementById('score-feedback').classList.contains('visible'));
   const award = await page.locator('#score-feedback').textContent();
-  expect(award).toMatch(/^(BUMPER|SLING|ORBIT|RAMP|POINTS) \+[\d,]+$/);
+  expect(award).toMatch(/^(BUMPER|SLING|WARD|ORBIT|RAMP|POINTS) \+[\d,]+$/);
   await page.waitForTimeout(350);
   await expect(page.locator('#score-feedback')).toHaveClass(/visible/);
   expect(await page.evaluate(() => window.pinballPresentation.sound.lastPlayed.has('launch'))).toBe(true);
@@ -272,4 +272,43 @@ test('Stage 1 Z and Slash replace Shift with independent, repeat-safe and focus-
   await page.waitForFunction(() => window.pinball.controls.right);
   await page.keyboard.up('Slash');
   expect(await controls()).toEqual({ left: false, right: false, plunger: false });
+});
+
+
+// Controlled initial placement tests presentation after a REAL Matter contact.
+// Ordinary-input whole-game coverage remains in full-game.spec.js; it does not
+// require a first ball to happen to strike any particular small obstacle.
+test('both wards show 75-point feedback and their own sound after actual contact', async ({ page }, testInfo) => {
+  test.setTimeout(45000);
+  await open(page);
+  const evidence = [];
+  for (const side of [0, 1]) {
+    await page.keyboard.press('r');
+    await page.keyboard.down('Space');
+    await page.waitForFunction(() => window.pinball.charge === 1);
+    await page.keyboard.up('Space');
+    await page.waitForFunction(() => !window.pinball.travel && !window.pinball.shooter);
+    await page.keyboard.press('p');
+    const before = await page.evaluate(side => {
+      const p = window.pinball, Body = window.Phaser.Physics.Matter.Matter.Body;
+      const ward = p.engine.world.bodies.find(b => b.label === `ward:${side}`);
+      // Fixture setup only. Thereafter the normal game loop resolves collision;
+      // no collision callbacks, kicks, scores, physics steps or feedback are invoked.
+      Body.setPosition(p.ball, { x: ward.position.x, y: ward.position.y + 22 });
+      Body.setVelocity(p.ball, { x: 0, y: -3 });
+      Body.setAngularVelocity(p.ball, 0);
+      return { score: p.state.score, body: p.ball.id };
+    }, side);
+    await page.keyboard.press('p');
+    const hit = await page.waitForFunction(side => {
+      const p = window.pinball, feedback = window.pinballPresentation;
+      if (!p.flashes.has(`ward:${side}`) || feedback.message !== 'WARD +75' || !feedback.visible) return false;
+      return { score: p.state.score, caption: document.getElementById('score-feedback').textContent,
+        sound: feedback.sound.lastPlayed.has('ward'), body: p.ball.id };
+    }, side);
+    const result = await hit.jsonValue();
+    expect(result).toEqual({ score: before.score + 75, body: before.body, caption: 'WARD +75', sound: true });
+    evidence.push({ side, before, result });
+  }
+  await testInfo.attach('actual-contact-ward-feedback', { body: JSON.stringify(evidence), contentType: 'application/json' });
 });

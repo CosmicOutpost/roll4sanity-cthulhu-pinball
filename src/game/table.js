@@ -5,6 +5,9 @@ export const FIXED_DT = 1000 / 120;
 export const MAX_SPEED = 22;
 export const SHOOTER = { x: 504, y: 863 };
 export const BUMPERS = [{ x: 250, y: 250 }, { x: 185, y: 335 }, { x: 315, y: 335 }];
+// Compact midfield kickers; existing rails, entrances and lower feeds stay open.
+export const WARDS = [{ x: 135, y: 550, radius: 12 }, { x: 365, y: 550, radius: 12 }];
+export const WARD_RULES = { score: 75, speed: 9, cooldown: 240, inwardBias: .22 };
 export const SLINGS = [
   [{ x: 110, y: 604 }, { x: 178, y: 715 }, { x: 105, y: 687 }],
   [{ x: 390, y: 604 }, { x: 395, y: 687 }, { x: 322, y: 715 }],

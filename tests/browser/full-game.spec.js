@@ -28,10 +28,15 @@ async function startObservation(page) {
   // Only the observer's own records change. No writes to the simulation, calls
   // to its methods, timers driving physics, or synthetic in-page input events.
   await page.evaluate(() => {
-    const observation = window.fullGameObservation = { samples: [], violations: [], sawFlipperRebound: false };
+    const observation = window.fullGameObservation = { samples: [], violations: [], sawFlipperRebound: false, hits: [] };
+    const seen = new Map();
     let lastSample = -Infinity, pocket = null;
     const sample = () => {
       const p = window.pinball, b = p.ball;
+      for (const [id, expires] of p.flashes) if (seen.get(id) !== expires) {
+        seen.set(id, expires);
+        observation.hits.push({ id, t: p.elapsed, ball: p.state.ballNumber });
+      }
       const s = {
         t: p.elapsed, ball: p.state.ballNumber, phase: p.state.phase,
         score: p.state.score, paused: p.state.paused, shooter: p.shooter,
@@ -241,13 +246,15 @@ for (const player of players) {
       await page.mouse.up();
       const observation = await page.evaluate(() => {
         cancelAnimationFrame(window.fullGameObservation.frame);
-        return { samples: window.fullGameObservation.samples, violations: window.fullGameObservation.violations, sawFlipperRebound: window.fullGameObservation.sawFlipperRebound };
+        return { samples: window.fullGameObservation.samples, violations: window.fullGameObservation.violations, sawFlipperRebound: window.fullGameObservation.sawFlipperRebound, hits: window.fullGameObservation.hits };
       });
       const summary = {
         player, balls, errors, failures, violations: observation.violations,
         sawFlipperRebound: observation.sawFlipperRebound,
         simulatedSeconds: observation.samples.at(-1)?.t / 1000,
         flipperPresses: Object.fromEntries(Object.keys(held).map(key => [key, inputs.filter(i => i.key === key && i.down).length])),
+        wardHits: observation.hits.filter(h => h.id.startsWith('ward:')).length,
+        rapidDifferentHits: observation.hits.filter((h, i, hits) => i && h.ball === hits[i - 1].ball && h.id !== hits[i - 1].id && h.t - hits[i - 1].t < 1000).length,
         guidedShots: [...new Set(observation.samples.map(s => s.guided).filter(Boolean))],
       };
       console.log(`Full-game baseline: ${JSON.stringify(summary)}`);

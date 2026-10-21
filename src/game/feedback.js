@@ -39,12 +39,12 @@ export class ArcadeFeedback {
       if (expires === this.seen.get(id)) continue;
       this.seen.set(id, expires);
       if (expires <= sim.elapsed || restarted || state.paused) continue;
-      const kind = id.startsWith('bumper:') ? 'bumper' : id.startsWith('sling:') ? 'sling' : id.endsWith('orbit') ? 'orbit' : id.endsWith('ramp') ? 'ramp' : null;
+      const kind = id.startsWith('ward:') ? 'ward' : id.startsWith('bumper:') ? 'bumper' : id.startsWith('sling:') ? 'sling' : id.endsWith('orbit') ? 'orbit' : id.endsWith('ramp') ? 'ramp' : null;
       if (kind) { effects.push(kind); sound.play(kind); }
     }
     const delta = state.score - this.previousScore;
     if (delta > 0 && !restarted) {
-      const labels = { bumper: 'BUMPER', sling: 'SLING', orbit: 'ORBIT', ramp: 'RAMP' };
+      const labels = { ward: 'WARD', bumper: 'BUMPER', sling: 'SLING', orbit: 'ORBIT', ramp: 'RAMP' };
       const kinds = [...new Set(effects)];
       const label = kinds.length === 1 ? labels[kinds[0]] : 'POINTS';
       this.message = `${label} +${delta.toLocaleString('en-US')}`;

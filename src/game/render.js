@@ -1,4 +1,4 @@
-import { WIDTH, HEIGHT, BUMPERS, POSTS, RAILS, SLINGS } from './table.js';
+import { WIDTH, HEIGHT, BUMPERS, WARDS, WARD_RULES, POSTS, RAILS, SLINGS } from './table.js';
 
 export class TableRenderer {
   constructor(scene, physics) {
@@ -65,6 +65,7 @@ export class TableRenderer {
     }
     // These are the existing three scoring bumpers, not a new target bank.
     for (const { x, y } of BUMPERS) this.text(x, y + 44, 'POP 100', 12, '#b6dfc3');
+    for (const { x, y } of WARDS) this.text(x, y + 25, `WARD ${WARD_RULES.score}`, 11, '#dcc38c');
     // Ramp mouths: clear broad arrowheads and raised lips.
     for (const [x, color] of [[185, 0xe6b981], [315, 0xb7edbd]]) {
       g.fillStyle(color, .1).fillTriangle(x - 16, 466, x + 16, 466, x, 429);
@@ -113,6 +114,16 @@ export class TableRenderer {
       this.circle(x, y, 19, active ? 0x8be7b0 : 0x193e3e, 0x70bd91, g);
       this.circle(x, y, 10, 0x9fe8b7, 0xc9efd0, g, .8);
       this.stroke([[x - 4, y], [x, y - 5], [x + 4, y], [x, y + 5], [x - 4, y]], 1, 0x1c4e40, 1, g);
+    });
+    WARDS.forEach(({ x, y, radius }, i) => {
+      const active = (p.flashes.get(`ward:${i}`) ?? 0) > p.elapsed;
+      if (active) this.circle(x, y, radius + 9, 0xd6c48a, null, g, .14);
+      this.circle(x + 1, y + 2, radius + 2, 0x030e12, null, g, .8);
+      // The brass rim follows the collider; only the soft halo extends beyond it.
+      this.circle(x, y, radius, 0x776036, 0xe0c589, g);
+      this.circle(x, y, radius - 3, active ? 0x7cc9a0 : 0x174a3b, 0x987b44, g);
+      this.stroke([[x - 4, y], [x, y - 6], [x + 4, y], [x, y + 6], [x - 4, y]], 1.5, 0xe6d198, 1, g);
+      this.stroke([[x - 6, y + 7], [x + 6, y + 7]], 1, 0xba9b5b, .8, g);
     });
     SLINGS.forEach((points, i) => {
       if ((p.flashes.get(`sling:${i}`) ?? 0) > p.elapsed) g.fillStyle(0xaaf3b6, .55).fillPoints(points, true);

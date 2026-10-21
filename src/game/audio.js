@@ -3,6 +3,7 @@
 const PRESETS = {
   flipper: [[150, 65, .055, 'triangle', .42]],
   bumper: [[780, 460, .11, 'triangle', .32], [1170, 900, .07, 'sine', .13]],
+  ward: [[880, 600, .075, 'sine', .22]],
   sling: [[430, 180, .075, 'triangle', .3]],
   post: [[1250, 820, .045, 'sine', .12]],
   launch: [[110, 380, .18, 'triangle', .38]],

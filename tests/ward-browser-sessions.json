@@ -1,0 +1,126 @@
+{
+  "build": "Arcane ward draft on pinball-playtest; production repository-path build, local Chromium",
+  "browserTests": {
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0
+  },
+  "games": [
+    {
+      "player": {
+        "name": "keyboard reactive",
+        "launch": "keyboard",
+        "interval": 60,
+        "threshold": 735,
+        "pulse": 160,
+        "pause": 260
+      },
+      "balls": [
+        {
+          "number": 1,
+          "id": 56,
+          "start": 41.66666666666667,
+          "scoreBefore": 0,
+          "handsOffAt": 22566.666666666246,
+          "end": 25266.666666665853,
+          "scoreAfter": 2975,
+          "phaseAfter": "ready"
+        },
+        {
+          "number": 2,
+          "id": 57,
+          "start": 25316.666666665846,
+          "scoreBefore": 2975,
+          "handsOffAt": 47375.00000000234,
+          "end": 52141.6666666704,
+          "scoreAfter": 7625,
+          "phaseAfter": "ready"
+        },
+        {
+          "number": 3,
+          "id": 58,
+          "start": 52175.00000000374,
+          "scoreBefore": 7625,
+          "handsOffAt": 74591.66666666903,
+          "end": 75925.00000000159,
+          "scoreAfter": 11575,
+          "phaseAfter": "gameover"
+        }
+      ],
+      "errors": [],
+      "failures": [],
+      "violations": [],
+      "sawFlipperRebound": true,
+      "simulatedSeconds": 76.341666666668,
+      "flipperPresses": {
+        "KeyZ": 22,
+        "Slash": 25
+      },
+      "wardHits": 7,
+      "rapidDifferentHits": 10,
+      "guidedShots": [
+        "launch",
+        "left-ramp",
+        "right-orbit",
+        "right-ramp"
+      ]
+    },
+    {
+      "player": {
+        "name": "Launch button and late keyboard taps",
+        "launch": "pointer",
+        "interval": 140,
+        "threshold": 770,
+        "pulse": 110,
+        "pause": 420
+      },
+      "balls": [
+        {
+          "number": 1,
+          "id": 56,
+          "start": 58.33333333333334,
+          "scoreBefore": 0,
+          "handsOffAt": 22733.33333333289,
+          "end": 24649.999999999276,
+          "scoreAfter": 800,
+          "phaseAfter": "ready"
+        },
+        {
+          "number": 2,
+          "id": 57,
+          "start": 24666.66666666594,
+          "scoreBefore": 800,
+          "handsOffAt": 47175.000000002285,
+          "end": 49741.6666666697,
+          "scoreAfter": 1100,
+          "phaseAfter": "ready"
+        },
+        {
+          "number": 3,
+          "id": 58,
+          "start": 49758.33333333637,
+          "scoreBefore": 1100,
+          "handsOffAt": 72191.66666667043,
+          "end": 77008.33333333429,
+          "scoreAfter": 7000,
+          "phaseAfter": "gameover"
+        }
+      ],
+      "errors": [],
+      "failures": [],
+      "violations": [],
+      "sawFlipperRebound": true,
+      "simulatedSeconds": 77.3916666666674,
+      "flipperPresses": {
+        "KeyZ": 16,
+        "Slash": 12
+      },
+      "wardHits": 8,
+      "rapidDifferentHits": 11,
+      "guidedShots": [
+        "launch",
+        "left-ramp"
+      ]
+    }
+  ]
+}

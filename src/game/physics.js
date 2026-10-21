@@ -1,6 +1,6 @@
 import Matter from 'matter-js';
 import { GameState } from './state.js';
-import { BALL_RADIUS, FIXED_DT, MAX_SPEED, SHOOTER, BUMPERS, POSTS, RAILS, SLINGS, SHOTS, samplePath, pointOnPath } from './table.js';
+import { BALL_RADIUS, FIXED_DT, MAX_SPEED, SHOOTER, BUMPERS, WARDS, WARD_RULES, POSTS, RAILS, SLINGS, SHOTS, samplePath, pointOnPath } from './table.js';
 const { Engine, Bodies, Body, Composite, Events, Vector } = Matter;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -47,6 +47,9 @@ export class PinballPhysics {
       }
     }
     BUMPERS.forEach((p, i) => add(Bodies.circle(p.x, p.y, 28, { isStatic: true, restitution: 1, label: `bumper:${i}` })));
+    WARDS.forEach(({ x, y, radius }, i) => add(Bodies.polygon(x, y, 32, radius, {
+      circleRadius: radius, isStatic: true, restitution: .8, friction: .02, label: `ward:${i}`,
+    })));
     POSTS.forEach(([x, y, r], i) => {
       // Pivot covers belong to the moving bat, not a second, larger stationary
       // post that could shelter a ball from the flipper's contact surface.
@@ -204,17 +207,23 @@ export class PinballPhysics {
       if (!other) continue;
       const bumper = other.label.startsWith('bumper:');
       const sling = other.label.startsWith('sling:');
-      if (!bumper && !sling) continue;
+      const ward = other.label.startsWith('ward:');
+      if (!bumper && !sling && !ward) continue;
       if (sling && !this.isActiveSlingFace(other, collision)) continue;
       if ((this.cooldowns.get(other.id) ?? 0) > this.elapsed) continue;
-      this.cooldowns.set(other.id, this.elapsed + 160);
+      this.cooldowns.set(other.id, this.elapsed + (ward ? WARD_RULES.cooldown : 160));
       this.flashes.set(other.label, this.elapsed + 180);
       let direction;
-      if (bumper) direction = Vector.normalise(Vector.sub(this.ball.position, other.position));
+      if (ward) {
+        const radial = Vector.normalise(Vector.sub(this.ball.position, other.position));
+        // A lightly canted coil encourages cross-table returns. Bias < 1 keeps
+        // every face outward; a crown hit cannot settle into a vertical kick loop.
+        direction = Vector.normalise({ x: radial.x + (other.label.endsWith('0') ? 1 : -1) * WARD_RULES.inwardBias, y: radial.y });
+      } else if (bumper) direction = Vector.normalise(Vector.sub(this.ball.position, other.position));
       else direction = { x: other.label.endsWith('0') ? .82 : -.82, y: -.57 };
       // Apply after the solver so restitution cannot cancel the active coil kick.
-      this.pendingKick = { direction, speed: bumper ? 12 : 13 };
-      this.state.addScore(bumper ? 100 : 50, bumper ? 'THE DEPTHS AWAKEN · +100' : 'SLINGSHOT · +50');
+      this.pendingKick = { direction, speed: ward ? WARD_RULES.speed : bumper ? 12 : 13 };
+      this.state.addScore(ward ? WARD_RULES.score : bumper ? 100 : 50, ward ? `ARCANE WARD · +${WARD_RULES.score}` : bumper ? 'THE DEPTHS AWAKEN · +100' : 'SLINGSHOT · +50');
     }
   }
   applyPendingKick() {
