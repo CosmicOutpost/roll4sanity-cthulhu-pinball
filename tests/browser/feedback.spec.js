@@ -51,7 +51,7 @@ for (const [width, height] of [[1280, 720], [1440, 900], [1920, 1080], [768, 102
     await open(page);
     const layout = await page.evaluate(() => ({
       width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight,
-      items: ['game', 'launch', 'left-flipper', 'right-flipper', 'sound', 'pause', 'restart', 'score', 'ball'].map(id => {
+      items: ['game', 'launch', 'left-flipper', 'right-flipper', 'sound', 'pause', 'restart', 'motion', 'score', 'ball'].map(id => {
         const r = document.getElementById(id).getBoundingClientRect();
         return { id, x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: r.width, height: r.height };
       }),
@@ -98,7 +98,7 @@ test('Stage 1 audio unlocks on real input, produces signal, mutes immediately an
   const signal = await page.evaluate(async () => {
     const sound = window.pinballPresentation.sound, probe = window.audioProbe;
     const results = {};
-    for (const kind of ['flipper', 'bumper', 'sling', 'ward', 'post', 'launch', 'orbit', 'ramp']) {
+    for (const kind of ['flipper', 'bumper', 'sling', 'ward', 'post', 'launch', 'orbit', 'ramp', 'rail', 'drain', 'gameover']) {
       let peak = 0;
       sound.play(kind);
       for (let frame = 0; frame < 8; frame++) {
@@ -116,7 +116,7 @@ test('Stage 1 audio unlocks on real input, produces signal, mutes immediately an
   }
   expect(await page.evaluate(() => {
     const sound = window.pinballPresentation.sound;
-    for (let i = 0; i < 50; i++) sound.play(['flipper', 'bumper', 'sling', 'ward', 'post', 'launch', 'orbit', 'ramp'][i % 8]);
+    for (let i = 0; i < 50; i++) sound.play(['flipper', 'bumper', 'sling', 'ward', 'post', 'launch', 'orbit', 'ramp', 'rail', 'drain', 'gameover'][i % 11]);
     return sound.voices.size;
   })).toBeLessThanOrEqual(10);
   await page.waitForFunction(() => window.pinballPresentation.sound.voices.size === 0);

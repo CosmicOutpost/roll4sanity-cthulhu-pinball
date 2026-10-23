@@ -1,3 +1,4 @@
+import { TableLights } from './lights.js';
 import { WIDTH, HEIGHT, BUMPERS, WARDS, WARD_RULES, POSTS, RAILS, SLINGS } from './table.js';
 
 export class TableRenderer {
@@ -11,6 +12,7 @@ export class TableRenderer {
     this.moving = scene.add.graphics().setDepth(5);
     this.overlay = scene.add.graphics().setDepth(10);
     this.drawTable();
+    this.lights = new TableLights(scene, physics);
     // One reusable caption, below the ball's rendering depth. No particle pool
     // or animations that change collision positions, sizes or simulation time.
     this.eventText = this.text(250, 584, '', 17, '#dbfadd').setStroke('#071a24', 4).setDepth(4);
@@ -106,31 +108,30 @@ export class TableRenderer {
   draw() {
     const p = this.physics, g = this.moving;
     g.clear();
+    this.lights.draw();
     BUMPERS.forEach(({ x, y }, i) => {
-      const active = (p.flashes.get(`bumper:${i}`) ?? 0) > p.elapsed;
-      this.circle(x, y, active ? 43 : 38, 0x80e8b2, null, g, active ? .16 : .055);
+      const strength = this.lights.strength(`bumper:${i}`);
+      this.circle(x, y, 38, 0x80e8b2, null, g, .055 + strength * .1);
       this.circle(x, y, 29, 0x0a252d, 0x658f7d, g);
-      this.circle(x, y, 24, active ? 0xc5ffda : 0x437f67, 0xb5edbb, g);
-      this.circle(x, y, 19, active ? 0x8be7b0 : 0x193e3e, 0x70bd91, g);
+      this.circle(x, y, 24, 0x437f67, 0xb5edbb, g);
+      this.circle(x, y, 19, 0x193e3e, 0x70bd91, g);
       this.circle(x, y, 10, 0x9fe8b7, 0xc9efd0, g, .8);
       this.stroke([[x - 4, y], [x, y - 5], [x + 4, y], [x, y + 5], [x - 4, y]], 1, 0x1c4e40, 1, g);
     });
     WARDS.forEach(({ x, y, radius }, i) => {
-      const active = (p.flashes.get(`ward:${i}`) ?? 0) > p.elapsed;
-      if (active) this.circle(x, y, radius + 9, 0xd6c48a, null, g, .14);
+      const strength = this.lights.strength(`ward:${i}`);
+      if (strength) this.circle(x, y, radius + 9, 0xd6c48a, null, g, .1 * strength);
       this.circle(x + 1, y + 2, radius + 2, 0x030e12, null, g, .8);
       // The brass rim follows the collider; only the soft halo extends beyond it.
       this.circle(x, y, radius, 0x776036, 0xe0c589, g);
-      this.circle(x, y, radius - 3, active ? 0x7cc9a0 : 0x174a3b, 0x987b44, g);
+      this.circle(x, y, radius - 3, 0x174a3b, 0x987b44, g);
       this.stroke([[x - 4, y], [x, y - 6], [x + 4, y], [x, y + 6], [x - 4, y]], 1.5, 0xe6d198, 1, g);
       this.stroke([[x - 6, y + 7], [x + 6, y + 7]], 1, 0xba9b5b, .8, g);
     });
     SLINGS.forEach((points, i) => {
-      if ((p.flashes.get(`sling:${i}`) ?? 0) > p.elapsed) g.fillStyle(0xaaf3b6, .55).fillPoints(points, true);
+      const strength = this.lights.strength(`sling:${i}`);
+      if (strength) g.fillStyle(0xaaf3b6, .2 * strength).fillPoints(points, true);
     });
-    for (const shot of p.shots) {
-      if ((p.flashes.get(shot.id) ?? 0) > p.elapsed) this.stroke(shot.path.points, 4, shot.color, .45, g);
-    }
     for (const f of p.flippers) {
       const tip = { x: f.pivot.x + Math.cos(f.angle) * 80, y: f.pivot.y + Math.sin(f.angle) * 80 };
       this.stroke([f.pivot, tip], 23, 0x03161e, 1, g);

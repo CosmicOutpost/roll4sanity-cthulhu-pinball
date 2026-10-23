@@ -2,13 +2,16 @@
 // audio assets. The context is created/resumed only inside a trusted gesture.
 const PRESETS = {
   flipper: [[150, 65, .055, 'triangle', .42]],
-  bumper: [[780, 460, .11, 'triangle', .32], [1170, 900, .07, 'sine', .13]],
-  ward: [[880, 600, .075, 'sine', .22]],
+  bumper: [[180, 70, .045, 'triangle', .28], [420, 330, .14, 'sine', .17], [84, 62, .12, 'sine', .1]],
+  ward: [[1100, 700, .055, 'triangle', .2], [164, 138, .19, 'sine', .18]],
   sling: [[430, 180, .075, 'triangle', .3]],
   post: [[1250, 820, .045, 'sine', .12]],
   launch: [[110, 380, .18, 'triangle', .38]],
-  orbit: [[523, 523, .1, 'sine', .24], [784, 784, .16, 'sine', .2, .08]],
-  ramp: [[659, 659, .1, 'sine', .24], [988, 988, .18, 'sine', .2, .09]],
+  orbit: [[523, 392, .14, 'sine', .18], [196, 147, .25, 'triangle', .12, .04]],
+  ramp: [[659, 988, .19, 'sine', .19], [1320, 1046, .22, 'sine', .1, .09], [82, 65, .34, 'triangle', .13]],
+  rail: [[1360, 710, .085, 'sine', .09], [220, 146, .13, 'triangle', .1]],
+  drain: [[98, 46, .38, 'triangle', .2], [147, 73, .26, 'sine', .12]],
+  gameover: [[110, 41, .62, 'triangle', .2], [165, 55, .52, 'sine', .13, .08], [82, 36, .64, 'sine', .1]],
 };
 
 export class ArcadeAudio {
@@ -86,9 +89,12 @@ export class ArcadeAudio {
     const context = this.context;
     if (!PRESETS[kind] || !context || context.state !== 'running' || this.muted || this.paused) return false;
     const now = context.currentTime;
-    if (now - (this.lastPlayed.get(kind) ?? -Infinity) < (kind === 'post' ? .12 : .035)) return false;
+    if (now - (this.lastPlayed.get(kind) ?? -Infinity) < (kind === 'rail' ? .35 : kind === 'post' ? .12 : kind === 'bumper' ? .1 : .035)) return false;
     const preset = PRESETS[kind];
-    if (this.voices.size + preset.length > 10) return false;
+    if (this.voices.size + preset.length > 10) {
+      if (kind === 'ramp' || kind === 'orbit') this.stopVoices();
+      else return false;
+    }
     this.lastPlayed.set(kind, now);
     for (const [start, end, duration, type, level, delay = 0] of preset) {
       const oscillator = context.createOscillator(), envelope = context.createGain();

@@ -153,3 +153,10 @@ footer button { color: #e4d6af; letter-spacing: 1px; }
 @media (max-height:500px) {
   footer button { border-color: #ac8d5069; background: #10271d; }
 }
+
+/* A quiet manual alternative to the device's reduced-motion preference. */
+#motion { letter-spacing: .3px; min-width: 88px; }
+#motion[aria-pressed=true] { color: #a5b4a5; }
+html[data-reduced-effects=true] .score-feedback,
+html[data-reduced-effects=true] .table-message { transition: none; }
+@media(max-width:650px) { footer { gap: 6px; } #motion { font-size: 8px; } }

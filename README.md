@@ -34,10 +34,18 @@ compact surrounding UI; portrait remains preferable for a larger playfield.
 locally when browser storage is available. Audio starts only after a real player
 gesture (a game key, pointer or touch); the browser may require another gesture
 after an interruption. Effects are original, generated locally with Web Audio:
-flipper clicks, bumper/slings, quiet rubber-post ticks, launch and orbit/ramp
-chimes. No audio downloads, third-party samples, music or runtime service is used.
+flipper clicks, occult bumper/ward impacts, quiet rubber-post and metal-rail
+ticks, supernatural orbit/ramp chimes, and short drain/game-over descents. No audio downloads, third-party samples, music or runtime service is used.
 Unsupported or blocked audio/storage does not stop the game. Pause/focus loss
 silences active effects; there is no delayed sound replay on resume.
+
+**LIGHTS: FULL / CALM** in the footer toggles reduced effects. It initially follows
+`prefers-reduced-motion`, remembers a manual choice when storage is available,
+and never changes gameplay or mute. Calm mode uses faint stationary cues, without
+chase lights or animated eyes. Full mode adds smooth scoring glows and symbols,
+lights following guided ramp/orbit travel, and a brief eye glow on ramp scores
+(at most once per six seconds). Repeated hits sustain a glow rather than strobe.
+The original artwork and all collision shapes stay unchanged.
 
 Scoring shows a short **+points** caption in the scoreboard and playfield for
 about 0.95 seconds, with a restrained fade. Multiple awards within a rendered
@@ -219,6 +227,7 @@ This is an initial mechanical prototype. Automated browser and simulation checks
 - `src/game/physics.js` — fixed-step Matter simulation, flippers, plunger, kickers, guided travel.
 - `src/game/state.js` — scoring, ball count, pause, restart.
 - `src/game/render.js` — procedural table visuals and debug overlay.
+- `src/game/lights.js` — bounded scoring glows, guided-path chase lights, subtle eyes and reduced-effects preferences.
 - `src/game/audio.js` — original generated effects, gesture unlock, bounded voices and mute preference.
 - `src/game/feedback.js` — observes existing inputs/scoring for sound and readable captions; never changes the simulation.
 - `src/game/controls.js` — keyboard and pointer input, focus safety.
