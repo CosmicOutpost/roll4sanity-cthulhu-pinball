@@ -73,7 +73,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
       await page.waitForFunction(() => window.pinballPresentation.table.lights.spells.completions.length > 0);
       const completion = await groups(page);
       expect(completion).toContain('completion');
-      expect(completion.includes('roar')).toBe(expectedEyes[id].kind === 'ramp');
+      expect(completion.filter(g => g === 'roar')).toHaveLength(1);
       expect(completion.includes('chant')).toBe(false);
       expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
       {
@@ -131,7 +131,7 @@ test('ritual: mute, pause, focus loss and interruption release sources without c
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(false);
 });
 
-test('ritual: CALM stays independent of music, with ramp-only roar and proper cleanup', async ({ page }) => {
+test('ritual: CALM stays independent of music, with shared guided-shot roar and proper cleanup', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 390, height: 844 });
   await open(page);

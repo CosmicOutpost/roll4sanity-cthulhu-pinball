@@ -108,7 +108,6 @@ export class RitualAudio {
     this.tone(g, 'sine', 146.8, .36, 130.8, 1.9);
     this.tone(g, 'sine', 310, .2, 294, 1.65);
     this.tone(g, 'triangle', 427, .1, 392, 1.4);
-    if (kind === 'ramp') this.roar();
   }
   roar() {
     for (const old of this.groups) if (old.name === 'roar' && !old.released) old.release(.06);

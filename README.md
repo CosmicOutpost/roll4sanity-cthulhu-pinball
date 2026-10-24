@@ -40,11 +40,11 @@ Unsupported audio or blocked storage does not stop the game.
 The mechanical flipper clicks, bumper/ward impacts, rubber-post/rail ticks and
 existing game-over sound are preserved. Guided shots retain their activation
 rumble, detuned shimmer, progress-following drone, rune sparkles and completion
-bell. Successful ramps add **one 2.3-second Cthulhu roar**: almost stationary bass pressure, low rumbling turbulence and
+bell. Successful guided ramps and orbits add **one 2.3-second Cthulhu roar**: almost stationary bass pressure, low rumbling turbulence and
 a rough, breathy noise layer fading into a dark underwater tail. No sawtooth buzz,
 pitch wobble or vocal syllables are used. It replaces
 both the old growl and robotic chant; there is no CHANT control or speech synthesis.
-Orbit audio is unchanged. A genuine physical drain adds a descending three-note
+Existing orbit drones and completion bells retain their sound. A genuine physical drain adds a descending three-note
 hollow toll, with a short echo, and ducks music before restoring it smoothly over
 1.85 seconds. Debug count changes, repositioning and weak plunges are not losses.
 
@@ -89,7 +89,7 @@ the eyes. Calm uses stationary entrance/exit symbols and one gentle shot-colour
 eye cue; sound remains
 independent. Repeated mechanical hits sustain a glow rather than strobe.
 The original artwork and all collision shapes stay unchanged.
-The roar remains exclusive to ramp completion; orbit audio is unchanged.
+All four successful guided shots share one eye-and-roar completion handler; aborted runs trigger neither.
 
 Scoring shows a short **+points** caption in the scoreboard and playfield for
 about 0.95 seconds, with a restrained fade. Multiple awards within a rendered

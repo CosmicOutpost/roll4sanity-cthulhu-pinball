@@ -5,23 +5,24 @@ import { SpellLights, awakeningStrength, AWAKEN_DURATION } from '../src/game/spe
 import { SHOTS, samplePath, pointOnPath } from '../src/game/table.js';
 
 // Presentation models only: no physics steps, artificial drains or whole games.
-function observer(kind = 'ramp') {
-  const shot = { kind, duration: 1950 }, travel = { shot, started: 100 };
+function observer(kind = 'ramp', id = kind === 'ramp' ? 'left-ramp' : kind === 'orbit' ? 'left-orbit' : 'launch') {
+  const shot = { id, kind, duration: 1950 }, travel = { shot, started: 100 };
   const sim = { elapsed: 100, ball: {}, travel, state: { paused: false, phase: 'playing' } };
   const calls = [];
   const lights = Object.fromEntries(['cancelSpell', 'completeSpell', 'beginSpell'].map(k => [k, arg => calls.push([k, arg])]));
-  const audio = Object.fromEntries(['startSpell', 'updateSpell', 'endSpell'].map(k => [k, (...args) => calls.push([k, ...args])]));
+  const audio = Object.fromEntries(['startSpell', 'updateSpell', 'endSpell', 'roar'].map(k => [k, (...args) => calls.push([k, ...args])]));
   return { sim, calls, shot, travel, feedback: new GuidedFeedback(sim, lights, audio) };
 }
 test('guide observer starts once, follows actual progress and rewards completion once', () => {
-  for (const kind of ['ramp', 'orbit']) {
-    const e = observer(kind); e.feedback.update();
+  for (const [id, kind] of [['left-ramp', 'ramp'], ['right-ramp', 'ramp'], ['left-orbit', 'orbit'], ['right-orbit', 'orbit']]) {
+    const e = observer(kind, id); e.feedback.update();
     e.sim.elapsed += 975; e.feedback.update();
     assert.deepEqual(e.calls.filter(c => c[0] === 'startSpell'), [['startSpell', 0, true]]);
     assert.deepEqual(e.calls.find(c => c[0] === 'updateSpell'), ['updateSpell', .5]);
     e.sim.elapsed = 2050; e.sim.travel = null; e.feedback.update(); e.feedback.update();
     assert.deepEqual(e.calls.filter(c => c[0] === 'completeSpell'), [['completeSpell', e.shot]]);
-    assert.deepEqual(e.calls.at(-1), ['endSpell', true, kind]);
+    assert.deepEqual(e.calls.slice(-2), [['endSpell', true, kind], ['roar']]);
+    assert.equal(e.calls.filter(c => c[0] === 'roar').length, 1);
   }
 });
 test('interruption, replacement ball, launch and restart never reward a completed ritual', () => {
@@ -75,4 +76,21 @@ test('CALM drawing commands stay stationary throughout a guided journey', () => 
   sim.elapsed = 1200; lights.draw(true);
   assert.ok(early.length > 0);
   assert.deepEqual(commands, early);
+});
+
+// Identity mismatch must never produce an eye/roar split, even with valid timing.
+test('unknown or mismatched shot identities produce neither completion effect', () => {
+  for (const [id, kind] of [['unknown', 'ramp'], ['left-orbit', 'ramp'], ['left-ramp', 'orbit']]) {
+    const e = observer(kind, id); e.feedback.update(); e.sim.elapsed = 3000; e.sim.travel = null; e.feedback.update();
+    assert.equal(e.calls.some(c => ['completeSpell', 'roar'].includes(c[0])), false);
+  }
+});
+
+test('completion is consumed before callbacks, including re-entrant observation', () => {
+  const e = observer(); e.feedback.update();
+  const complete = e.feedback.lights.completeSpell;
+  e.feedback.lights.completeSpell = shot => { complete(shot); e.feedback.update(); };
+  e.sim.elapsed = 2050; e.sim.travel = null; e.feedback.update();
+  assert.equal(e.calls.filter(c => c[0] === 'completeSpell').length, 1);
+  assert.equal(e.calls.filter(c => c[0] === 'roar').length, 1);
 });

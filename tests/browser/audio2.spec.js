@@ -104,7 +104,7 @@ test('music and DSP levels: seamless composed loop, finite roar/toll and headroo
     for (const mode of ['roar', 'ball-lost', 'overlap']) {
       const ctx = new OfflineAudioContext(1, 48000 * 3, 48000), master = ctx.createGain(); master.gain.value = .18; master.connect(ctx.destination);
       const r = new a.ritual.constructor({ context: ctx, master, music: { duck() {} } }); r.canPlay = () => true;
-      if (mode === 'roar') r.roar(); else if (mode === 'ball-lost') r.ballLost(); else { r.endSpell(true, 'ramp'); r.ballLost(); }
+      if (mode === 'roar') r.roar(); else if (mode === 'ball-lost') r.ballLost(); else { r.endSpell(true, 'ramp'); r.roar(); r.ballLost(); }
       const raw = (await ctx.startRendering()).getChannelData(0); let peak = 0, energy = 0;
       for (const value of raw) { peak = Math.max(peak, Math.abs(value)); energy += value * value; }
       results[mode] = { peak, rms: Math.sqrt(energy / raw.length), remaining: r.groups.size }; r.destroy();
@@ -113,7 +113,7 @@ test('music and DSP levels: seamless composed loop, finite roar/toll and headroo
     const analyser = a.context.createAnalyser(); analyser.fftSize = 1024; a.master.connect(analyser);
     const block = new Float32Array(1024); let livePeak = 0;
     window.pinballPresentation.table.scene.scene.pause();
-    a.ritual.endSpell(true, 'ramp'); a.play('drain');
+    a.ritual.endSpell(true, 'ramp'); a.ritual.roar(); a.play('drain');
     for (const kind of ['bumper', 'ward', 'sling', 'flipper', 'gameover']) a.play(kind);
     for (let i = 0; i < 55; i++) { await new Promise(requestAnimationFrame); analyser.getFloatTimeDomainData(block); for (const v of block) livePeak = Math.max(livePeak, Math.abs(v)); }
     a.master.disconnect(analyser); analyser.disconnect(); results.livePeak = livePeak;

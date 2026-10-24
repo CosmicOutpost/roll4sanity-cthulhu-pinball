@@ -34,9 +34,13 @@ test('roar uses slow sine pressure and full-length breath noise, with no buzzing
     const ritual = new original.ritual.constructor({ context: ctx, master }); ritual.canPlay = () => true;
     ritual.roar();
     const group = [...ritual.groups][0];
-    const stopped = ctx.suspend(.1), rendering = ctx.startRendering();
+    const stopped = ctx.suspend(.1), ended = ctx.suspend(2.35), rendering = ctx.startRendering();
     await stopped; // Read AudioParams after scheduled automation has actually rendered.
     const graph = group.sources.map(s => ({ type: s.type || 'noise', loop: !!s.loop, duration: s.buffer?.duration, frequency: s.frequency?.value }));
+    await ctx.resume(); await ended;
+    // Offline rendering can outrun JS onended callbacks. Yield at source end so
+    // group/echo disconnection runs before rendering the silence-tail assertion.
+    await new Promise(resolve => setTimeout(resolve, 0));
     await ctx.resume(); const samples = (await rendering).getChannelData(0);
     let peak = 0, energy = 0, tail = 0;
     for (let i = 0; i < samples.length; i++) { peak = Math.max(peak, Math.abs(samples[i])); energy += samples[i] ** 2; if (i > 48000 * 2.4) tail = Math.max(tail, Math.abs(samples[i])); }
