@@ -1,4 +1,5 @@
 import { RitualAudio } from './ritual-audio.js';
+import { HorrorMusic } from './music.js';
 
 // Original synthesised arcade effects. No samples, downloads or third-party
 // audio assets. The context is created/resumed only inside a trusted gesture.
@@ -13,7 +14,6 @@ const PRESETS = {
   ramp: [[659, 988, .19, 'sine', .19], [1320, 1046, .22, 'sine', .1, .09], [82, 65, .34, 'triangle', .13]],
   rune: [[1780, 1200, .08, 'sine', .11]],
   rail: [[1360, 710, .085, 'sine', .09], [220, 146, .13, 'triangle', .1]],
-  drain: [[98, 46, .38, 'triangle', .2], [147, 73, .26, 'sine', .12]],
   gameover: [[110, 41, .62, 'triangle', .2], [165, 55, .52, 'sine', .13, .08], [82, 36, .64, 'sine', .1]],
 };
 
@@ -27,10 +27,12 @@ export class ArcadeAudio {
     this.lastPlayed = new Map();
     this.played = 0;
     this.paused = false;
-    this.ritual = new RitualAudio(this);
     this.unavailable = !(host.AudioContext || host.webkitAudioContext);
     try { this.muted = host.localStorage.getItem('roll4sanity-muted') === 'true'; }
     catch { this.muted = false; }
+    this.ritual = new RitualAudio(this);
+    this.music = new HorrorMusic(this);
+    this.onContextState = () => this.music.sync();
     this.onGesture = event => {
       if (event.isTrusted && (['pointerdown', 'pointerup'].includes(event.type) || ['KeyZ', 'Slash', 'Space', 'KeyP', 'KeyR'].includes(event.code))) this.unlock();
     };
@@ -45,6 +47,7 @@ export class ArcadeAudio {
       this.stopVoices();
       if (!this.muted) this.unlock();
       this.setGain();
+      this.music.sync();
       this.refreshButton();
     };
     host.addEventListener('pointerdown', this.onGesture, true);
@@ -60,8 +63,8 @@ export class ArcadeAudio {
     this.button.textContent = 'SFX';
     this.button.disabled = this.unavailable;
     this.button.setAttribute('aria-pressed', String(this.muted));
-    this.button.setAttribute('aria-label', this.unavailable ? 'Sound unavailable in this browser' : this.muted ? 'Unmute sound' : 'Mute sound');
-    this.button.title = this.unavailable ? 'Audio is unavailable; the game remains playable' : this.muted ? 'Sound off — click to unmute' : 'Arcade sounds on — click to mute';
+    this.button.setAttribute('aria-label', this.unavailable ? 'Sound unavailable in this browser' : this.muted ? 'Unmute all audio' : 'Mute all audio');
+    this.button.title = this.unavailable ? 'Audio is unavailable; the game remains playable' : this.muted ? 'All audio off — click to unmute' : 'Sound effects and music on — click to mute all audio';
   }
   unlock() {
     if (this.unavailable || this.muted) return;
@@ -69,14 +72,17 @@ export class ArcadeAudio {
       if (!this.context) {
         const Context = this.host.AudioContext || this.host.webkitAudioContext;
         this.context = new Context();
+        this.context.addEventListener('statechange', this.onContextState);
         this.master = this.context.createGain();
         this.master.connect(this.context.destination);
         this.setGain();
       }
       // A blocked/interrupted context is retried on the next player gesture.
-      if (this.context.state !== 'running') this.context.resume().catch(() => {});
+      if (this.context.state !== 'running') this.context.resume().then(() => this.music.sync()).catch(() => {});
+      else this.music.sync();
     } catch {
       this.unavailable = true;
+      this.music.unavailable = true; this.music.refresh();
       this.refreshButton();
     }
   }
@@ -88,12 +94,18 @@ export class ArcadeAudio {
     this.paused = paused;
     if (paused) this.stopVoices();
     this.setGain();
+    this.music.sync();
   }
   play(kind) {
     const context = this.context;
-    if (!PRESETS[kind] || !context || context.state !== 'running' || this.muted || this.paused) return false;
+    if ((!PRESETS[kind] && kind !== 'drain') || !context || context.state !== 'running' || this.muted || this.paused) return false;
     const now = context.currentTime;
     if (now - (this.lastPlayed.get(kind) ?? -Infinity) < (kind === 'rail' ? .35 : kind === 'post' ? .12 : kind === 'bumper' ? .1 : .035)) return false;
+    if (kind === 'drain') {
+      if (!this.ritual.ballLost()) return false;
+      this.lastPlayed.set(kind, now); this.played++; this.lastEffect = kind;
+      return true;
+    }
     const preset = PRESETS[kind];
     if (this.voices.size + preset.length > 10) {
       if (kind === 'ramp' || kind === 'orbit') this.stopVoices();
@@ -140,7 +152,11 @@ export class ArcadeAudio {
     this.button.removeEventListener('click', this.onToggle);
     this.stopVoices();
     this.ritual.destroy();
+    this.music.destroy();
     this.master?.disconnect();
-    if (this.context) this.context.close().catch(() => {});
+    if (this.context) {
+      this.context.removeEventListener('statechange', this.onContextState);
+      this.context.close().catch(() => {});
+    }
   }
 }

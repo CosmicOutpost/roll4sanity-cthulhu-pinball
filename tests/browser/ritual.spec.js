@@ -73,8 +73,8 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
       await page.waitForFunction(() => window.pinballPresentation.table.lights.spells.completions.length > 0);
       const completion = await groups(page);
       expect(completion).toContain('completion');
-      expect(completion.includes('awakening')).toBe(expectedEyes[id].kind === 'ramp');
-      expect(completion.includes('chant')).toBe(expectedEyes[id].kind === 'ramp');
+      expect(completion.includes('roar')).toBe(expectedEyes[id].kind === 'ramp');
+      expect(completion.includes('chant')).toBe(false);
       expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
       {
         await page.waitForFunction(() => {
@@ -131,37 +131,32 @@ test('ritual: mute, pause, focus loss and interruption release sources without c
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(false);
 });
 
-test('ritual: CALM is stationary, audio independent, saved chant OFF is respected and cleans up', async ({ page }) => {
+test('ritual: CALM stays independent of music, with ramp-only roar and proper cleanup', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 390, height: 844 });
   await open(page);
-  await expect(page.locator('#chant')).toHaveText('CHANT: ON');
-  await page.locator('#chant').click();
+  await expect(page.locator('#music')).toHaveText('MUSIC: ON');
+  await page.locator('#music').click();
   await enter(page, 'left-ramp', 185, 470);
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.chase)).toBe(null);
   expect(await groups(page)).toContain('travel');
   await page.waitForFunction(() => !window.pinball.travel);
   await page.waitForTimeout(80);
-  expect(await groups(page)).toContain('awakening');
+  expect(await groups(page)).toContain('roar');
   expect(await groups(page)).not.toContain('chant');
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
-  await page.locator('#chant').click();
+  await page.locator('#music').click();
   await expect(page.locator('#motion')).toHaveText('LIGHTS: CALM');
   await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'false');
-  await enter(page, 'left-ramp', 185, 470);
-  await page.waitForFunction(() => [...window.pinballPresentation.sound.ritual.groups].some(g => g.name === 'chant'));
-  expect((await groups(page)).length).toBeLessThanOrEqual(4);
-  await page.locator('#chant').click();
-  await page.waitForFunction(() => ![...window.pinballPresentation.sound.ritual.groups].some(g => g.name === 'chant'));
+  await page.waitForFunction(() => !!window.pinballPresentation.sound.music.source);
   await page.reload(); await page.waitForFunction(() => !!window.pinballPresentation);
-  await expect(page.locator('#chant')).toHaveText('CHANT: OFF');
-  // Destroy during an active release must immediately disconnect every group.
+  await expect(page.locator('#music')).toHaveText('MUSIC: ON');
   const remaining = await page.evaluate(async () => {
     const a = window.pinballPresentation.sound; a.unlock(); await a.context.resume();
     a.ritual.startSpell(.5); a.ritual.stopAll(); a.destroy();
-    return a.ritual.groups.size;
+    return { groups: a.ritual.groups.size, music: !!a.music.source };
   });
-  expect(remaining).toBe(0);
+  expect(remaining).toEqual({ groups: 0, music: false });
 });
 
 test('ritual: render budget stays bounded and a muted completion never replays on unmute', async ({ page }) => {

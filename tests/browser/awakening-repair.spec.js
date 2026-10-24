@@ -24,29 +24,29 @@ const evidence = 'test-results/awakening-repair-previews';
 for (const width of [1440, 390]) {
   test.describe(`awakening repair at ${width}`, () => {
     test.use({ viewport: { width, height: width === 390 ? 844 : 1000 }, isMobile: width === 390, hasTouch: width === 390 });
-    test('real ramp completes once: eyes and chant start together, survive mode changes and expire', async ({ page }) => {
+    test('real ramp completes once: eyes and roar start together, survive mode changes and expire', async ({ page }) => {
       const errors = []; page.on('pageerror', e => errors.push(e.message));
       await open(page);
       const baselineHalo = await page.evaluate(() => {
         const ctx = document.querySelector('canvas').getContext('2d');
         return [230, 310].map(x => [...ctx.getImageData(x - 18, 391, 1, 1).data]);
       });
-      const button = page.locator('#chant'), box = await button.boundingBox();
+      const button = page.locator('#music'), box = await button.boundingBox();
       expect(box.y).toBeGreaterThan(0); expect(box.height).toBeGreaterThanOrEqual(28);
       expect(box.x + box.width).toBeLessThanOrEqual(width);
-      await expect(button).toHaveText('CHANT: ON');
+      await expect(button).toHaveText('MUSIC: ON');
       // A trusted touch/click must actually operate the preference on both layouts.
       if (width === 390) await button.tap(); else await button.click();
-      await expect(button).toHaveText('CHANT: OFF');
+      await expect(button).toHaveText('MUSIC: OFF');
       if (width === 390) await button.tap(); else await button.click();
       await ramp(page, width === 390);
       const onset = await page.evaluate(() => {
         const f = window.pinballPresentation, groups = [...f.sound.ritual.groups];
         return { cue: f.table.lights.cues.get('eyes'), age: window.pinball.elapsed - f.table.lights.cues.get('eyes').at,
-          times: groups.filter(g => ['completion', 'awakening', 'chant'].includes(g.name)).map(g => g.at),
+          times: groups.filter(g => ['completion', 'roar'].includes(g.name)).map(g => g.at),
           names: groups.map(g => g.name) };
       });
-      expect(onset.names).toContain('chant'); expect(onset.names).toContain('awakening');
+      expect(onset.names).toContain('roar'); expect(onset.names).not.toContain('chant');
       expect(Math.max(...onset.times) - Math.min(...onset.times)).toBeLessThan(.025);
       expect(onset.age).toBeLessThan(100);
       expect(onset.cue.until - onset.cue.at).toBeCloseTo(2550, 5);
@@ -77,27 +77,27 @@ for (const width of [1440, 390]) {
       expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
       await page.locator('#motion').click();
       expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.get('eyes').at)).toBe(onset.cue.at);
-      expect(await page.evaluate(() => [...window.pinballPresentation.sound.ritual.groups].some(g => g.name === 'chant'))).toBe(false);
+      expect(await page.evaluate(() => [...window.pinballPresentation.sound.ritual.groups].some(g => g.name === 'roar'))).toBe(false);
       await page.waitForFunction(() => !window.pinballPresentation.table.lights.cues.has('eyes'));
       expect(errors).toEqual([]);
     });
   });
 }
 
-test('new and saved chant preferences survive reload; mute still dominates chant ON', async ({ page }) => {
-  await open(page); await expect(page.locator('#chant')).toHaveText('CHANT: ON');
-  await page.locator('#chant').click();
+test('new and saved music preferences survive reload; mute still dominates music ON', async ({ page }) => {
+  await open(page); await expect(page.locator('#music')).toHaveText('MUSIC: ON');
+  await page.locator('#music').click();
   await page.reload(); await page.waitForFunction(() => !!window.pinballPresentation);
-  await expect(page.locator('#chant')).toHaveText('CHANT: OFF');
-  await page.locator('#chant').click(); await expect(page.locator('#chant')).toHaveText('CHANT: ON');
-  expect(await page.evaluate(() => localStorage.getItem('roll4sanity-chant'))).toBe('true');
+  await expect(page.locator('#music')).toHaveText('MUSIC: OFF');
+  await page.locator('#music').click(); await expect(page.locator('#music')).toHaveText('MUSIC: ON');
+  expect(await page.evaluate(() => localStorage.getItem('roll4sanity-music'))).toBe('true');
   await page.reload(); await page.waitForFunction(() => !!window.pinballPresentation); await page.keyboard.press('d');
-  await expect(page.locator('#chant')).toHaveText('CHANT: ON');
+  await expect(page.locator('#music')).toHaveText('MUSIC: ON');
   await page.locator('#sound').click(); await ramp(page);
   expect(await page.evaluate(() => window.pinballPresentation.sound.ritual.groups.size)).toBe(0);
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
   await page.locator('#sound').click(); await page.waitForTimeout(80);
-  expect(await page.evaluate(() => [...window.pinballPresentation.sound.ritual.groups].some(g => g.name === 'chant'))).toBe(false);
+  expect(await page.evaluate(() => [...window.pinballPresentation.sound.ritual.groups].some(g => g.name === 'roar'))).toBe(false);
 });
 
 test('development console eye preview does not change game state or score', async ({ page }) => {
@@ -113,34 +113,4 @@ test('development console eye preview does not change game state or score', asyn
   expect(await observe()).toEqual(before);
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
   await page.waitForFunction(() => !window.pinballPresentation.table.lights.cues.has('eyes'));
-});
-
-test('procedural chant has vocal-band energy, dominates the ducked growl, and leaves safe mix headroom', async ({ page }, info) => {
-  await open(page);
-  // Offline rendering tests the real synthesis graph without a physics session.
-  // Gesture unlock/mute/pause are checked above against the normal live context.
-  const levels = await page.evaluate(async () => {
-    const RitualAudio = window.pinballPresentation.sound.ritual.constructor, levels = {};
-    for (const mode of ['chant', 'ducked-growl', 'complete-mix']) {
-      const ctx = new OfflineAudioContext(1, 48000 * 3, 48000), master = ctx.createGain();
-      master.gain.value = .18; master.connect(ctx.destination);
-      const host = { document: { getElementById: () => null }, localStorage: { getItem: () => null } };
-      const a = new RitualAudio({ context: ctx, master, host }); a.canPlay = () => true;
-      if (mode === 'chant') a.chant();
-      else if (mode === 'ducked-growl') { a.chant = () => {}; a.awaken(); }
-      else a.endSpell(true, 'ramp');
-      const buffer = await ctx.startRendering(), data = buffer.getChannelData(0);
-      let sum = 0, peak = 0;
-      for (let i = 0; i < 48000 * 2.2; i++) { sum += data[i] * data[i]; peak = Math.max(peak, Math.abs(data[i])); }
-      levels[mode] = { rms: Math.sqrt(sum / (48000 * 2.2)), peak, remainingGroups: a.groups.size };
-      a.destroy();
-    }
-    return levels;
-  });
-  expect(levels.chant.rms).toBeGreaterThan(.004);
-  expect(levels.chant.rms).toBeGreaterThan(levels['ducked-growl'].rms * 2);
-  expect(levels['complete-mix'].peak).toBeLessThan(.2);
-  for (const value of Object.values(levels)) expect(value.remainingGroups).toBe(0);
-  await writeFile('/tmp/awakening-repair-levels.json', JSON.stringify(levels, null, 2));
-  await info.attach('synthesis-levels', { body: JSON.stringify(levels), contentType: 'application/json' });
 });

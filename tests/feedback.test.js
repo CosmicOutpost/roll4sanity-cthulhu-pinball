@@ -50,7 +50,7 @@ test('score cues are observed once; entry scores never awaken eyes and collision
   } finally { e.destroy(); }
 });
 
-test('drain and game-over cues occur once; weak plunger returns and restart are silent', () => {
+test('debug-only ball-count changes, weak plunger returns and restart do not play loss audio', () => {
   const e = environment();
   try {
     e.sim.state.launch(); e.feedback.update(0);
@@ -61,8 +61,8 @@ test('drain and game-over cues occur once; weak plunger returns and restart are 
       e.sim.state.drain(); if (ball < 3) e.sim.spawn();
       e.feedback.update(ball * 100 + 10); e.feedback.update(ball * 100 + 20);
     }
-    assert.equal(e.sounds.filter(k => k === 'drain').length, 2);
-    assert.equal(e.sounds.filter(k => k === 'gameover').length, 1);
+    assert.equal(e.sounds.filter(k => k === 'drain').length, 0);
+    assert.equal(e.sounds.filter(k => k === 'gameover').length, 0);
     const count = e.sounds.length;
     e.sim.restart(); e.feedback.update(500);
     assert.equal(e.sounds.length, count);
@@ -150,4 +150,23 @@ test('bumper hit bursts finish one 700ms colour sequence without extending or re
     e.lights.pulse('bumper:0', 'bumper', { x: 250, y: 250 });
     assert.equal(e.lights.cues.get('bumper:0').at, e.sim.elapsed);
   } finally { e.destroy(); }
+});
+
+
+test('real bottom crossing emits one loss cue after catch-up; teleporting below drain is silent', () => {
+  for (const debugTeleport of [false, true]) {
+    const e = environment();
+    try {
+      e.sim.state.launch(); e.sim.shooter = false;
+      Matter.Body.setStatic(e.sim.ball, false);
+      Matter.Body.setPosition(e.sim.ball, { x: 250, y: debugTeleport ? 960 : 938 });
+      Matter.Body.setVelocity(e.sim.ball, { x: 0, y: 6 });
+      e.feedback.update(0);
+      // Several physics ticks before presentation observes the final transition.
+      for (let i = 0; i < 12; i++) e.sim.step();
+      e.feedback.update(100); e.feedback.update(110);
+      assert.equal(e.sim.state.ballNumber, 2);
+      assert.equal(e.sounds.filter(k => k === 'drain').length, debugTeleport ? 0 : 1);
+    } finally { e.destroy(); }
+  }
 });

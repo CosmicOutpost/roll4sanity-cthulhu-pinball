@@ -30,27 +30,38 @@ The cabinet fits both the available screen height and width, keeping the full
 portrait table and essential controls in view. Very short landscape screens use
 compact surrounding UI; portrait remains preferable for a larger playfield.
 
-**SFX** beside Pause mutes/unmutes the arcade sounds. The preference is remembered
-locally when browser storage is available. Audio starts only after a real player
-gesture (a game key, pointer or touch); the browser may require another gesture
-after an interruption. Effects are original, generated locally with Web Audio:
-flipper clicks, occult bumper/ward impacts, quiet rubber-post and metal-rail
-ticks, and short drain/game-over descents. Guided shots add a low activation
-rumble, detuned rising shimmer, progress-following drone and rune sparkles.
-Completion produces a dissonant ritual bell with a short echo; completed ramps
-add a filtered, modulated growl. These are original procedural Web Audio graphs,
-with bounded sources and explicit cleanup. No audio downloads, third-party
-samples, music or runtime service is used.
-Unsupported or blocked audio/storage does not stop the game. Pause/focus loss
-silences active effects; there is no delayed sound replay on resume. A journey
-resumed mid-route starts only its current-progress drone, without replaying the
-activation. **CHANT: OFF / ON** independently enables an optional robotic
-vowel-like chant on ramp completion (on for new players; saved ON/OFF preferences
-are respected). It is deliberately artificial, not intelligible speech. Its six
-syllables use three vocal formants,
-stepped pitch and a lightly quantised excitation; the growl and ramp bell are
-ducked while the chant is enabled so it remains distinct. SFX mute silences it
-along with all sounds.
+**SFX** beside Pause is the global mute for effects and music. Its preference is
+remembered locally when browser storage is available. Audio starts only after a
+real player gesture (a game key, pointer or touch); the browser may require another
+gesture after an interruption. All runtime audio is original procedural Web Audio,
+with no downloaded samples, third-party audio libraries or external services.
+Unsupported audio or blocked storage does not stop the game.
+
+The mechanical flipper clicks, bumper/ward impacts, rubber-post/rail ticks and
+existing game-over sound are preserved. Guided shots retain their activation
+rumble, detuned shimmer, progress-following drone, rune sparkles and completion
+bell. Successful ramps add **one 2.3-second Cthulhu roar**: moving bass, a distorted
+midrange throat and filtered breath fading into a dark underwater tail. It replaces
+both the old growl and robotic chant; there is no CHANT control or speech synthesis.
+Orbit audio is unchanged. A genuine physical drain adds a descending three-note
+hollow toll, with a short echo, and ducks music before restoring it smoothly over
+1.85 seconds. Debug count changes, repositioning and weak plunges are not losses.
+
+**MUSIC: ON / OFF** in the footer independently controls a saved music preference,
+ON for new players. The original 110 BPM, eight-bar D-minor score combines a bass
+ostinato, restrained clock pulse, organ-like chords and a recurring motif with
+harmonic variation and occasional dissonant metallic accents. Its 17.45-second
+loop includes release and echo tails across the seam. It is rendered locally once,
+then played by a single looping buffer source, quieter than foreground effects.
+No scheduling interval or ongoing oscillator orchestra is used.
+
+Pause/focus loss silences active effects and stops music, preserving its position
+for resume. No effect is replayed late. A journey resumed mid-route starts only
+its current-progress drone. Global mute also stops music; its separate ON/OFF
+choice survives unmuting. Game over stops the loop, restart begins it afresh, and
+scene destruction releases sources and the buffer. CALM lighting does not change
+audio preferences. Unsupported offline synthesis disables music while retaining
+available mechanical effects.
 
 **LIGHTS: FULL / CALM** in the footer toggles reduced effects. It initially follows
 `prefers-reduced-motion`, remembers a manual choice when storage is available,
@@ -71,7 +82,7 @@ the eyes. Calm uses stationary entrance/exit symbols and one gentle shot-colour
 eye cue; sound remains
 independent. Repeated mechanical hits sustain a glow rather than strobe.
 The original artwork and all collision shapes stay unchanged.
-The chant and growl remain exclusive to ramp completion; orbit audio is unchanged.
+The roar remains exclusive to ramp completion; orbit audio is unchanged.
 
 Scoring shows a short **+points** caption in the scoreboard and playfield for
 about 0.95 seconds, with a restrained fade. Multiple awards within a rendered
@@ -257,7 +268,9 @@ This is an initial mechanical prototype. Automated browser and simulation checks
 - `src/game/spell-lights.js` — path-following ritual currents, runes and timed eye awakening.
 - `src/game/eye-colours.js` — eye palettes keyed by the simulation's shot IDs and kinds.
 - `src/game/guided-feedback.js` — read-only guided journey start/progress/completion observation.
-- `src/game/ritual-audio.js` — procedural drones, ritual bell, growl, optional chant and group cleanup.
+- `src/game/ritual-audio.js` — procedural drones, ritual bell, layered roar, ball-loss toll and group cleanup.
+- `src/game/music-score.js` — original eight-bar horror score and seamless offline loop synthesis.
+- `src/game/music.js` — single-loop lifecycle, saved preference, resume position and loss ducking.
 - `src/game/audio.js` — original generated effects, gesture unlock, bounded voices and mute preference.
 - `src/game/feedback.js` — observes existing inputs/scoring for sound and readable captions; never changes the simulation.
 - `src/game/controls.js` — keyboard and pointer input, focus safety.

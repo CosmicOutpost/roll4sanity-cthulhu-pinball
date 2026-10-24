@@ -19,6 +19,16 @@ export class ArcadeFeedback {
     this.previousBallNumber = sim.state.ballNumber;
     this.previousBall = sim.ball;
     this.previousControls = { left: false, right: false };
+    // Read-only evidence from a real Matter step. Ball-count changes alone
+    // (including debug actions or a future non-loss transition) are not drains.
+    this.drainContact = null;
+    this.onPhysicsUpdate = () => {
+      const ball = sim.ball;
+      if (sim.state.phase !== 'playing' || !ball || sim.travel) return;
+      // Match the existing bottom-drain boundary. A debug teleport already
+      // below it (or an off-table debug position) is not a physical crossing.
+      if (ball.positionPrev.y <= 942 && ball.position.y > 942) this.drainContact = { ball, number: sim.state.ballNumber };
+    };
     this.onCollision = ({ pairs }) => {
       if (sim.state.phase !== 'playing' || sim.state.paused || sim.travel || !sim.ball) return;
       for (const { bodyA, bodyB, collision } of pairs) {
@@ -37,16 +47,22 @@ export class ArcadeFeedback {
       }
     };
     Matter.Events.on(sim.engine, 'collisionStart', this.onCollision);
+    Matter.Events.on(sim.engine, 'afterUpdate', this.onPhysicsUpdate);
   }
   update(time) {
     const { sim, sound } = this, { state, controls } = sim;
     const restarted = state.score < this.previousScore || (state.phase === 'ready' && state.ballNumber === 1 && sim.ball !== this.previousBall);
     sound.setPaused(state.paused);
+    if (restarted) sound.music.restart();
+    else sound.music.setEnded(state.phase === 'gameover');
     if (restarted) { this.guided.reset(); this.seen.clear(); this.until = 0; this.railUntil = 0; sound.stopVoices(); this.lights.reset(); }
     if (!restarted && this.previousPhase === 'playing' && (state.ballNumber > this.previousBallNumber || state.phase === 'gameover')) {
       const kind = state.phase === 'gameover' ? 'gameover' : 'drain';
       // Let the terminal cue speak instead of stacking it over impact tails.
-      sound.stopVoices(); sound.play(kind);
+      if (this.drainContact?.ball === this.previousBall && this.drainContact.number === this.previousBallNumber) {
+        sound.stopVoices(); sound.play('drain');
+        if (kind === 'gameover') sound.play('gameover');
+      }
       this.lights.pulse(kind, kind, { x: 250, y: 910 });
     }
     this.guided.update();
@@ -91,9 +107,11 @@ export class ArcadeFeedback {
     this.previousBallNumber = state.ballNumber;
     this.previousPhase = state.phase;
     this.previousBall = sim.ball;
+    this.drainContact = null;
   }
   destroy() {
     Matter.Events.off(this.sim.engine, 'collisionStart', this.onCollision);
+    Matter.Events.off(this.sim.engine, 'afterUpdate', this.onPhysicsUpdate);
     this.sound.destroy();
     this.lights.destroy();
   }

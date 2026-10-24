@@ -51,7 +51,7 @@ for (const [width, height] of [[1280, 720], [1440, 900], [1920, 1080], [768, 102
     await open(page);
     const layout = await page.evaluate(() => ({
       width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight,
-      items: ['game', 'launch', 'left-flipper', 'right-flipper', 'sound', 'pause', 'restart', 'motion', 'chant', 'score', 'ball'].map(id => {
+      items: ['game', 'launch', 'left-flipper', 'right-flipper', 'sound', 'pause', 'restart', 'motion', 'music', 'score', 'ball'].map(id => {
         const r = document.getElementById(id).getBoundingClientRect();
         return { id, x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: r.width, height: r.height };
       }),
@@ -86,6 +86,8 @@ test('Stage 1 audio unlocks on real input, produces signal, mutes immediately an
   await page.waitForFunction(() => window.pinballPresentation.sound.context?.state === 'running');
   await page.keyboard.up('KeyZ');
   await page.waitForTimeout(100);
+  await page.locator('#music').click();
+  await page.waitForFunction(() => !window.pinballPresentation.sound.music.source && !window.pinballPresentation.sound.music.tail);
   // Measure the real Web Audio graph rather than stubbing play() or accepting
   // only a running AudioContext as evidence of generated sound.
   await page.evaluate(() => {

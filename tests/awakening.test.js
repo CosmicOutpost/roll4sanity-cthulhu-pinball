@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TableLights } from '../src/game/lights.js';
-import { RitualAudio } from '../src/game/ritual-audio.js';
+import { HorrorMusic } from '../src/game/music.js';
 import { AWAKEN_DURATION, SpellLights, awakeningStrength } from '../src/game/spell-lights.js';
 import { eyePalette, EYE_PALETTES } from '../src/game/eye-colours.js';
 import { SHOTS, samplePath } from '../src/game/table.js';
@@ -90,14 +90,14 @@ test('both eyes use the same palette, white-hot centres and unchanged geometry f
     }
   }
 });
-test('chant defaults ON for new/blocked storage and honours both saved preferences', () => {
+test('music defaults ON for new/blocked storage and honours both saved preferences', () => {
   for (const [saved, expected] of [[null, true], ['true', true], ['false', false], ['invalid', true], [undefined, true]]) {
     const attributes = {}, listeners = {};
     const button = { setAttribute: (k, v) => { attributes[k] = v; }, addEventListener: (k, v) => { listeners[k] = v; }, removeEventListener: k => { delete listeners[k]; } };
     const storage = { getItem() { if (saved === undefined) throw Error('blocked'); return saved; }, setItem(k, v) { attributes[k] = v; } };
-    const a = new RitualAudio({ host: { localStorage: storage, document: { getElementById: () => button } } });
-    assert.equal(a.chantEnabled, expected); assert.equal(button.textContent, expected ? 'CHANT: ON' : 'CHANT: OFF');
-    listeners.click(); assert.equal(attributes['roll4sanity-chant'], String(!expected));
+    const a = new HorrorMusic({ host: { localStorage: storage, document: { getElementById: () => button } } });
+    assert.equal(a.enabled, expected); assert.equal(button.textContent, expected ? 'MUSIC: ON' : 'MUSIC: OFF');
+    listeners.click(); assert.equal(attributes['roll4sanity-music'], String(!expected));
     a.destroy(); assert.equal(listeners.click, undefined);
   }
 });
