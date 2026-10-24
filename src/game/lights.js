@@ -1,4 +1,5 @@
-import { SpellLights, AWAKEN_DURATION } from './spell-lights.js';
+import { SpellLights, AWAKEN_DURATION, awakeningStrength } from './spell-lights.js';
+import { eyePalette } from './eye-colours.js';
 import { BUMPER_COLOUR_DURATION, bumperRingColours } from './bumper-colours.js';
 
 const COLOURS = { ward: 0xc1915a, sling: 0xa5cf96,
@@ -42,7 +43,7 @@ export class TableLights {
     if (awakening) this.cues.set('eyes', awakening); // Keep the original completion/duration when switching modes.
     this.button.textContent = reduced ? 'LIGHTS: CALM' : 'LIGHTS: FULL';
     this.button.setAttribute('aria-pressed', String(reduced));
-    this.button.title = 'Reduced effects: stationary light cues and gentle amber eyes; no chase or bright eye flare';
+    this.button.title = 'Reduced effects: stationary light cues and gentle coloured eyes; no chase or bright eye flare';
     this.host.document.documentElement.dataset.reducedEffects = String(reduced);
   }
   reset() { this.cues.clear(); this.spells.reset(); }
@@ -50,11 +51,18 @@ export class TableLights {
   cancelSpell() { this.spells.cancel(); }
   completeSpell(shot) {
     this.spells.complete(shot);
-    if (shot.kind === 'ramp') this.awaken();
+    this.awaken(shot);
   }
-  awaken() {
+  awaken(shot = { id: 'left-ramp', kind: 'ramp' }) {
+    const palette = eyePalette(shot);
+    if (!palette) return;
+    const old = this.cues.get('eyes');
+    const initialStrength = old ? awakeningStrength(this.sim.elapsed - old.at, old.initialStrength) : 0;
+    // One cue/palette for both eyes. Replace atomically, retain brightness on
+    // overlap, and give the new completion its own full 2550ms envelope.
     this.cues.delete('eyes');
     this.pulse('eyes', 'eyes', { x: 0, y: 0 });
+    Object.assign(this.cues.get('eyes'), { shotId: shot.id, palette, initialStrength });
   }
   pulse(id, kind, position) {
     const now = this.sim.elapsed, duration = DURATIONS[kind];

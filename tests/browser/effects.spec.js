@@ -65,7 +65,7 @@ for (const [width, height] of [[1440, 900], [390, 844]]) {
       await page.keyboard.press('p');
       await page.waitForFunction(() => !window.pinball.travel);
       await page.waitForTimeout(50);
-      expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(kind === 'ramp');
+      expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
     }
     await page.keyboard.press('r');
     await page.waitForFunction(() => window.pinballPresentation.table.lights.cues.size === 0);

@@ -46,7 +46,7 @@ test('score cues are observed once; entry scores never awaken eyes and collision
     assert.equal(e.lights.cues.has('eyes'), false);
     e.sim.elapsed += 1800;
     e.lights.pulse('left-ramp', 'ramp', { x: 185, y: 455 });
-    assert.equal(e.lights.cues.has('eyes'), false, 'only completed ramps awaken the eyes');
+    assert.equal(e.lights.cues.has('eyes'), false, 'only completed guided shots awaken the eyes');
   } finally { e.destroy(); }
 });
 

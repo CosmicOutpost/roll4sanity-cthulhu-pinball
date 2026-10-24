@@ -19,7 +19,7 @@ async function ramp(page, right = false) {
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(false);
   await page.waitForFunction(() => window.pinballPresentation.table.lights.cues.has('eyes'));
 }
-const evidence = 'docs/previews/awakening-repair';
+const evidence = 'test-results/awakening-repair-previews';
 
 for (const width of [1440, 390]) {
   test.describe(`awakening repair at ${width}`, () => {
@@ -59,9 +59,8 @@ for (const width of [1440, 390]) {
           layers: [f.table.artwork.depth, f.table.lights.eyes.depth, f.table.moving.depth] };
       });
       for (const [r, g, b] of peak.centres) { expect(r).toBeGreaterThan(240); expect(g).toBeGreaterThan(225); expect(b).toBeGreaterThan(180); }
-      peak.halo.forEach(([r, g], i) => {
-        expect(r - baselineHalo[i][0]).toBeGreaterThan(60);
-        expect(g - baselineHalo[i][1]).toBeGreaterThan(30);
+      peak.halo.forEach((rgb, i) => {
+        expect(Math.max(...rgb.slice(0, 3).map((value, c) => value - baselineHalo[i][c]))).toBeGreaterThan(60);
       });
       expect(peak.art).toEqual([270, 480, 540, 960]); expect(peak.layers).toEqual([-1, 4.5, 5]);
       await mkdir(evidence, { recursive: true });

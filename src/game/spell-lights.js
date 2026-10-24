@@ -1,12 +1,13 @@
 import { pointOnPath } from './table.js';
+import { EYE_PALETTES } from './eye-colours.js';
 
 export const EYE_CENTRES = [{ x: 230, y: 391 }, { x: 310, y: 391 }];
 export const AWAKEN_DURATION = 2550;
 const clamp = n => Math.max(0, Math.min(1, n));
 const smooth = n => { const t = clamp(n); return t * t * (3 - 2 * t); };
-export function awakeningStrength(age) {
+export function awakeningStrength(age, initialStrength = 0) {
   if (age < 0 || age >= AWAKEN_DURATION) return 0;
-  return age < 250 ? smooth(age / 250) : age <= 1050 ? 1 : 1 - smooth((age - 1050) / 1500);
+  return age < 250 ? initialStrength + (1 - initialStrength) * smooth(age / 250) : age <= 1050 ? 1 : 1 - smooth((age - 1050) / 1500);
 }
 
 // Presentation only: every channel position comes from the existing sampled
@@ -74,7 +75,7 @@ export class SpellLights {
         this.rune(exit.x, exit.y - 36, 8, 0xe4b174, strength, 1);
       }
     }
-    if (eyeCue) this.drawEyes(now - eyeCue.at, reduced);
+    if (eyeCue) this.drawEyes(now - eyeCue.at, reduced, eyeCue.palette, eyeCue.initialStrength);
     const travel = this.active;
     if (!travel || this.sim.travel !== travel) return null;
     const shot = travel.shot, route = this.routes.get(shot.id);
@@ -106,25 +107,25 @@ export class SpellLights {
     }
     return { id: shot.id, progress, phase: progress < .2 ? 'activation' : progress < .7 ? 'travel' : 'buildup', head };
   }
-  drawEyes(age, reduced = false) {
-    const strength = awakeningStrength(age), g = this.eyes;
+  drawEyes(age, reduced = false, palette = EYE_PALETTES['left-ramp'], initialStrength = 0) {
+    const strength = awakeningStrength(age, initialStrength), g = this.eyes;
     if (!strength) return;
     for (const { x, y } of EYE_CENTRES) {
       if (reduced) {
-        // One fixed amber cue with soft attack/fade; no flare, rays or cycling.
-        g.fillStyle(0xe3ad42, .22 * strength).fillEllipse(x, y, 48, 30);
-        g.fillStyle(0xffbe52, .6 * strength).fillEllipse(x, y, 22, 12);
+        // One fixed shot-colour cue with soft attack/fade; no flare, rays or cycling.
+        g.fillStyle(palette.colour, .22 * strength).fillEllipse(x, y, 48, 30);
+        g.fillStyle(palette.highlight, .6 * strength).fillEllipse(x, y, 22, 12);
         continue;
       }
       // The old 5x3 centre shrank to ~3x2 CSS pixels on a phone, resembling the
-      // already bright printed eyes. Broad gold light makes awakening distinct.
-      g.fillStyle(0xdba441, .13 * strength).fillEllipse(x, y, 94, 60);
-      g.fillStyle(0xffc653, .22 * strength).fillEllipse(x, y, 72, 44);
-      g.fillStyle(0xffbf3d, .4 * strength).fillEllipse(x, y, 48, 28);
-      g.fillStyle(0xffb62d, .85 * strength).fillEllipse(x, y, 30, 16);
-      g.fillStyle(0xffd976, strength).fillEllipse(x, y, 22, 12);
-      g.fillStyle(0xfffbe1, strength).fillEllipse(x, y, 12, 7);
-      g.lineStyle(1.6, 0xffdc85, .65 * strength);
+      // already bright printed eyes. Broad coloured light makes awakening distinct.
+      g.fillStyle(palette.colour, .13 * strength).fillEllipse(x, y, 94, 60);
+      g.fillStyle(palette.colour, .22 * strength).fillEllipse(x, y, 72, 44);
+      g.fillStyle(palette.colour, .4 * strength).fillEllipse(x, y, 48, 28);
+      g.fillStyle(palette.colour, .85 * strength).fillEllipse(x, y, 30, 16);
+      g.fillStyle(palette.highlight, strength).fillEllipse(x, y, 22, 12);
+      g.fillStyle(palette.centre, strength).fillEllipse(x, y, 12, 7);
+      g.lineStyle(1.6, palette.highlight, .65 * strength);
       for (const direction of [-1, 1]) {
         g.beginPath().moveTo(x + direction * 19, y).lineTo(x + direction * 32, y).strokePath();
       }

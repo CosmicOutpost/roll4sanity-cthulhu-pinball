@@ -59,13 +59,19 @@ chase lights or bright eye flares. Full mode adds smooth scoring glows and symbo
 emerald/gold currents following the actual guided ramp/orbit paths, sequential
 occult runes, trailing energy and geometric end-of-route arcs. Completion sends
 a final gold packet down the route before a local crimson pulse. Ordinary rail
-contacts remain small local reactions. Successful **ramp completion** awakens
+contacts remain small local reactions. Successful **guided shot completion** awakens
 both illustrated eyes above the printed art and rail decks, below the ball:
-250 ms amber-to-white attack, 800 ms peak hold and 1.5 s smooth fade. Entry
-scores, orbit completions and bumper hits do not awaken the eyes. Calm uses
-stationary entrance/exit symbols and one gentle amber eye cue; sound remains
+250 ms attack, 800 ms peak hold and 1.5 s smooth fade. Both eyes use the completed
+shot's colour: left ramp emerald green, right ramp crimson red, left orbit
+electric blue, right orbit eldritch violet. Mapping uses actual IDs and kinds,
+independent of shot-array order. A new completion replaces the single eye cue
+and colour together, retaining current brightness to avoid a dark blink and
+starting a fresh 2.55-second lifetime. Entry scores and bumper hits do not awaken
+the eyes. Calm uses stationary entrance/exit symbols and one gentle shot-colour
+eye cue; sound remains
 independent. Repeated mechanical hits sustain a glow rather than strobe.
 The original artwork and all collision shapes stay unchanged.
+The chant and growl remain exclusive to ramp completion; orbit audio is unchanged.
 
 Scoring shows a short **+points** caption in the scoreboard and playfield for
 about 0.95 seconds, with a restrained fade. Multiple awards within a rendered
@@ -249,6 +255,7 @@ This is an initial mechanical prototype. Automated browser and simulation checks
 - `src/game/render.js` — procedural table visuals and debug overlay.
 - `src/game/lights.js` — bounded scoring glows and reduced-effects preferences.
 - `src/game/spell-lights.js` — path-following ritual currents, runes and timed eye awakening.
+- `src/game/eye-colours.js` — eye palettes keyed by the simulation's shot IDs and kinds.
 - `src/game/guided-feedback.js` — read-only guided journey start/progress/completion observation.
 - `src/game/ritual-audio.js` — procedural drones, ritual bell, growl, optional chant and group cleanup.
 - `src/game/audio.js` — original generated effects, gesture unlock, bounded voices and mute preference.

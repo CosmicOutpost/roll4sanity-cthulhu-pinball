@@ -33,6 +33,12 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     const errors = []; page.on('pageerror', e => errors.push(e.message));
     await open(page);
     const metrics = [];
+    const expectedEyes = {
+      'left-ramp': { kind: 'ramp', colour: 0x21e58d, iris: [89, 236, 170] },
+      'right-ramp': { kind: 'ramp', colour: 0xf23c55, iris: [245, 109, 128] },
+      'left-orbit': { kind: 'orbit', colour: 0x329dff, iris: [101, 182, 255] },
+      'right-orbit': { kind: 'orbit', colour: 0xaf58ff, iris: [195, 130, 255] },
+    };
     for (const [id, x, y] of [['left-orbit', 59, 451], ['right-orbit', 441, 451], ['right-ramp', 315, 470], ['left-ramp', 185, 470]]) {
       await enter(page, id, x, y);
       await page.waitForFunction(() => window.pinballPresentation.table.lights.chase?.progress > .1);
@@ -43,9 +49,9 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
         window.ritualFrames = []; window.ritualFrameAt = performance.now();
         window.ritualFrame = () => { const now = performance.now(); window.ritualFrames.push(now - window.ritualFrameAt); window.ritualFrameAt = now; if (window.pinball.travel) requestAnimationFrame(window.ritualFrame); };
         requestAnimationFrame(window.ritualFrame);
-        return { eyes: f.table.lights.cues.has('eyes'), frequency: g.tones[1].frequency.value, progress: g.progress };
+        return { kind: window.pinball.travel.shot.kind, eyes: f.table.lights.cues.has('eyes'), frequency: g.tones[1].frequency.value, progress: g.progress };
       });
-      expect(first.eyes).toBe(false);
+      expect(first.eyes).toBe(false); expect(first.kind).toBe(expectedEyes[id].kind);
       await page.waitForFunction(() => window.pinballPresentation.table.lights.chase?.progress > .82);
       const peak = await page.evaluate(() => {
         const p = window.pinball, f = window.pinballPresentation, c = f.table.lights.chase, a = f.sound;
@@ -67,9 +73,10 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
       await page.waitForFunction(() => window.pinballPresentation.table.lights.spells.completions.length > 0);
       const completion = await groups(page);
       expect(completion).toContain('completion');
-      expect(completion.includes('awakening')).toBe(id.endsWith('ramp'));
-      expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(id.endsWith('ramp'));
-      if (id === 'left-ramp') {
+      expect(completion.includes('awakening')).toBe(expectedEyes[id].kind === 'ramp');
+      expect(completion.includes('chant')).toBe(expectedEyes[id].kind === 'ramp');
+      expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
+      {
         await page.waitForFunction(() => {
           const f = window.pinballPresentation, c = f.table.lights.cues.get('eyes');
           return c && window.pinball.elapsed - c.at >= 500;
@@ -77,12 +84,16 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
         const eyes = await page.evaluate(() => {
           const f = window.pinballPresentation, canvas = document.querySelector('canvas'), ctx = canvas.getContext('2d');
           return { colours: [230, 310].map(x => [...ctx.getImageData(x, 391, 1, 1).data]),
+            irises: [230, 310].map(x => [...ctx.getImageData(x + 8, 391, 1, 1).data].slice(0, 3)),
+            cueId: f.table.lights.cues.get('eyes').shotId, colour: f.table.lights.cues.get('eyes').palette.colour,
             depth: f.table.lights.eyes.depth, moving: f.table.moving.depth, artwork: f.table.artwork.depth,
             groups: [...f.sound.ritual.groups].map(g => ({ name: g.name, nodes: g.nodes.length })) };
         });
         for (const [r, g, b] of eyes.colours) { expect(r).toBeGreaterThan(235); expect(g).toBeGreaterThan(215); expect(b).toBeGreaterThan(160); }
+        expect(eyes.cueId).toBe(id); expect(eyes.colour).toBe(expectedEyes[id].colour);
+        for (const iris of eyes.irises) iris.forEach((value, channel) => expect(Math.abs(value - expectedEyes[id].iris[channel])).toBeLessThanOrEqual(2));
         expect(eyes.depth).toBeGreaterThan(4); expect(eyes.depth).toBeLessThan(eyes.moving);
-        await page.screenshot({ path: info.outputPath(`eyes-${viewport.width}.png`) });
+        await page.screenshot({ path: info.outputPath(`${id}-eyes-${viewport.width}.png`) });
         expect(eyes.groups.find(g => g.name === 'completion').nodes).toBeGreaterThan(10); // Includes the bounded echo graph.
         await page.waitForFunction(() => !window.pinballPresentation.table.lights.cues.has('eyes'));
         await page.waitForFunction(() => window.pinballPresentation.sound.ritual.groups.size === 0);
