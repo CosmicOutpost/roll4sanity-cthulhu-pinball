@@ -48,6 +48,7 @@ for (const prefix of prefixes) {
     await page.keyboard.press('d');
     const label = prefix === prefixes[0] ? 'wordpress' : 'github-pages';
     await page.screenshot({ path: `/tmp/roll4sanity-${label}.png`, fullPage: true });
+    expect(await page.evaluate(() => typeof window.previewCthulhuEyes)).toBe('undefined');
     expect(errors).toEqual([]);
     expect(failures).toEqual([]);
     expect(requests.length).toBeGreaterThan(3);

@@ -3,8 +3,11 @@
 export class RitualAudio {
   constructor(owner) {
     this.owner = owner; this.groups = new Set(); this.travel = null;
-    this.chantEnabled = false;
-    try { this.chantEnabled = owner.host.localStorage.getItem('roll4sanity-chant') === 'true'; } catch { /* Optional persistence. */ }
+    this.chantEnabled = true;
+    try {
+      const saved = owner.host.localStorage.getItem('roll4sanity-chant');
+      if (saved === 'true' || saved === 'false') this.chantEnabled = saved === 'true';
+    } catch { /* New players still hear the chant if persistence is unavailable. */ }
     this.button = owner.host.document.getElementById('chant');
     this.onToggle = () => {
       this.chantEnabled = !this.chantEnabled;
@@ -122,14 +125,14 @@ export class RitualAudio {
   endSpell(completed, kind) {
     if (this.travel) { this.travel.release(.1); this.travel = null; }
     if (!completed || !this.canPlay()) return;
-    const g = this.group('completion', 2.5, .55, true); if (!g) return;
+    const g = this.group('completion', 2.5, kind === 'ramp' && this.chantEnabled ? .28 : .55, true); if (!g) return;
     this.tone(g, 'sine', 146.8, .36, 130.8, 1.9);
     this.tone(g, 'sine', 310, .2, 294, 1.65);
     this.tone(g, 'triangle', 427, .1, 392, 1.4);
     if (kind === 'ramp') this.awaken();
   }
   awaken() {
-    const g = this.group('awakening', 2.7, .48); if (!g) return;
+    const g = this.group('awakening', 2.7, this.chantEnabled ? .2 : .48); if (!g) return;
     const ctx = this.owner.context;
     g.filter.frequency.value = 1250;
     const body = this.tone(g, 'sawtooth', 94, .23, 55, 2.55);
@@ -147,15 +150,41 @@ export class RitualAudio {
     if (this.chantEnabled) this.chant();
   }
   chant() {
-    const g = this.group('chant', .95, .3); if (!g) return;
+    const g = this.group('chant', 2.55, 1.15, true); if (!g) return;
     const ctx = this.owner.context;
-    g.filter.type = 'bandpass'; g.filter.frequency.value = 850; g.filter.Q.value = 2;
-    const voice = this.source(g, ctx.createOscillator(), .0001); voice.source.type = 'square';
-    for (const [i, hz] of [92, 115, 82, 130].entries()) {
-      const at = g.at + i * .18;
+    g.filter.frequency.value = 3000;
+    const voice = this.source(g, ctx.createOscillator(), .0001); voice.source.type = 'sawtooth';
+    const quantiser = g.node(ctx.createWaveShaper());
+    quantiser.curve = Float32Array.from({ length: 256 }, (_, i) => Math.round((i / 127.5 - 1) * 12) / 12 * .85);
+    voice.source.disconnect(); voice.source.connect(quantiser);
+    // Three parallel vocal resonances, rather than a single thin filtered beep.
+    const formants = [5, 7, 10].map((q, i) => {
+      const filter = g.node(ctx.createBiquadFilter()), level = g.node(ctx.createGain());
+      filter.type = 'bandpass'; filter.Q.value = q; level.gain.value = [.7, .45, .22][i];
+      quantiser.connect(filter); filter.connect(level); level.connect(voice.envelope);
+      return filter;
+    });
+    const breath = this.noise(g, .0001), hiss = g.node(ctx.createBiquadFilter());
+    hiss.type = 'bandpass'; hiss.frequency.value = 1800; hiss.Q.value = .7;
+    breath.source.disconnect(); breath.source.connect(hiss); hiss.connect(breath.envelope);
+    // Six deliberate, stepped syllables: a robotic ritual chant, not claimed speech.
+    const syllables = [
+      [0, .21, 130, [520, 1190, 2390]], [.26, .31, 98, [330, 870, 2240]],
+      [.62, .22, 123, [330, 870, 2240]], [.91, .30, 147, [730, 1090, 2440]],
+      [1.28, .27, 139, [530, 1840, 2480]], [1.67, .44, 98, [450, 1050, 2200]],
+    ];
+    for (const [offset, duration, hz, vowels] of syllables) {
+      const at = g.at + offset;
       voice.source.frequency.setValueAtTime(hz, at);
-      voice.gain.setValueAtTime(.0001, at); voice.gain.linearRampToValueAtTime(.3, at + .025); voice.gain.exponentialRampToValueAtTime(.0001, at + .15);
-      g.filter.frequency.setValueAtTime([550, 1100, 760, 480][i], at);
+      voice.source.frequency.exponentialRampToValueAtTime(hz * .94, at + duration);
+      formants.forEach((filter, i) => filter.frequency.setTargetAtTime(vowels[i], at, .02));
+      voice.gain.setValueAtTime(.0001, at);
+      voice.gain.linearRampToValueAtTime(.72, at + .018);
+      voice.gain.setValueAtTime(.68, at + duration * .6);
+      voice.gain.exponentialRampToValueAtTime(.0001, at + duration);
+      breath.gain.setValueAtTime(.0001, at);
+      breath.gain.linearRampToValueAtTime(.035, at + .008);
+      breath.gain.exponentialRampToValueAtTime(.0001, at + .06);
     }
   }
   stopAll(fade = .04) { for (const g of [...this.groups]) g.release(fade); this.travel = null; }

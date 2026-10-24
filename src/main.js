@@ -20,6 +20,11 @@ class PinballScene extends Phaser.Scene {
     const toggleDebug = () => { this.table.debug = !this.table.debug; this.refreshHUD(); };
     this.unbind = bindControls(this.sim, toggleDebug, () => this.refreshHUD());
     this.feedback = new ArcadeFeedback(this.sim, this.table);
+    // Temporary console-only inspection; Vite removes this entire block from production.
+    if (import.meta.env.DEV) {
+      window.previewCthulhuEyes = () => this.table.lights.awaken();
+      this.events.once('shutdown', () => { delete window.previewCthulhuEyes; });
+    }
     // Opt-in inspection for physics diagnostics and automated browser checks.
     if (new URLSearchParams(location.search).get('debug') === '1') {
       window.pinball = this.sim;

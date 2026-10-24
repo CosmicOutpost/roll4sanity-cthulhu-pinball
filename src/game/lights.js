@@ -37,10 +37,12 @@ export class TableLights {
 
   setReduced(reduced) {
     this.reduced = reduced;
+    const awakening = this.cues.get('eyes');
     this.cues.clear();
+    if (awakening) this.cues.set('eyes', awakening); // Keep the original completion/duration when switching modes.
     this.button.textContent = reduced ? 'LIGHTS: CALM' : 'LIGHTS: FULL';
     this.button.setAttribute('aria-pressed', String(reduced));
-    this.button.title = 'Reduced effects: quiet, stationary light cues; no chase lights or eye animation';
+    this.button.title = 'Reduced effects: stationary light cues and gentle amber eyes; no chase or bright eye flare';
     this.host.document.documentElement.dataset.reducedEffects = String(reduced);
   }
   reset() { this.cues.clear(); this.spells.reset(); }
@@ -48,10 +50,11 @@ export class TableLights {
   cancelSpell() { this.spells.cancel(); }
   completeSpell(shot) {
     this.spells.complete(shot);
-    if (shot.kind === 'ramp' && !this.reduced) {
-      this.cues.delete('eyes');
-      this.pulse('eyes', 'eyes', { x: 0, y: 0 });
-    }
+    if (shot.kind === 'ramp') this.awaken();
+  }
+  awaken() {
+    this.cues.delete('eyes');
+    this.pulse('eyes', 'eyes', { x: 0, y: 0 });
   }
   pulse(id, kind, position) {
     const now = this.sim.elapsed, duration = DURATIONS[kind];

@@ -45,13 +45,17 @@ Unsupported or blocked audio/storage does not stop the game. Pause/focus loss
 silences active effects; there is no delayed sound replay on resume. A journey
 resumed mid-route starts only its current-progress drone, without replaying the
 activation. **CHANT: OFF / ON** independently enables an optional robotic
-vowel-like chant on ramp completion (off by default). It is deliberately
-artificial, not intelligible speech. SFX mute silences it along with all sounds.
+vowel-like chant on ramp completion (on for new players; saved ON/OFF preferences
+are respected). It is deliberately artificial, not intelligible speech. Its six
+syllables use three vocal formants,
+stepped pitch and a lightly quantised excitation; the growl and ramp bell are
+ducked while the chant is enabled so it remains distinct. SFX mute silences it
+along with all sounds.
 
 **LIGHTS: FULL / CALM** in the footer toggles reduced effects. It initially follows
 `prefers-reduced-motion`, remembers a manual choice when storage is available,
 and never changes gameplay or mute. Calm mode uses faint stationary cues, without
-chase lights or animated eyes. Full mode adds smooth scoring glows and symbols,
+chase lights or bright eye flares. Full mode adds smooth scoring glows and symbols,
 emerald/gold currents following the actual guided ramp/orbit paths, sequential
 occult runes, trailing energy and geometric end-of-route arcs. Completion sends
 a final gold packet down the route before a local crimson pulse. Ordinary rail
@@ -59,7 +63,7 @@ contacts remain small local reactions. Successful **ramp completion** awakens
 both illustrated eyes above the printed art and rail decks, below the ball:
 250 ms amber-to-white attack, 800 ms peak hold and 1.5 s smooth fade. Entry
 scores, orbit completions and bumper hits do not awaken the eyes. Calm uses
-stationary entrance/exit symbols and suppresses eye animation; sound remains
+stationary entrance/exit symbols and one gentle amber eye cue; sound remains
 independent. Repeated mechanical hits sustain a glow rather than strobe.
 The original artwork and all collision shapes stay unchanged.
 
@@ -268,3 +272,8 @@ contains the cabinet/HUD treatment separately from the playfield renderer.
 for this project. It is bundled locally and rendered as one static image beneath
 the existing mechanisms. Artwork has no collision body and does not alter the
 ball, table geometry, scoring or controls.
+
+Development-only eye inspection: in `npm run dev`, open the browser console and
+call `window.previewCthulhuEyes()`. It triggers only the eye lighting, without a
+shot, points or sound. Resume first if paused. The helper is removed from the
+production bundle and has no production UI or key binding.

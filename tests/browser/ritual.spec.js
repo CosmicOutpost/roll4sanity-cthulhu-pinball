@@ -60,8 +60,8 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
       expect(peak.peak).toBeGreaterThan(.002); expect(peak.peak).toBeLessThan(.25);
       expect(peak.rune).toBe(true); expect(peak.groups).toBeLessThanOrEqual(4);
       if (id === 'left-ramp') {
-        await mkdir('docs/previews/awaken-cthulhu', { recursive: true });
-        await page.screenshot({ path: `docs/previews/awaken-cthulhu/spell-${viewport.width}.png` });
+        await mkdir(info.outputDir, { recursive: true });
+        await page.screenshot({ path: info.outputPath(`spell-${viewport.width}.png`) });
       }
       await page.waitForFunction(() => !window.pinball.travel);
       await page.waitForFunction(() => window.pinballPresentation.table.lights.spells.completions.length > 0);
@@ -82,7 +82,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
         });
         for (const [r, g, b] of eyes.colours) { expect(r).toBeGreaterThan(235); expect(g).toBeGreaterThan(215); expect(b).toBeGreaterThan(160); }
         expect(eyes.depth).toBeGreaterThan(4); expect(eyes.depth).toBeLessThan(eyes.moving);
-        await page.screenshot({ path: `docs/previews/awaken-cthulhu/eyes-${viewport.width}.png` });
+        await page.screenshot({ path: info.outputPath(`eyes-${viewport.width}.png`) });
         expect(eyes.groups.find(g => g.name === 'completion').nodes).toBeGreaterThan(10); // Includes the bounded echo graph.
         await page.waitForFunction(() => !window.pinballPresentation.table.lights.cues.has('eyes'));
         await page.waitForFunction(() => window.pinballPresentation.sound.ritual.groups.size === 0);
@@ -120,11 +120,12 @@ test('ritual: mute, pause, focus loss and interruption release sources without c
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(false);
 });
 
-test('ritual: CALM is stationary, audio independent, optional chant defaults off and cleans up', async ({ page }) => {
+test('ritual: CALM is stationary, audio independent, saved chant OFF is respected and cleans up', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 390, height: 844 });
   await open(page);
-  await expect(page.locator('#chant')).toHaveText('CHANT: OFF');
+  await expect(page.locator('#chant')).toHaveText('CHANT: ON');
+  await page.locator('#chant').click();
   await enter(page, 'left-ramp', 185, 470);
   expect(await page.evaluate(() => window.pinballPresentation.table.lights.chase)).toBe(null);
   expect(await groups(page)).toContain('travel');
@@ -132,7 +133,7 @@ test('ritual: CALM is stationary, audio independent, optional chant defaults off
   await page.waitForTimeout(80);
   expect(await groups(page)).toContain('awakening');
   expect(await groups(page)).not.toContain('chant');
-  expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(false);
+  expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(true);
   await page.locator('#chant').click();
   await expect(page.locator('#motion')).toHaveText('LIGHTS: CALM');
   await expect(page.locator('#sound')).toHaveAttribute('aria-pressed', 'false');

@@ -74,7 +74,7 @@ export class SpellLights {
         this.rune(exit.x, exit.y - 36, 8, 0xe4b174, strength, 1);
       }
     }
-    if (eyeCue && !reduced) this.drawEyes(now - eyeCue.at);
+    if (eyeCue) this.drawEyes(now - eyeCue.at, reduced);
     const travel = this.active;
     if (!travel || this.sim.travel !== travel) return null;
     const shot = travel.shot, route = this.routes.get(shot.id);
@@ -106,17 +106,28 @@ export class SpellLights {
     }
     return { id: shot.id, progress, phase: progress < .2 ? 'activation' : progress < .7 ? 'travel' : 'buildup', head };
   }
-  drawEyes(age) {
+  drawEyes(age, reduced = false) {
     const strength = awakeningStrength(age), g = this.eyes;
     if (!strength) return;
     for (const { x, y } of EYE_CENTRES) {
-      // Layered soft aureoles around bright amber irises and white-hot centres.
-      g.fillStyle(0xdba441, .12 * strength).fillEllipse(x, y, 54, 34);
-      g.fillStyle(0xffc653, .24 * strength).fillEllipse(x, y, 38, 24);
-      g.fillStyle(0xffcc67, .48 * strength).fillEllipse(x, y, 25, 14);
-      g.fillStyle(0xffbd48, .95 * strength).fillEllipse(x, y, 16, 8);
-      g.fillStyle(0xffe99c, strength).fillEllipse(x, y, 10, 5);
-      g.fillStyle(0xfffbe1, strength).fillEllipse(x, y, 5, 3);
+      if (reduced) {
+        // One fixed amber cue with soft attack/fade; no flare, rays or cycling.
+        g.fillStyle(0xe3ad42, .22 * strength).fillEllipse(x, y, 48, 30);
+        g.fillStyle(0xffbe52, .6 * strength).fillEllipse(x, y, 22, 12);
+        continue;
+      }
+      // The old 5x3 centre shrank to ~3x2 CSS pixels on a phone, resembling the
+      // already bright printed eyes. Broad gold light makes awakening distinct.
+      g.fillStyle(0xdba441, .13 * strength).fillEllipse(x, y, 94, 60);
+      g.fillStyle(0xffc653, .22 * strength).fillEllipse(x, y, 72, 44);
+      g.fillStyle(0xffbf3d, .4 * strength).fillEllipse(x, y, 48, 28);
+      g.fillStyle(0xffb62d, .85 * strength).fillEllipse(x, y, 30, 16);
+      g.fillStyle(0xffd976, strength).fillEllipse(x, y, 22, 12);
+      g.fillStyle(0xfffbe1, strength).fillEllipse(x, y, 12, 7);
+      g.lineStyle(1.6, 0xffdc85, .65 * strength);
+      for (const direction of [-1, 1]) {
+        g.beginPath().moveTo(x + direction * 19, y).lineTo(x + direction * 32, y).strokePath();
+      }
     }
   }
 }
