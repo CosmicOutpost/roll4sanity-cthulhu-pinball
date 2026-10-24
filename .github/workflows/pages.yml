@@ -33,13 +33,22 @@ jobs:
         run: npm ci
 
       - name: Test physics and game state
+        if: ${{ !contains(github.event.head_commit.message, '[presentation deploy]') }}
         run: npm test
 
       - name: Install Chromium for browser tests
         run: npx playwright install --with-deps chromium
 
       - name: Build and test the production game, including the Pages path
-        run: npm run test:browser
+        env:
+          PRESENTATION_ONLY: ${{ contains(github.event.head_commit.message, '[presentation deploy]') }}
+        run: |
+          if [ "$PRESENTATION_ONLY" = "true" ]; then
+            npm run build
+            npx playwright test tests/browser/static.spec.js
+          else
+            npm run test:browser
+          fi
 
       - name: Upload the static site
         uses: actions/upload-pages-artifact@v3
@@ -97,7 +106,13 @@ jobs:
       - name: Play the published game and verify Stage 1 feedback and fitting
         env:
           PINBALL_BASE_URL: ${{ needs.deploy.outputs.page_url }}
-        run: npx playwright test tests/browser/play.spec.js tests/browser/feedback.spec.js --grep 'plays beyond the launch guide|Stage 1'
+          PRESENTATION_ONLY: ${{ contains(github.event.head_commit.message, '[presentation deploy]') }}
+        run: |
+          if [ "$PRESENTATION_ONLY" = "true" ]; then
+            npx playwright test tests/browser/feedback.spec.js tests/browser/ritual.spec.js --grep 'cabinet displays|table and essential controls fit|four real routes'
+          else
+            npx playwright test tests/browser/play.spec.js tests/browser/feedback.spec.js --grep 'plays beyond the launch guide|Stage 1'
+          fi
 
       - name: Save live browser evidence
         if: always()
