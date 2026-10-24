@@ -40,8 +40,9 @@ Unsupported audio or blocked storage does not stop the game.
 The mechanical flipper clicks, bumper/ward impacts, rubber-post/rail ticks and
 existing game-over sound are preserved. Guided shots retain their activation
 rumble, detuned shimmer, progress-following drone, rune sparkles and completion
-bell. Successful ramps add **one 2.3-second Cthulhu roar**: moving bass, a distorted
-midrange throat and filtered breath fading into a dark underwater tail. It replaces
+bell. Successful ramps add **one 2.3-second Cthulhu roar**: almost stationary bass pressure, low rumbling turbulence and
+a rough, breathy noise layer fading into a dark underwater tail. No sawtooth buzz,
+pitch wobble or vocal syllables are used. It replaces
 both the old growl and robotic chant; there is no CHANT control or speech synthesis.
 Orbit audio is unchanged. A genuine physical drain adds a descending three-note
 hollow toll, with a short echo, and ducks music before restoring it smoothly over
@@ -50,9 +51,15 @@ hollow toll, with a short echo, and ducks music before restoring it smoothly ove
 **MUSIC: ON / OFF** in the footer independently controls a saved music preference,
 ON for new players. The original 110 BPM, eight-bar D-minor score combines a bass
 ostinato, restrained clock pulse, organ-like chords and a recurring motif with
-harmonic variation and occasional dissonant metallic accents. Its 17.45-second
-loop includes release and echo tails across the seam. It is rendered locally once,
-then played by a single looping buffer source, quieter than foreground effects.
+harmonic variation and occasional dissonant metallic accents. The original
+17.45-second theme now has a deterministic **3-minute 29-second arrangement**:
+organ and melody layers recede and return, bass weight varies gently, and metallic
+accents become sparser. The notes, tempo, instrument synthesis and opening balance
+are preserved. Four-bar transitions fade over 0.6 seconds; release and echo tails
+remain across every seam. This longer arrangement repeats; it is not an endlessly
+evolving or random composition. It is rendered locally once, then played by a
+single mono looping buffer source (the previous stereo channels were identical),
+quieter than foreground effects. The retained buffer is about 37 MB at 44.1 kHz.
 No scheduling interval or ongoing oscillator orchestra is used.
 
 Pause/focus loss silences active effects and stops music, preserving its position
@@ -269,7 +276,7 @@ This is an initial mechanical prototype. Automated browser and simulation checks
 - `src/game/eye-colours.js` — eye palettes keyed by the simulation's shot IDs and kinds.
 - `src/game/guided-feedback.js` — read-only guided journey start/progress/completion observation.
 - `src/game/ritual-audio.js` — procedural drones, ritual bell, layered roar, ball-loss toll and group cleanup.
-- `src/game/music-score.js` — original eight-bar horror score and seamless offline loop synthesis.
+- `src/game/music-score.js` — original eight-bar theme, deterministic long arrangement and seamless offline synthesis.
 - `src/game/music.js` — single-loop lifecycle, saved preference, resume position and loss ducking.
 - `src/game/audio.js` — original generated effects, gesture unlock, bounded voices and mute preference.
 - `src/game/feedback.js` — observes existing inputs/scoring for sound and readable captions; never changes the simulation.

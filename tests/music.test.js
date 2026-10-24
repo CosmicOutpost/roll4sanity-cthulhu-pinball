@@ -57,3 +57,20 @@ test('blocked localStorage property access does not prevent audio or the game fr
   Object.defineProperty(e.owner.host, 'localStorage', { get() { throw Error('blocked'); } });
   const m = new HorrorMusic(e.owner); assert.equal(m.enabled, true); m.destroy();
 });
+
+test('the liked theme remains unchanged and the arrangement repeats only after 3.49 minutes', async () => {
+  const { createHash } = await import('node:crypto');
+  const { MUSIC_SCORE, MUSIC_BPM, MUSIC_TOTAL_BEATS, MUSIC_ARRANGEMENT } = await import('../src/game/music-score.js');
+  assert.equal(MUSIC_BPM, 110);
+  assert.equal(createHash('sha256').update(JSON.stringify(MUSIC_SCORE)).digest('hex'), 'f74897e2c663563f124ffa9b53f4530f47d2d82ec15af04966e54cdda62c10f0');
+  assert.equal(MUSIC_TOTAL_BEATS, 384);
+  assert.ok(MUSIC_TOTAL_BEATS * 60 / MUSIC_BPM > 180 && MUSIC_TOTAL_BEATS * 60 / MUSIC_BPM < 300);
+  assert.deepEqual(MUSIC_ARRANGEMENT[0], [1, 1, 1, 1]);
+  assert.deepEqual(MUSIC_ARRANGEMENT[1], [1, 1, 1, 1]);
+  assert.deepEqual(MUSIC_ARRANGEMENT.at(-1), MUSIC_ARRANGEMENT[0]);
+  assert.ok(new Set(MUSIC_ARRANGEMENT.map(JSON.stringify)).size > 10);
+  assert.ok(MUSIC_ARRANGEMENT.some(row => row[2] === 0));
+  for (let section = 0; section < MUSIC_ARRANGEMENT.length; section++) {
+    for (const v of MUSIC_ARRANGEMENT[section]) assert.ok(v >= 0 && v <= 1);
+  }
+});

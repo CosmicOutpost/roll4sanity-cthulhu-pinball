@@ -120,7 +120,7 @@ test('music and DSP levels: seamless composed loop, finite roar/toll and headroo
     a.destroy(); results.destroyed = { music: !!a.music.source, tail: !!a.music.tail, groups: a.ritual.groups.size, voices: a.voices.size };
     return results;
   });
-  expect(result.music.duration).toBeCloseTo(32 * 60 / 110, 3); expect(result.music.peak).toBeCloseTo(.65, 3);
+  expect(result.music.duration).toBeCloseTo(384 * 60 / 110, 3); expect(result.music.peak).toBeCloseTo(.65, 3);
   expect(result.music.seam).toBeLessThan(result.music.maxStep * .15);
   expect(result.music.rmsAtOutput).toBeLessThan(result.roar.rms / 4);
   expect(result.music.rmsAtOutput).toBeLessThan(result['ball-lost'].rms / 2);

@@ -114,28 +114,38 @@ export class RitualAudio {
     for (const old of this.groups) if (old.name === 'roar' && !old.released) old.release(.06);
     const g = this.group('roar', 2.3, .62, true); if (!g) return;
     const ctx = this.owner.context;
-    g.high.frequency.value = 40;
-    g.filter.frequency.setValueAtTime(1500, g.at);
-    g.filter.frequency.exponentialRampToValueAtTime(320, g.at + 2.2);
-    const envelope = (voice, level, hold = .85) => {
+    g.high.frequency.value = 35;
+    g.filter.frequency.setValueAtTime(1900, g.at);
+    g.filter.frequency.linearRampToValueAtTime(1100, g.at + 2.2);
+    const envelope = (voice, level, attack = .13, hold = .8) => {
       voice.gain.cancelScheduledValues(g.at); voice.gain.setValueAtTime(.0001, g.at);
-      voice.gain.linearRampToValueAtTime(level, g.at + .065);
-      voice.gain.linearRampToValueAtTime(level * .85, g.at + hold);
-      voice.gain.exponentialRampToValueAtTime(.0001, g.at + 2.2);
+      voice.gain.linearRampToValueAtTime(level, g.at + attack);
+      voice.gain.linearRampToValueAtTime(level * .88, g.at + hold);
+      voice.gain.exponentialRampToValueAtTime(.0001, g.at + 2.23);
     };
-    const sub = this.tone(g, 'triangle', 68, .3, 43, 2.2); envelope(sub, .3);
-    const throat = this.tone(g, 'sawtooth', 102, .24, 57, 2.2); envelope(throat, .24);
-    const rasp = this.tone(g, 'triangle', 77, .16, 49, 2.2); rasp.source.detune.value = -17; envelope(rasp, .16, .7);
-    const shaper = g.node(ctx.createWaveShaper());
-    shaper.curve = Float32Array.from({ length: 256 }, (_, i) => Math.tanh((i / 127.5 - 1) * 3));
-    throat.source.disconnect(); throat.source.connect(shaper); shaper.connect(throat.envelope);
-    const lfo = ctx.createOscillator(), modulation = g.node(ctx.createGain());
-    lfo.frequency.value = 3.3; modulation.gain.value = 7;
-    lfo.connect(modulation); modulation.connect(throat.source.frequency); this.source(g, lfo, 0);
-    const breath = this.noise(g, .0001), texture = g.node(ctx.createBiquadFilter());
-    texture.type = 'bandpass'; texture.frequency.value = 620; texture.Q.value = .65;
-    breath.source.disconnect(); breath.source.connect(texture); texture.connect(breath.envelope); envelope(breath, .18, .6);
+    // Almost stationary fundamentals. No sawtooth, vocal formants or pitch LFO.
+    envelope(this.tone(g, 'sine', 47, .22, 45, 2.23), .22, .16);
+    envelope(this.tone(g, 'sine', 69, .055, 67.5, 2.23), .055, .19);
+    const turbulence = (seed, type, cutoff, q, level, rough = false) => {
+      // A full-length non-looping noise bed avoids the old half-second repetition.
+      const buffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * 2.3), ctx.sampleRate), data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) { seed = seed * 16807 % 2147483647; data[i] = seed / 1073741824 - 1; }
+      const source = ctx.createBufferSource(); source.buffer = buffer;
+      const voice = this.source(g, source, .0001), filter = g.node(ctx.createBiquadFilter());
+      filter.type = type; filter.frequency.value = cutoff; filter.Q.value = q;
+      source.disconnect(); source.connect(filter);
+      if (rough) {
+        const shaper = g.node(ctx.createWaveShaper());
+        shaper.curve = Float32Array.from({ length: 512 }, (_, i) => Math.tanh((i / 255.5 - 1) * 2.4));
+        filter.connect(shaper); shaper.connect(voice.envelope);
+      } else filter.connect(voice.envelope);
+      envelope(voice, level, rough ? .09 : .18, rough ? .65 : .95);
+    };
+    turbulence(1928, 'lowpass', 185, .5, .9); // geological pressure and uneven rumble
+    turbulence(7331, 'bandpass', 630, .55, .46, true); // irregular, breathy rasp
+    turbulence(10201, 'bandpass', 1250, .4, .19); // air above the throat, no voiced syllables
   }
+
   ballLost() {
     const g = this.group('ball-lost', 1.85, .72, true); if (!g) return false;
     const ctx = this.owner.context; g.high.frequency.value = 100; g.filter.frequency.value = 2500;
