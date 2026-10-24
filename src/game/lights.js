@@ -1,8 +1,9 @@
 import { pointOnPath } from './table.js';
+import { BUMPER_COLOUR_DURATION, bumperRingColours } from './bumper-colours.js';
 
-const COLOURS = { bumper: 0x80dbac, ward: 0xc1915a, sling: 0xa5cf96,
+const COLOURS = { ward: 0xc1915a, sling: 0xa5cf96,
   rail: 0xc8ac70, orbit: 0x79c9b4, ramp: 0xe0bd72, drain: 0x9c4650, gameover: 0x9c4650 };
-const DURATIONS = { rail: 400, bumper: 550, ward: 650, sling: 450, orbit: 850,
+const DURATIONS = { rail: 400, bumper: BUMPER_COLOUR_DURATION, ward: 650, sling: 450, orbit: 850,
   ramp: 1100, eyes: 1400, drain: 950, gameover: 1700 };
 const smooth = value => { const t = Math.max(0, Math.min(1, value)); return t * t * (3 - 2 * t); };
 
@@ -56,7 +57,10 @@ export class TableLights {
     const now = this.sim.elapsed, duration = DURATIONS[kind];
     if (!duration || !position) return;
     const old = this.cues.get(id);
-    // Repeated hits sustain one glow instead of restarting a flashing envelope.
+    // Finish one bumper colour cycle before accepting another. Scoring and
+    // sounds still respond to every valid hit; a burst cannot restart the flash.
+    if (kind === 'bumper' && old && old.until > now) return;
+    // Other repeated hits sustain one glow instead of restarting its envelope.
     if (old && old.until > now) Object.assign(old, position, { until: now + duration });
     else {
       if (this.cues.size >= 16) this.cues.delete(this.cues.keys().next().value);
@@ -66,6 +70,10 @@ export class TableLights {
       this.lastEyes = now;
       this.pulse('eyes', 'eyes', { x: 0, y: 0 });
     }
+  }
+  bumperColours(id) {
+    const cue = this.cues.get(id);
+    return bumperRingColours(cue?.kind === 'bumper' ? this.sim.elapsed - cue.at : -1, this.reduced);
   }
   strength(id) {
     const cue = this.cues.get(id), now = this.sim.elapsed;
@@ -82,6 +90,8 @@ export class TableLights {
     if (sim.state.paused) return;
     for (const [id, cue] of this.cues) {
       const strength = this.strength(id), { x, y, kind } = cue;
+      // Bumpers change their existing opaque rings; no additive halo pulse.
+      if (kind === 'bumper') continue;
       if (kind === 'eyes') {
         if (this.reduced) continue;
         // Aligned to the eyes in the original 540x960 printed illustration.
@@ -97,7 +107,7 @@ export class TableLights {
         continue;
       }
       const big = kind === 'ramp' || kind === 'orbit';
-      const radius = kind === 'bumper' ? 36 : kind === 'ward' ? 18 : big ? 25 : 13;
+      const radius = kind === 'ward' ? 18 : big ? 25 : 13;
       g.fillStyle(colour, .11 * strength).fillCircle(x, y, radius + 6);
       g.lineStyle(big ? 2 : 1.5, colour, .65 * strength).strokeCircle(x, y, radius);
       if (kind === 'ward') g.lineStyle(1, 0xb4585c, .5 * strength).strokeCircle(x, y, radius + 3);

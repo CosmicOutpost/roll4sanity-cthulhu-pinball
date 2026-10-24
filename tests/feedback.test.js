@@ -135,3 +135,19 @@ test('metal rail feedback uses normalised impact speed and stays quiet on soft c
     } finally { e.destroy(); }
   }
 });
+
+test('bumper hit bursts finish one 700ms colour sequence without extending or restarting it', () => {
+  const e = environment();
+  try {
+    e.lights.pulse('bumper:0', 'bumper', { x: 250, y: 250 });
+    const cue = { ...e.lights.cues.get('bumper:0') };
+    e.sim.elapsed += 240;
+    assert.equal(e.lights.bumperColours('bumper:0').ring, 0xd85a58);
+    e.lights.pulse('bumper:0', 'bumper', { x: 250, y: 250 });
+    assert.deepEqual(e.lights.cues.get('bumper:0'), cue);
+    e.sim.elapsed += 460;
+    assert.equal(e.lights.bumperColours('bumper:0').ring, 0x437f67);
+    e.lights.pulse('bumper:0', 'bumper', { x: 250, y: 250 });
+    assert.equal(e.lights.cues.get('bumper:0').at, e.sim.elapsed);
+  } finally { e.destroy(); }
+});

@@ -110,11 +110,11 @@ export class TableRenderer {
     g.clear();
     this.lights.draw();
     BUMPERS.forEach(({ x, y }, i) => {
-      const strength = this.lights.strength(`bumper:${i}`);
-      this.circle(x, y, 38, 0x80e8b2, null, g, .055 + strength * .1);
+      const colours = this.lights.bumperColours(`bumper:${i}`);
+      this.circle(x, y, 38, 0x80e8b2, null, g, .055);
       this.circle(x, y, 29, 0x0a252d, 0x658f7d, g);
-      this.circle(x, y, 24, 0x437f67, 0xb5edbb, g);
-      this.circle(x, y, 19, 0x193e3e, 0x70bd91, g);
+      this.circle(x, y, 24, colours.ring, colours.outer, g);
+      this.circle(x, y, 19, 0x193e3e, colours.inner, g);
       this.circle(x, y, 10, 0x9fe8b7, 0xc9efd0, g, .8);
       this.stroke([[x - 4, y], [x, y - 5], [x + 4, y], [x, y + 5], [x - 4, y]], 1, 0x1c4e40, 1, g);
     });
