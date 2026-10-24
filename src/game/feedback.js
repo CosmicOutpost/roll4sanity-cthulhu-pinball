@@ -1,5 +1,6 @@
 import Matter from 'matter-js';
 import { ArcadeAudio } from './audio.js';
+import { GuidedFeedback } from './guided-feedback.js';
 import { BUMPERS, WARDS, SLINGS } from './table.js';
 
 // Presentation observes the existing score, flash timestamps and input state.
@@ -10,6 +11,7 @@ export class ArcadeFeedback {
     this.table = table;
     this.lights = table.lights;
     this.sound = new ArcadeAudio(document.getElementById('sound'));
+    this.guided = new GuidedFeedback(sim, this.lights, this.sound.ritual);
     this.caption = document.getElementById('score-feedback');
     this.seen = new Map();
     this.previousScore = sim.state.score;
@@ -40,13 +42,14 @@ export class ArcadeFeedback {
     const { sim, sound } = this, { state, controls } = sim;
     const restarted = state.score < this.previousScore || (state.phase === 'ready' && state.ballNumber === 1 && sim.ball !== this.previousBall);
     sound.setPaused(state.paused);
-    if (restarted) { this.seen.clear(); this.until = 0; this.railUntil = 0; sound.stopVoices(); this.lights.reset(); }
+    if (restarted) { this.guided.reset(); this.seen.clear(); this.until = 0; this.railUntil = 0; sound.stopVoices(); this.lights.reset(); }
     if (!restarted && this.previousPhase === 'playing' && (state.ballNumber > this.previousBallNumber || state.phase === 'gameover')) {
       const kind = state.phase === 'gameover' ? 'gameover' : 'drain';
       // Let the terminal cue speak instead of stacking it over impact tails.
       sound.stopVoices(); sound.play(kind);
       this.lights.pulse(kind, kind, { x: 250, y: 910 });
     }
+    this.guided.update();
     for (const side of ['left', 'right']) {
       if (controls[side] && !this.previousControls[side] && !state.paused) sound.play('flipper');
       this.previousControls[side] = controls[side];
@@ -59,7 +62,8 @@ export class ArcadeFeedback {
       if (expires <= sim.elapsed || restarted || state.paused || state.phase !== 'playing') continue;
       const kind = id.startsWith('ward:') ? 'ward' : id.startsWith('bumper:') ? 'bumper' : id.startsWith('sling:') ? 'sling' : id.endsWith('orbit') ? 'orbit' : id.endsWith('ramp') ? 'ramp' : null;
       if (kind) {
-        effects.push(kind); sound.play(kind);
+        effects.push(kind);
+        if (kind !== 'ramp' && kind !== 'orbit') sound.play(kind);
         const side = Number(id.split(':')[1]);
         const position = kind === 'bumper' ? BUMPERS[side] : kind === 'ward' ? WARDS[side]
           : kind === 'sling' ? SLINGS[side][0] : sim.shots.find(shot => shot.id === id)?.entry;

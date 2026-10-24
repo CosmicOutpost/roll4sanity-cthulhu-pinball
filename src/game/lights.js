@@ -1,10 +1,10 @@
-import { pointOnPath } from './table.js';
+import { SpellLights, AWAKEN_DURATION } from './spell-lights.js';
 import { BUMPER_COLOUR_DURATION, bumperRingColours } from './bumper-colours.js';
 
 const COLOURS = { ward: 0xc1915a, sling: 0xa5cf96,
   rail: 0xc8ac70, orbit: 0x79c9b4, ramp: 0xe0bd72, drain: 0x9c4650, gameover: 0x9c4650 };
 const DURATIONS = { rail: 400, bumper: BUMPER_COLOUR_DURATION, ward: 650, sling: 450, orbit: 850,
-  ramp: 1100, eyes: 1400, drain: 950, gameover: 1700 };
+  ramp: 1100, eyes: AWAKEN_DURATION, drain: 950, gameover: 1700 };
 const smooth = value => { const t = Math.max(0, Math.min(1, value)); return t * t * (3 - 2 * t); };
 
 // A few reusable Canvas graphics and bounded event envelopes. No timers, physics
@@ -14,9 +14,8 @@ export class TableLights {
     this.sim = sim;
     this.host = host;
     this.graphics = scene.add.graphics().setDepth(1); // Below mechanisms and ball.
-    this.eyes = scene.add.graphics().setDepth(-.5); // Above art, below all hardware.
+    this.eyes = scene.add.graphics().setDepth(4.5); // Above art/rail decks and labels, below ball and mechanisms.
     this.cues = new Map();
-    this.lastEyes = -Infinity;
     this.media = host.matchMedia('(prefers-reduced-motion: reduce)');
     this.override = null;
     try {
@@ -33,17 +32,9 @@ export class TableLights {
     this.media.addEventListener('change', this.onPreference);
     this.button.addEventListener('click', this.onToggle);
     this.onPreference();
-    // Constant-distance studs, slightly off the ball's centre line. Generated
-    // once from the same sampled paths as the existing guided ball travel.
-    this.routes = sim.shots.map(shot => ({ id: shot.id, kind: shot.kind,
-      nodes: Array.from({ length: 33 }, (_, i) => {
-        const p = pointOnPath(shot.path, i / 32), next = pointOnPath(shot.path, Math.min(1, (i + .2) / 32));
-        const prev = pointOnPath(shot.path, Math.max(0, (i - .2) / 32));
-        const dx = next.x - prev.x, dy = next.y - prev.y, length = Math.hypot(dx, dy) || 1;
-        const offset = shot.kind === 'ramp' ? 12 : 9;
-        return { x: p.x - dy / length * offset, y: p.y + dx / length * offset, progress: i / 32 };
-      }) }));
+    this.spells = new SpellLights(sim, this.graphics, this.eyes);
   }
+
   setReduced(reduced) {
     this.reduced = reduced;
     this.cues.clear();
@@ -52,7 +43,16 @@ export class TableLights {
     this.button.title = 'Reduced effects: quiet, stationary light cues; no chase lights or eye animation';
     this.host.document.documentElement.dataset.reducedEffects = String(reduced);
   }
-  reset() { this.cues.clear(); this.lastEyes = -Infinity; }
+  reset() { this.cues.clear(); this.spells.reset(); }
+  beginSpell(travel) { this.spells.begin(travel); }
+  cancelSpell() { this.spells.cancel(); }
+  completeSpell(shot) {
+    this.spells.complete(shot);
+    if (shot.kind === 'ramp' && !this.reduced) {
+      this.cues.delete('eyes');
+      this.pulse('eyes', 'eyes', { x: 0, y: 0 });
+    }
+  }
   pulse(id, kind, position) {
     const now = this.sim.elapsed, duration = DURATIONS[kind];
     if (!duration || !position) return;
@@ -66,11 +66,8 @@ export class TableLights {
       if (this.cues.size >= 16) this.cues.delete(this.cues.keys().next().value);
       this.cues.set(id, { kind, x: position.x, y: position.y, at: now, until: now + duration });
     }
-    if (kind === 'ramp' && !this.reduced && now - this.lastEyes >= 6000) {
-      this.lastEyes = now;
-      this.pulse('eyes', 'eyes', { x: 0, y: 0 });
-    }
   }
+
   bumperColours(id) {
     const cue = this.cues.get(id);
     return bumperRingColours(cue?.kind === 'bumper' ? this.sim.elapsed - cue.at : -1, this.reduced);
@@ -92,15 +89,7 @@ export class TableLights {
       const strength = this.strength(id), { x, y, kind } = cue;
       // Bumpers change their existing opaque rings; no additive halo pulse.
       if (kind === 'bumper') continue;
-      if (kind === 'eyes') {
-        if (this.reduced) continue;
-        // Aligned to the eyes in the original 540x960 printed illustration.
-        for (const ex of [230, 310]) {
-          eyes.fillStyle(0xc88a48, .13 * strength).fillEllipse(ex, 391, 23, 14);
-          eyes.fillStyle(0xe5c38b, .4 * strength).fillEllipse(ex, 391, 9, 4);
-        }
-        continue;
-      }
+      if (['eyes', 'ramp', 'orbit'].includes(kind)) continue;
       const colour = COLOURS[kind];
       if (kind === 'drain' || kind === 'gameover') {
         g.lineStyle(2, colour, .4 * strength).strokeTriangle(236, 899, 264, 899, 250, 916);
@@ -121,25 +110,9 @@ export class TableLights {
         if (big) g.lineStyle(1, colour, .3 * strength).strokeCircle(x, y, radius + 8);
       }
     }
-    const travel = sim.travel;
-    if (!travel || !['ramp', 'orbit'].includes(travel.shot.kind)) return;
-    const progress = Math.max(0, Math.min(1, (sim.elapsed - travel.started) / travel.shot.duration));
-    const route = this.routes.find(r => r.id === travel.shot.id);
-    const colour = COLOURS[route.kind];
-    if (this.reduced) {
-      const node = route.nodes[0];
-      g.fillStyle(colour, .22).fillCircle(node.x, node.y, 4);
-      return;
-    }
-    this.chase = { id: route.id, progress };
-    for (const node of route.nodes) {
-      const behind = progress - node.progress;
-      if (behind < 0 || behind > .2) continue;
-      const alpha = .55 * (1 - behind / .2);
-      g.fillStyle(colour, alpha * .2).fillCircle(node.x, node.y, 6);
-      g.fillStyle(colour, alpha).fillCircle(node.x, node.y, 2.5);
-    }
+    this.chase = this.spells.draw(this.reduced, this.cues.get('eyes'));
   }
+
   destroy() {
     this.media.removeEventListener('change', this.onPreference);
     this.button.removeEventListener('click', this.onToggle);

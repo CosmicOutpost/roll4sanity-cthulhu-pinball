@@ -160,3 +160,12 @@ footer button { color: #e4d6af; letter-spacing: 1px; }
 html[data-reduced-effects=true] .score-feedback,
 html[data-reduced-effects=true] .table-message { transition: none; }
 @media(max-width:650px) { footer { gap: 6px; } #motion { font-size: 8px; } }
+
+#chant { font-size: 8px; letter-spacing: .3px; min-width: 80px; }
+#chant[aria-pressed=true] { color: #f2d78b; }
+@media(max-width:650px) {
+  footer > span { display: none; }
+  footer { gap: 6px; }
+  footer button, #motion, #chant { min-width: 76px; font-size: 8px; }
+}
+@media(max-height:500px) { footer button { padding: 0 5px; } }

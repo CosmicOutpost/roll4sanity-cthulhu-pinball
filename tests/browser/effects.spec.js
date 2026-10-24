@@ -33,19 +33,20 @@ for (const [width, height] of [[1440, 900], [390, 844]]) {
     await page.setViewportSize({ width, height });
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
-    await open(page); await serve(page);
+    await open(page);
     for (const [id, kind, x, y, points] of [['left-ramp', 'ramp', 185, 470, 2500], ['right-orbit', 'orbit', 441, 451, 1000]]) {
+      await page.keyboard.press('r'); await serve(page);
       const before = await pose(page, { x, y, vy: -7 });
       await page.waitForFunction(id => window.pinball.travel?.shot.id === id && window.pinballPresentation.table.lights.chase?.progress > .15, id);
       const first = await page.evaluate(id => {
         const p = window.pinball, f = window.pinballPresentation, l = f.table.lights;
         return { id: p.ball.id, score: p.state.score, cue: l.cues.get(id)?.kind,
-          eyes: l.cues.has('eyes'), chase: { ...l.chase }, sound: f.sound.lastPlayed.has(p.travel.shot.kind),
+          eyes: l.cues.has('eyes'), chase: { ...l.chase }, sound: !!f.sound.ritual.travel,
           layers: [l.eyes.depth, f.table.artwork.depth, l.graphics.depth, f.table.moving.depth] };
       }, id);
       expect(first.id).toBe(before.id); expect(first.score).toBe(before.score + points);
       expect(first.cue).toBe(kind); expect(first.sound).toBe(true);
-      if (kind === 'ramp') expect(first.eyes).toBe(true);
+      expect(first.eyes).toBe(false);
       expect(first.layers[0]).toBeGreaterThan(first.layers[1]);
       expect(first.layers[2]).toBeLessThan(first.layers[3]);
       await page.waitForTimeout(140);
@@ -63,7 +64,8 @@ for (const [width, height] of [[1440, 900], [390, 844]]) {
       expect(await page.evaluate(() => window.pinballPresentation.sound.voices.size)).toBe(0);
       await page.keyboard.press('p');
       await page.waitForFunction(() => !window.pinball.travel);
-      // Expire the previous eye cue before checking the smaller orbit reward.
+      await page.waitForTimeout(50);
+      expect(await page.evaluate(() => window.pinballPresentation.table.lights.cues.has('eyes'))).toBe(kind === 'ramp');
     }
     await page.keyboard.press('r');
     await page.waitForFunction(() => window.pinballPresentation.table.lights.cues.size === 0);

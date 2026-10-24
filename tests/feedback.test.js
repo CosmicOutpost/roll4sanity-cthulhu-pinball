@@ -30,7 +30,7 @@ function environment({ reduced = false, blocked = false } = {}) {
   return { sim, lights, feedback, sounds, media, nodes, graphics, destroy() { feedback.destroy(); sim.destroy(); } };
 }
 
-test('score cues are observed once; ramp eyes are restrained and collision data stays untouched', () => {
+test('score cues are observed once; entry scores never awaken eyes and collision data stays untouched', () => {
   const e = environment();
   try {
     e.sim.state.launch(); e.feedback.update(0);
@@ -38,15 +38,15 @@ test('score cues are observed once; ramp eyes are restrained and collision data 
       e.sim.state.addScore(score, id); e.sim.flashes.set(id, e.sim.elapsed + 300);
       const flashes = [...e.sim.flashes];
       e.feedback.update(100); e.feedback.update(110);
-      assert.equal(e.sounds.filter(k => k === kind).length, 1);
+      assert.equal(e.sounds.filter(k => k === kind).length, ['ramp', 'orbit'].includes(kind) ? 0 : 1);
       assert.equal(e.lights.cues.get(id).kind, kind);
       assert.deepEqual([...e.sim.flashes], flashes);
     }
     assert.equal(e.sim.state.score, 3675);
-    const eyes = e.lights.cues.get('eyes');
+    assert.equal(e.lights.cues.has('eyes'), false);
     e.sim.elapsed += 1800;
     e.lights.pulse('left-ramp', 'ramp', { x: 185, y: 455 });
-    assert.equal(e.lights.cues.get('eyes'), eyes, 'no repeated eye wake within six seconds');
+    assert.equal(e.lights.cues.has('eyes'), false, 'only completed ramps awaken the eyes');
   } finally { e.destroy(); }
 });
 

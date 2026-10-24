@@ -51,7 +51,7 @@ for (const [width, height] of [[1280, 720], [1440, 900], [1920, 1080], [768, 102
     await open(page);
     const layout = await page.evaluate(() => ({
       width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight,
-      items: ['game', 'launch', 'left-flipper', 'right-flipper', 'sound', 'pause', 'restart', 'motion', 'score', 'ball'].map(id => {
+      items: ['game', 'launch', 'left-flipper', 'right-flipper', 'sound', 'pause', 'restart', 'motion', 'chant', 'score', 'ball'].map(id => {
         const r = document.getElementById(id).getBoundingClientRect();
         return { id, x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: r.width, height: r.height };
       }),

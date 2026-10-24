@@ -1,3 +1,5 @@
+import { RitualAudio } from './ritual-audio.js';
+
 // Original synthesised arcade effects. No samples, downloads or third-party
 // audio assets. The context is created/resumed only inside a trusted gesture.
 const PRESETS = {
@@ -9,6 +11,7 @@ const PRESETS = {
   launch: [[110, 380, .18, 'triangle', .38]],
   orbit: [[523, 392, .14, 'sine', .18], [196, 147, .25, 'triangle', .12, .04]],
   ramp: [[659, 988, .19, 'sine', .19], [1320, 1046, .22, 'sine', .1, .09], [82, 65, .34, 'triangle', .13]],
+  rune: [[1780, 1200, .08, 'sine', .11]],
   rail: [[1360, 710, .085, 'sine', .09], [220, 146, .13, 'triangle', .1]],
   drain: [[98, 46, .38, 'triangle', .2], [147, 73, .26, 'sine', .12]],
   gameover: [[110, 41, .62, 'triangle', .2], [165, 55, .52, 'sine', .13, .08], [82, 36, .64, 'sine', .1]],
@@ -24,6 +27,7 @@ export class ArcadeAudio {
     this.lastPlayed = new Map();
     this.played = 0;
     this.paused = false;
+    this.ritual = new RitualAudio(this);
     this.unavailable = !(host.AudioContext || host.webkitAudioContext);
     try { this.muted = host.localStorage.getItem('roll4sanity-muted') === 'true'; }
     catch { this.muted = false; }
@@ -120,6 +124,7 @@ export class ArcadeAudio {
     return true;
   }
   stopVoices() {
+    this.ritual.stopAll();
     for (const voice of this.voices) {
       try { voice.oscillator.stop(); } catch { /* An ended voice may be awaiting its callback. */ }
       voice.oscillator.disconnect(); voice.envelope.disconnect();
@@ -134,6 +139,7 @@ export class ArcadeAudio {
     this.host.document.removeEventListener('visibilitychange', this.onVisibility);
     this.button.removeEventListener('click', this.onToggle);
     this.stopVoices();
+    this.ritual.destroy();
     this.master?.disconnect();
     if (this.context) this.context.close().catch(() => {});
   }

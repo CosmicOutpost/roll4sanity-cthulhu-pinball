@@ -35,16 +35,32 @@ locally when browser storage is available. Audio starts only after a real player
 gesture (a game key, pointer or touch); the browser may require another gesture
 after an interruption. Effects are original, generated locally with Web Audio:
 flipper clicks, occult bumper/ward impacts, quiet rubber-post and metal-rail
-ticks, supernatural orbit/ramp chimes, and short drain/game-over descents. No audio downloads, third-party samples, music or runtime service is used.
+ticks, and short drain/game-over descents. Guided shots add a low activation
+rumble, detuned rising shimmer, progress-following drone and rune sparkles.
+Completion produces a dissonant ritual bell with a short echo; completed ramps
+add a filtered, modulated growl. These are original procedural Web Audio graphs,
+with bounded sources and explicit cleanup. No audio downloads, third-party
+samples, music or runtime service is used.
 Unsupported or blocked audio/storage does not stop the game. Pause/focus loss
-silences active effects; there is no delayed sound replay on resume.
+silences active effects; there is no delayed sound replay on resume. A journey
+resumed mid-route starts only its current-progress drone, without replaying the
+activation. **CHANT: OFF / ON** independently enables an optional robotic
+vowel-like chant on ramp completion (off by default). It is deliberately
+artificial, not intelligible speech. SFX mute silences it along with all sounds.
 
 **LIGHTS: FULL / CALM** in the footer toggles reduced effects. It initially follows
 `prefers-reduced-motion`, remembers a manual choice when storage is available,
 and never changes gameplay or mute. Calm mode uses faint stationary cues, without
 chase lights or animated eyes. Full mode adds smooth scoring glows and symbols,
-lights following guided ramp/orbit travel, and a brief eye glow on ramp scores
-(at most once per six seconds). Repeated hits sustain a glow rather than strobe.
+emerald/gold currents following the actual guided ramp/orbit paths, sequential
+occult runes, trailing energy and geometric end-of-route arcs. Completion sends
+a final gold packet down the route before a local crimson pulse. Ordinary rail
+contacts remain small local reactions. Successful **ramp completion** awakens
+both illustrated eyes above the printed art and rail decks, below the ball:
+250 ms amber-to-white attack, 800 ms peak hold and 1.5 s smooth fade. Entry
+scores, orbit completions and bumper hits do not awaken the eyes. Calm uses
+stationary entrance/exit symbols and suppresses eye animation; sound remains
+independent. Repeated mechanical hits sustain a glow rather than strobe.
 The original artwork and all collision shapes stay unchanged.
 
 Scoring shows a short **+points** caption in the scoreboard and playfield for
@@ -227,7 +243,10 @@ This is an initial mechanical prototype. Automated browser and simulation checks
 - `src/game/physics.js` — fixed-step Matter simulation, flippers, plunger, kickers, guided travel.
 - `src/game/state.js` — scoring, ball count, pause, restart.
 - `src/game/render.js` — procedural table visuals and debug overlay.
-- `src/game/lights.js` — bounded scoring glows, guided-path chase lights, subtle eyes and reduced-effects preferences.
+- `src/game/lights.js` — bounded scoring glows and reduced-effects preferences.
+- `src/game/spell-lights.js` — path-following ritual currents, runes and timed eye awakening.
+- `src/game/guided-feedback.js` — read-only guided journey start/progress/completion observation.
+- `src/game/ritual-audio.js` — procedural drones, ritual bell, growl, optional chant and group cleanup.
 - `src/game/audio.js` — original generated effects, gesture unlock, bounded voices and mute preference.
 - `src/game/feedback.js` — observes existing inputs/scoring for sound and readable captions; never changes the simulation.
 - `src/game/controls.js` — keyboard and pointer input, focus safety.
