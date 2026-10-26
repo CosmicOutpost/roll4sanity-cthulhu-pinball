@@ -62,7 +62,7 @@ for (const width of [1440, 390]) {
       peak.halo.forEach((rgb, i) => {
         expect(Math.max(...rgb.slice(0, 3).map((value, c) => value - baselineHalo[i][c]))).toBeGreaterThan(60);
       });
-      expect(peak.art).toEqual([270, 480, 540, 960]); expect(peak.layers).toEqual([-1, 4.5, 5]);
+      expect(peak.art).toEqual([0, 0, 540, 960]); expect(peak.layers).toEqual([-3, 4.5, 5]);
       await mkdir(evidence, { recursive: true });
       await page.screenshot({ path: `${evidence}/after-full-${width}-peak.png` });
       await page.keyboard.press('p');

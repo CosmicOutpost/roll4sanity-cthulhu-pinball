@@ -109,7 +109,7 @@ jobs:
           PRESENTATION_ONLY: ${{ contains(github.event.head_commit.message, '[presentation deploy]') }}
         run: |
           if [ "$PRESENTATION_ONLY" = "true" ]; then
-            npx playwright test tests/browser/feedback.spec.js tests/browser/ritual.spec.js --grep 'cabinet displays|table and essential controls fit|four real routes'
+            npx playwright test tests/browser/feedback.spec.js tests/browser/ritual.spec.js tests/browser/layered-art.spec.js --grep 'cabinet displays|table and essential controls fit|four real routes|static layers|actual phone touch'
           else
             npx playwright test tests/browser/play.spec.js tests/browser/feedback.spec.js --grep 'plays beyond the launch guide|Stage 1'
           fi

@@ -11,7 +11,7 @@ test('Stage 1 cabinet displays the emerald and brass design with playfield artwo
   await expect(page.locator('.edition')).toHaveText('THE SUNKEN TABLE R4S');
   expect(await page.evaluate(() => {
     const art = window.pinballPresentation.table.artwork;
-    return { loaded: art.texture.key === 'playfield-art', width: art.displayWidth,
+    return { loaded: art.texture.key === 'art-background', width: art.displayWidth,
       height: art.displayHeight, behindMechanisms: art.depth < 0, physicsBody: !!art.body };
   })).toEqual({ loaded: true, width: 540, height: 960, behindMechanisms: true, physicsBody: false });
   await expect(page.locator('canvas')).toBeVisible();
