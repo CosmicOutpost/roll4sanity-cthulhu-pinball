@@ -1,0 +1,55 @@
+{
+  "operation": "Static REST alpha composition only; no retouch, deformation or generated artwork",
+  "boardSize": [
+    941,
+    1672
+  ],
+  "layers": [
+    {
+      "source": "/workspace/artifacts/awakening-facial-background-ownership/neck-shoulder-rear-strands.png",
+      "x": 166,
+      "y": 647
+    },
+    {
+      "source": "/workspace/artifacts/awakening-outer-groups-v2/left/frames/01_rest.png",
+      "x": -32,
+      "y": 600
+    },
+    {
+      "source": "/workspace/artifacts/awakening-connector-curl-ownership/frames/01_rest.png",
+      "x": 501,
+      "y": 600
+    },
+    {
+      "source": "/workspace/artifacts/awakening-facial-background-ownership/central-facial-rest.png",
+      "x": 214,
+      "y": 636
+    },
+    {
+      "source": "/workspace/artifacts/awakening-final-dormant-cleanup/assets/left-cheek.png",
+      "x": 323,
+      "y": 681
+    },
+    {
+      "source": "/workspace/artifacts/awakening-final-dormant-cleanup/assets/right-cheek.png",
+      "x": 526,
+      "y": 682
+    },
+    {
+      "source": "/workspace/artifacts/awakening-final-dormant-cleanup/assets/left-arm-root.png",
+      "x": 287,
+      "y": 927
+    },
+    {
+      "source": "/workspace/artifacts/awakening-final-dormant-cleanup/assets/right-arm-root.png",
+      "x": 607,
+      "y": 923
+    },
+    {
+      "source": "/workspace/artifacts/awakening-final-dormant-cleanup/assets/head-upper-face.png",
+      "x": 294,
+      "y": 444
+    }
+  ],
+  "background": "/workspace/artifacts/awakening-facial-background-ownership/corrected-clean-plate.png"
+}

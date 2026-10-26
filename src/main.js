@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import './style.css';
 import './cabinet.css';
-import playfieldArt from './assets/playfield-art.png';
+import { preloadArt } from './game/art-layers.js';
 import { PinballPhysics } from './game/physics.js';
 import { TableRenderer } from './game/render.js';
 import { bindControls } from './game/controls.js';
@@ -11,7 +11,7 @@ import { WIDTH, HEIGHT } from './game/table.js';
 class PinballScene extends Phaser.Scene {
   constructor() { super('pinball'); }
   preload() {
-    this.load.image('playfield-art', playfieldArt);
+    preloadArt(this);
   }
   create() {
     this.sim = new PinballPhysics();

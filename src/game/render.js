@@ -1,3 +1,4 @@
+import { createArtLayers } from './art-layers.js';
 import { TableLights } from './lights.js';
 import { WIDTH, HEIGHT, BUMPERS, WARDS, WARD_RULES, POSTS, RAILS, SLINGS } from './table.js';
 
@@ -6,8 +7,8 @@ export class TableRenderer {
     this.scene = scene;
     this.physics = physics;
     // Printed artwork sits behind every real mechanism. It has no physics body.
-    this.artwork = scene.add.image(WIDTH / 2, HEIGHT / 2, 'playfield-art')
-      .setDisplaySize(WIDTH, HEIGHT).setDepth(-1);
+    this.artLayers = createArtLayers(scene);
+    this.artwork = this.artLayers.background;
     this.base = scene.add.graphics();
     this.moving = scene.add.graphics().setDepth(5);
     this.overlay = scene.add.graphics().setDepth(10);
