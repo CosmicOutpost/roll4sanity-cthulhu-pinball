@@ -7,12 +7,22 @@ for (const [name,width,height] of [['desktop',1920,1080],['large',2560,1440],['l
   await page.goto(`${base}playtest-candidate/?debug=1`); await page.waitForFunction(()=>window.pinballPresentation);
   async function fits() {
    const layout=await page.evaluate(()=>{const box=s=>{const r=document.querySelector(s).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};return {scrollW:document.documentElement.scrollWidth,scrollH:document.documentElement.scrollHeight,field:box('.playfield'),boxes:['.scoreboard','#ritual-progress','#left-flipper','#launch','#right-flipper','footer'].map(box)};});
-   expect(layout.scrollW).toBeLessThanOrEqual(width); expect(layout.scrollH).toBeLessThanOrEqual(height);
-   for(const box of layout.boxes) {expect(box.left).toBeGreaterThanOrEqual(0);expect(box.top).toBeGreaterThanOrEqual(0);expect(box.right).toBeLessThanOrEqual(width);expect(box.bottom).toBeLessThanOrEqual(height);}
+   expect(layout.scrollW).toBeLessThanOrEqual(width);
+   for(const box of layout.boxes) {expect(box.left).toBeGreaterThanOrEqual(0);expect(box.right).toBeLessThanOrEqual(width);}
    expect(layout.field.width/layout.field.height).toBeCloseTo(9/16,3);
   }
-  await fits(); await page.locator('#test-tools').click(); await expect(page.locator('#ritual-test-mode')).toBeVisible(); await fits();
+  await fits();
+  for(const selector of ['.scoreboard','#ritual-progress','.playfield','#left-flipper','#launch','#right-flipper']) {
+   const rect=await page.locator(selector).boundingBox(); expect(rect.y).toBeGreaterThanOrEqual(0); expect(rect.y+rect.height).toBeLessThanOrEqual(height);
+  }
+  await page.locator('#test-tools').click(); await expect(page.locator('#ritual-test-mode')).toBeVisible(); await fits();
   await page.locator('#test-tools').click(); await expect(page.locator('#ritual-test-mode')).toBeHidden(); await fits();
+  if(name==='laptop') {
+   await expect(page.locator('.intro')).toBeVisible(); await expect(page.locator('.instructions')).toBeVisible();
+   const order=await page.evaluate(()=>({machine:document.querySelector('.machine').getBoundingClientRect().bottom,intro:document.querySelector('.intro').getBoundingClientRect().top,instructions:document.querySelector('.instructions').getBoundingClientRect().top}));
+   expect(order.intro).toBeGreaterThanOrEqual(order.machine); expect(order.instructions).toBeGreaterThan(order.intro);
+   await page.evaluate(()=>window.scrollTo(0,0));
+  }
   if(name==='mobile') {const launch=page.locator('#launch'),r=await launch.boundingBox();await page.mouse.move(r.x+r.width/2,r.y+r.height/2);await page.mouse.down();await page.waitForFunction(()=>window.pinball.charge>.95);await page.mouse.up();}
   else {await page.keyboard.down('Space');await page.waitForFunction(()=>window.pinball.charge>.95);await page.keyboard.up('Space');}
   await page.waitForFunction(()=>window.pinball.state.phase==='playing');

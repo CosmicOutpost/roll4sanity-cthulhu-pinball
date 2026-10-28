@@ -9,10 +9,11 @@
   footer { padding-top:4px; }
 }
 @media (min-width:651px) and (max-width:1400px) and (min-height:501px) {
-  .game-layout { display:flex; justify-content:center; }
-  .machine { width:min(100%,var(--machine-width)); }
-  .intro, .instructions { display:none; }
+  .game-layout { display:flex; flex-direction:column; align-items:center; gap:24px; }
+  .machine { order:0; width:min(100%,var(--machine-width)); }
+  .intro, .instructions { display:block; order:1; width:min(100%,680px); max-width:680px; }
+  .intro h1 { font-size:clamp(32px,4vw,48px); }
 }
 @media (min-width:651px) and (max-width:1000px) and (min-height:501px) {
-  .masthead { display:none; }
+  .masthead { display:flex; position:static; }
 }
