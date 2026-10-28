@@ -47,7 +47,10 @@ new = '''      this.stroke(rail.points, rail.width + 5, 0x081b17, .9);
         }
       }'''
 if source.count(old) != 1: raise SystemExit('Candidate guide drawing hook not unique')
-renderer.write_text(source.replace(old, new, 1))
+source = source.replace(old, new, 1)
+old = "    this.text(250, 106, 'ARKHAM  /  MASSACHUSETTS', 8, '#6b9f9b');\n"
+if source.count(old) != 1: raise SystemExit('Candidate upper-playfield lettering hook not unique')
+renderer.write_text(source.replace(old, '', 1))
 
 # Install the isolated test-only UI into this archived build, never the prototype.
 import shutil
