@@ -8,6 +8,13 @@ export const BUMPERS = [{ x: 250, y: 250 }, { x: 185, y: 335 }, { x: 315, y: 335
 // Compact midfield kickers; existing rails, entrances and lower feeds stay open.
 export const WARDS = [{ x: 135, y: 550, radius: 12 }, { x: 365, y: 550, radius: 12 }];
 export const WARD_RULES = { score: 75, speed: 9, cooldown: 240, inwardBias: .22 };
+// Passive, rounded stand-up stones; initial approved positions retained.
+export const COVER_STONES = [
+  { x: 135, y: 395, angle: -.314 },
+  { x: 250, y: 430, angle: .314 },
+  { x: 365, y: 395, angle: .314 },
+];
+export const STONE_RULES = { score: 100, cooldown: 250, width: 24, height: 16 };
 export const SLINGS = [
   [{ x: 110, y: 604 }, { x: 178, y: 715 }, { x: 105, y: 687 }],
   [{ x: 390, y: 604 }, { x: 395, y: 687 }, { x: 322, y: 715 }],

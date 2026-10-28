@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import './style.css';
 import './cabinet.css';
+import './ritual.css';
+import { RitualPresentation } from './game/ritual-presentation.js';
 import { preloadArt } from './game/art-layers.js';
 import { PinballPhysics } from './game/physics.js';
 import { TableRenderer } from './game/render.js';
@@ -20,6 +22,7 @@ class PinballScene extends Phaser.Scene {
     const toggleDebug = () => { this.table.debug = !this.table.debug; this.refreshHUD(); };
     this.unbind = bindControls(this.sim, toggleDebug, () => this.refreshHUD());
     this.feedback = new ArcadeFeedback(this.sim, this.table);
+    this.ritual = new RitualPresentation(this, this.sim, this.table.lights, this.feedback.sound);
     // Temporary console-only inspection; Vite removes this entire block from production.
     if (import.meta.env.DEV) {
       window.previewCthulhuEyes = () => this.table.lights.awaken();
@@ -31,7 +34,7 @@ class PinballScene extends Phaser.Scene {
       window.pinballPresentation = this.feedback;
     }
     this.events.once('shutdown', () => {
-      this.unbind(); this.feedback.destroy(); this.sim.destroy();
+      this.unbind(); this.ritual.destroy(); this.feedback.destroy(); this.sim.destroy();
       delete window.pinball; delete window.pinballPresentation;
     });
     this.refreshHUD();
@@ -47,8 +50,8 @@ class PinballScene extends Phaser.Scene {
     document.getElementById('ball').innerHTML = `${String(state.ballNumber).padStart(2, '0')} <small>/ 03</small>`;
     const show = state.paused || state.phase !== 'playing';
     document.getElementById('message').classList.toggle('visible', show);
-    document.getElementById('message-title').textContent = state.paused ? 'HOLD YOUR BREATH' : state.phase === 'gameover' ? 'CLAIMED BY THE DEEP' : charging ? `PLUNGER CHARGING · ${chargePercent}%` : state.lastEvent;
-    document.getElementById('message-detail').textContent = state.paused ? 'PRESS P OR Ⅱ TO RESUME' : state.phase === 'gameover' ? `FINAL SCORE ${state.score.toLocaleString()} · PRESS R TO BEGIN AGAIN` : charging && chargePercent === 100 ? 'FULL CHARGE · RELEASE TO LAUNCH' : 'HOLD SPACE OR LAUNCH FOR 1.2s, THEN RELEASE';
+    document.getElementById('message-title').textContent = state.paused ? 'HOLD YOUR BREATH' : state.phase === 'gameover' ? (state.ritual.sealed ? 'CTHULHU IS SEALED!' : 'CLAIMED BY THE DEEP') : charging ? `PLUNGER CHARGING · ${chargePercent}%` : state.lastEvent;
+    document.getElementById('message-detail').textContent = state.paused ? 'PRESS P OR Ⅱ TO RESUME' : state.phase === 'gameover' ? `FINAL SCORE ${state.score.toLocaleString()} · ${state.ritual.sealed ? 'CTHULHU SEALED' : 'RITUAL INCOMPLETE'} · PRESS R TO BEGIN AGAIN` : charging && chargePercent === 100 ? 'FULL CHARGE · RELEASE TO LAUNCH' : 'HOLD SPACE OR LAUNCH FOR 1.2s, THEN RELEASE';
     document.getElementById('pause').setAttribute('aria-label', state.paused ? 'Resume game' : 'Pause game');
     document.getElementById('pause').textContent = state.paused ? '▷' : 'II';
     document.getElementById('debug').setAttribute('aria-pressed', String(this.table.debug));
@@ -60,6 +63,7 @@ class PinballScene extends Phaser.Scene {
     this.sim.update(delta);
     this.table.draw();
     this.feedback.update(_time);
+    this.ritual.update();
     this.refreshHUD();
     if (this.table.debug && (!this.lastVelocityUpdate || _time - this.lastVelocityUpdate > 120)) {
       this.lastVelocityUpdate = _time;

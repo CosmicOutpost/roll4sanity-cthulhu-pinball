@@ -1,6 +1,6 @@
 import Matter from 'matter-js';
 import { GameState } from './state.js';
-import { BALL_RADIUS, FIXED_DT, MAX_SPEED, SHOOTER, BUMPERS, WARDS, WARD_RULES, POSTS, RAILS, SLINGS, SHOTS, samplePath, pointOnPath } from './table.js';
+import { BALL_RADIUS, FIXED_DT, MAX_SPEED, SHOOTER, BUMPERS, WARDS, WARD_RULES, COVER_STONES, STONE_RULES, POSTS, RAILS, SLINGS, SHOTS, samplePath, pointOnPath } from './table.js';
 const { Engine, Bodies, Body, Composite, Events, Vector } = Matter;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -50,6 +50,9 @@ export class PinballPhysics {
     WARDS.forEach(({ x, y, radius }, i) => add(Bodies.polygon(x, y, 32, radius, {
       circleRadius: radius, isStatic: true, restitution: .8, friction: .02, label: `ward:${i}`,
     })));
+    this.stones = COVER_STONES.map((stone, id) => add(Bodies.rectangle(stone.x, stone.y,
+      STONE_RULES.width, STONE_RULES.height, { isStatic: true, angle: stone.angle,
+        chamfer: { radius: 3 }, restitution: .55, friction: .02, label: `stone:${id}` })));
     POSTS.forEach(([x, y, r], i) => {
       // Pivot covers belong to the moving bat, not a second, larger stationary
       // post that could shelter a ball from the flipper's contact surface.
@@ -83,6 +86,7 @@ export class PinballPhysics {
   spawn() {
     if (this.ball) Composite.remove(this.engine.world, this.ball);
     this.travel = null;
+    this.completedShot = null;
     this.pendingKick = null;
     this.shotLock = this.elapsed + 500;
     this.shooter = true;
@@ -200,11 +204,25 @@ export class PinballPhysics {
     // almost parallel normal. Other faces retain Matter's passive restitution.
     return along > 0 && along < 1 && Vector.dot(outward, normal) > .99;
   }
+  isStoneFront(stone, collision) {
+    const normal = { x: -Math.sin(stone.angle), y: Math.cos(stone.angle) };
+    const outward = Vector.mult(collision.normal, collision.bodyA === this.ball ? 1 : -1);
+    // Require the long downward-facing rubber and an incoming approach. Back,
+    // corner, resting and separating contacts cannot award a hit or a seal.
+    return Vector.dot(outward, normal) > .95 && Vector.dot(this.ball.velocity, normal) < -.1;
+  }
   onCollision(event) {
     if (this.state.phase !== 'playing' || this.travel || !this.ball) return;
     for (const { bodyA, bodyB, collision } of event.pairs) {
       const other = bodyA === this.ball ? bodyB : bodyB === this.ball ? bodyA : null;
       if (!other) continue;
+      if (other.label.startsWith('stone:')) {
+        if (!this.isStoneFront(other, collision) || (this.cooldowns.get(other.id) ?? 0) > this.elapsed) continue;
+        this.cooldowns.set(other.id, this.elapsed + STONE_RULES.cooldown);
+        this.flashes.set(other.label, this.elapsed + 250);
+        this.state.hitStone(Number(other.label.split(':')[1]), this.elapsed);
+        continue; // Passive Matter restitution only: never assign pendingKick.
+      }
       const bumper = other.label.startsWith('bumper:');
       const sling = other.label.startsWith('sling:');
       const ward = other.label.startsWith('ward:');
@@ -233,7 +251,7 @@ export class PinballPhysics {
     this.pendingKick = null;
   }
   beginTravel(shot) {
-    this.travel = { shot, started: this.elapsed };
+    this.travel = { shot, started: this.elapsed, ball: this.ball };
     Body.setStatic(this.ball, true);
     this.ball.collisionFilter.mask = 0;
     if (shot.score) {
@@ -242,7 +260,7 @@ export class PinballPhysics {
     }
   }
   updateTravel() {
-    const { shot, started } = this.travel;
+    const { shot, started, ball } = this.travel;
     const progress = clamp((this.elapsed - started) / shot.duration, 0, 1);
     Body.setPosition(this.ball, pointOnPath(shot.path, progress));
     if (progress >= 1) {
@@ -251,6 +269,12 @@ export class PinballPhysics {
       this.ball.collisionFilter.mask = 0xFFFFFFFF;
       Body.setVelocity(this.ball, shot.exitVelocity);
       this.shotLock = this.elapsed + 900;
+      // A single confirmed record feeds both rules and presentation. Launches,
+      // aborted guides and serving never count. Consume only at actual exit.
+      if (ball === this.ball && this.state.phase === 'playing' && ['ramp', 'orbit'].includes(shot.kind)) {
+        this.state.completeBind(shot);
+        this.completedShot = { shot, ball: this.ball, at: this.elapsed };
+      }
     }
   }
   destroy() { Events.off(this.engine); Composite.clear(this.engine.world, false); Engine.clear(this.engine); }

@@ -1,7 +1,11 @@
+import { BindingRitual, SEAL_BONUS } from './binding-ritual.js';
+import { STONE_RULES } from './table.js';
+
 export class GameState {
   constructor() { this.restart(); }
   restart() {
     this.score = 0;
+    this.ritual = new BindingRitual();
     this.ballNumber = 1;
     this.phase = 'ready';
     this.paused = false;
@@ -16,6 +20,18 @@ export class GameState {
     if (this.phase !== 'playing' || this.paused) return false;
     this.score += points;
     this.lastEvent = label;
+    return true;
+  }
+  completeBind(shot) {
+    if (this.phase !== 'playing' || this.paused) return false;
+    return this.ritual.complete(shot);
+  }
+  hitStone(id, now) {
+    if (this.phase !== 'playing' || this.paused || !Number.isInteger(id) || id < 0 || id > 2) return false;
+    this.addScore(STONE_RULES.score, `COVER STONE ${id + 1} · +${STONE_RULES.score}`);
+    const wasSealed = this.ritual.sealed;
+    this.ritual.strike(id, now);
+    if (!wasSealed && this.ritual.sealed) this.addScore(SEAL_BONUS, 'CTHULHU IS SEALED!');
     return true;
   }
   drain() {

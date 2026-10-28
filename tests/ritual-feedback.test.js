@@ -19,7 +19,7 @@ test('guide observer starts once, follows actual progress and rewards completion
     e.sim.elapsed += 975; e.feedback.update();
     assert.deepEqual(e.calls.filter(c => c[0] === 'startSpell'), [['startSpell', 0, true]]);
     assert.deepEqual(e.calls.find(c => c[0] === 'updateSpell'), ['updateSpell', .5]);
-    e.sim.elapsed = 2050; e.sim.travel = null; e.feedback.update(); e.feedback.update();
+    e.sim.elapsed = 2050; e.sim.travel = null; e.sim.completedShot = { shot: e.shot, ball: e.sim.ball, at: e.sim.elapsed }; e.feedback.update(); e.feedback.update();
     assert.deepEqual(e.calls.filter(c => c[0] === 'completeSpell'), [['completeSpell', e.shot]]);
     assert.deepEqual(e.calls.slice(-2), [['endSpell', true, kind], ['roar']]);
     assert.equal(e.calls.filter(c => c[0] === 'roar').length, 1);
@@ -81,7 +81,7 @@ test('CALM drawing commands stay stationary throughout a guided journey', () => 
 // Identity mismatch must never produce an eye/roar split, even with valid timing.
 test('unknown or mismatched shot identities produce neither completion effect', () => {
   for (const [id, kind] of [['unknown', 'ramp'], ['left-orbit', 'ramp'], ['left-ramp', 'orbit']]) {
-    const e = observer(kind, id); e.feedback.update(); e.sim.elapsed = 3000; e.sim.travel = null; e.feedback.update();
+    const e = observer(kind, id); e.feedback.update(); e.sim.elapsed = 3000; e.sim.travel = null; e.sim.completedShot = { shot: e.shot, ball: e.sim.ball, at: e.sim.elapsed }; e.feedback.update();
     assert.equal(e.calls.some(c => ['completeSpell', 'roar'].includes(c[0])), false);
   }
 });
@@ -90,7 +90,7 @@ test('completion is consumed before callbacks, including re-entrant observation'
   const e = observer(); e.feedback.update();
   const complete = e.feedback.lights.completeSpell;
   e.feedback.lights.completeSpell = shot => { complete(shot); e.feedback.update(); };
-  e.sim.elapsed = 2050; e.sim.travel = null; e.feedback.update();
+  e.sim.elapsed = 2050; e.sim.travel = null; e.sim.completedShot = { shot: e.shot, ball: e.sim.ball, at: e.sim.elapsed }; e.feedback.update();
   assert.equal(e.calls.filter(c => c[0] === 'completeSpell').length, 1);
   assert.equal(e.calls.filter(c => c[0] === 'roar').length, 1);
 });

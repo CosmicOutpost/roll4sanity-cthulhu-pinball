@@ -76,10 +76,10 @@ export class ArcadeFeedback {
       if (expires === this.seen.get(id)) continue;
       this.seen.set(id, expires);
       if (expires <= sim.elapsed || restarted || state.paused || state.phase !== 'playing') continue;
-      const kind = id.startsWith('ward:') ? 'ward' : id.startsWith('bumper:') ? 'bumper' : id.startsWith('sling:') ? 'sling' : id.endsWith('orbit') ? 'orbit' : id.endsWith('ramp') ? 'ramp' : null;
+      const kind = id.startsWith('stone:') ? 'stone' : id.startsWith('ward:') ? 'ward' : id.startsWith('bumper:') ? 'bumper' : id.startsWith('sling:') ? 'sling' : id.endsWith('orbit') ? 'orbit' : id.endsWith('ramp') ? 'ramp' : null;
       if (kind) {
         effects.push(kind);
-        if (kind !== 'ramp' && kind !== 'orbit') sound.play(kind);
+        if (kind !== 'ramp' && kind !== 'orbit') sound.play(kind === 'stone' ? 'ward' : kind);
         const side = Number(id.split(':')[1]);
         const position = kind === 'bumper' ? BUMPERS[side] : kind === 'ward' ? WARDS[side]
           : kind === 'sling' ? SLINGS[side][0] : sim.shots.find(shot => shot.id === id)?.entry;
@@ -88,7 +88,7 @@ export class ArcadeFeedback {
     }
     const delta = state.score - this.previousScore;
     if (delta > 0 && !restarted) {
-      const labels = { ward: 'WARD', bumper: 'BUMPER', sling: 'SLING', orbit: 'ORBIT', ramp: 'RAMP' };
+      const labels = { stone: 'STONE', ward: 'WARD', bumper: 'BUMPER', sling: 'SLING', orbit: 'ORBIT', ramp: 'RAMP' };
       const kinds = [...new Set(effects)];
       const label = kinds.length === 1 ? labels[kinds[0]] : 'POINTS';
       this.message = `${label} +${delta.toLocaleString('en-US')}`;
