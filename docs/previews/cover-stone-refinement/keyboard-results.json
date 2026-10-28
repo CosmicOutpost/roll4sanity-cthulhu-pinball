@@ -1,0 +1,289 @@
+[
+  {
+    "id": 0,
+    "x": 278,
+    "y": 782,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 1,
+    "actualSteps": 16.00000000000029,
+    "hits": [],
+    "phase": "playing"
+  },
+  {
+    "id": 0,
+    "x": 278,
+    "y": 782,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 2,
+    "actualSteps": 11.999999999999563,
+    "hits": [],
+    "phase": "playing"
+  },
+  {
+    "id": 0,
+    "x": 278,
+    "y": 782,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 3,
+    "actualSteps": 13.000000000000945,
+    "hits": [],
+    "phase": "playing"
+  },
+  {
+    "id": 0,
+    "x": 278,
+    "y": 782,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 4,
+    "actualSteps": 11.0000000000008,
+    "hits": [
+      {
+        "id": 0,
+        "t": 14700.000000000355,
+        "qualifies": false
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 0,
+    "x": 278,
+    "y": 782,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 5,
+    "actualSteps": 10.999999999998398,
+    "hits": [
+      {
+        "id": 0,
+        "t": 18616.66666666682,
+        "qualifies": false
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 1,
+    "x": 285,
+    "y": 778,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 1,
+    "actualSteps": 10.999999999998398,
+    "hits": [
+      {
+        "id": 1,
+        "t": 22383.33333333294,
+        "qualifies": true
+      },
+      {
+        "id": 1,
+        "t": 22758.333333332885,
+        "qualifies": true
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 1,
+    "x": 285,
+    "y": 778,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 2,
+    "actualSteps": 7.999999999998836,
+    "hits": [
+      {
+        "id": 1,
+        "t": 26258.333333332375,
+        "qualifies": true
+      },
+      {
+        "id": 1,
+        "t": 26641.666666665653,
+        "qualifies": true
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 1,
+    "x": 285,
+    "y": 778,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 3,
+    "actualSteps": 7.999999999998836,
+    "hits": [
+      {
+        "id": 1,
+        "t": 30083.33333333182,
+        "qualifies": true
+      },
+      {
+        "id": 1,
+        "t": 30466.666666665096,
+        "qualifies": true
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 1,
+    "x": 285,
+    "y": 778,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 4,
+    "actualSteps": 8.000000000002327,
+    "hits": [
+      {
+        "id": 1,
+        "t": 33908.33333333176,
+        "qualifies": true
+      },
+      {
+        "id": 1,
+        "t": 34291.6666666652,
+        "qualifies": true
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 1,
+    "x": 285,
+    "y": 778,
+    "key": "Slash",
+    "delay": 7,
+    "attempt": 5,
+    "actualSteps": 9.000000000002618,
+    "hits": [
+      {
+        "id": 1,
+        "t": 37708.33333333286,
+        "qualifies": true
+      },
+      {
+        "id": 1,
+        "t": 38099.99999999964,
+        "qualifies": true
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 2,
+    "x": 228,
+    "y": 778,
+    "key": "KeyZ",
+    "delay": 7,
+    "attempt": 1,
+    "actualSteps": 8.000000000002327,
+    "hits": [
+      {
+        "id": 2,
+        "t": 41641.66666666734,
+        "qualifies": true
+      },
+      {
+        "id": 2,
+        "t": 41716.66666666736,
+        "qualifies": false
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 2,
+    "x": 228,
+    "y": 778,
+    "key": "KeyZ",
+    "delay": 7,
+    "attempt": 2,
+    "actualSteps": 8.000000000002327,
+    "hits": [
+      {
+        "id": 2,
+        "t": 45466.666666668454,
+        "qualifies": true
+      },
+      {
+        "id": 2,
+        "t": 45541.666666668476,
+        "qualifies": false
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 2,
+    "x": 228,
+    "y": 778,
+    "key": "KeyZ",
+    "delay": 7,
+    "attempt": 3,
+    "actualSteps": 8.000000000002327,
+    "hits": [
+      {
+        "id": 2,
+        "t": 49291.66666666957,
+        "qualifies": true
+      },
+      {
+        "id": 2,
+        "t": 49366.66666666959,
+        "qualifies": false
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 2,
+    "x": 228,
+    "y": 778,
+    "key": "KeyZ",
+    "delay": 7,
+    "attempt": 4,
+    "actualSteps": 8.000000000002327,
+    "hits": [
+      {
+        "id": 2,
+        "t": 53133.33333333735,
+        "qualifies": true
+      },
+      {
+        "id": 2,
+        "t": 53208.333333337374,
+        "qualifies": false
+      }
+    ],
+    "phase": "playing"
+  },
+  {
+    "id": 2,
+    "x": 228,
+    "y": 778,
+    "key": "KeyZ",
+    "delay": 7,
+    "attempt": 5,
+    "actualSteps": 8.000000000002327,
+    "hits": [
+      {
+        "id": 2,
+        "t": 56950.00000000513,
+        "qualifies": true
+      },
+      {
+        "id": 2,
+        "t": 57025.00000000515,
+        "qualifies": false
+      }
+    ],
+    "phase": "playing"
+  }
+]
