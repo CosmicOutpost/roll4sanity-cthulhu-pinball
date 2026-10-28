@@ -35,13 +35,13 @@ On a phone or tablet, use the flipper buttons and hold and release **LAUNCH**. A
 
 The candidate includes optional **TEST TOOLS** in the footer for examining the ritual. Test Mode starts a separate fresh game with the four Binds already active; the contact and hit counters can help during playtesting.
 
-## Which version am I playing?
+## Evolution of the Game
 
-GitHub Pages currently hosts separate builds:
+Take a look at how the table grew. All three versions are playable, and the earlier builds are preserved as milestones in its development:
 
-- [`/playtest-candidate/`](https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/playtest-candidate/) is the current Four Binds and Three Seals playtest described above.
-- [`/playtest/`](https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/playtest/) is the earlier ritual prototype.
-- [`/`](https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/) is the earlier live game, without the newer ritual objective.
+- **[RECOMMENDED — The Four Binds and Three Seals](https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/playtest-candidate/)**: the latest playtest, with the complete binding objective described above.
+- [First ritual prototype](https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/playtest/): an earlier milestone introducing the Four Binds and Three Seals.
+- [Original game](https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/): the earlier table before the ritual objective was added.
 
 The candidate is a playtest, not a promise that every shot is equally easy to aim. Human feedback remains important for judging balance and feel.
 
