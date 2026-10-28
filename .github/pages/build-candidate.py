@@ -13,3 +13,21 @@ for old, new in [
         raise SystemExit(f'Expected exactly one original stone: {old}')
     source = source.replace(old, new, 1)
 path.write_text(source)
+
+# Install the isolated test-only UI into this archived build, never the prototype.
+import shutil
+base = Path(__file__).resolve().parent
+target = Path(sys.argv[1])
+for name in ('ritual-test-mode.js', 'ritual-test-mode.css'):
+    shutil.copyfile(base / name, target / 'src/game' / name)
+main = target / 'src/main.js'
+code = main.read_text()
+for old, new in [
+    ("import { PinballPhysics } from './game/physics.js';", "import { PinballPhysics } from './game/physics.js';\nimport { RitualTestMode } from './game/ritual-test-mode.js';"),
+    ('    this.ritual = new RitualPresentation(this, this.sim, this.table.lights, this.feedback.sound);', '    this.ritual = new RitualPresentation(this, this.sim, this.table.lights, this.feedback.sound);\n    this.testMode = new RitualTestMode(this.sim, this);'),
+    ('this.unbind(); this.ritual.destroy();', 'this.unbind(); this.testMode.destroy(); this.ritual.destroy();'),
+    ('    this.ritual.update();', '    this.ritual.update();\n    this.testMode.update();'),
+]:
+    if code.count(old) != 1: raise SystemExit(f'Candidate hook not unique: {old}')
+    code = code.replace(old, new, 1)
+main.write_text(code)
