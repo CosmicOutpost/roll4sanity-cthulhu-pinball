@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Check out the playtest branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -49,6 +51,35 @@ jobs:
           else
             npm run test:browser
           fi
+
+      - name: Assemble and verify the two pinned releases
+        run: |
+          set -euo pipefail
+          stable=039d558e34a968f38a28902d874ff3e38902de9e
+          prototype=27e7ec49dadafd7aa3644114fe9eb90b7cfc38c3
+          # The playtest output must come from precisely the approved game code.
+          git diff --exit-code "$prototype" HEAD -- src index.html package.json package-lock.json vite.config.js
+          mv dist /tmp/pinball-playtest-dist
+          mkdir -p /tmp/pinball-live-source
+          git archive "$stable" | tar -x -C /tmp/pinball-live-source
+          (cd /tmp/pinball-live-source && npm ci && npm run build)
+          # Check both the rebuilt root and the current live root against the
+          # recorded release before publishing a replacement Pages artifact.
+          test "$(find /tmp/pinball-live-source/dist -type f | wc -l)" -eq "$(wc -l < .github/pages/stable-039d558.sha256)"
+          (cd /tmp/pinball-live-source/dist && sha256sum -c "$GITHUB_WORKSPACE/.github/pages/stable-039d558.sha256")
+          while read -r expected file; do
+            actual=$(curl --fail --silent --show-error --location "https://cosmicoutpost.github.io/roll4sanity-cthulhu-pinball/${file#./}" | sha256sum | cut -d' ' -f1)
+            test "$actual" = "$expected" || { echo "Live file changed: $file"; exit 1; }
+          done < .github/pages/stable-039d558.sha256
+          mv /tmp/pinball-live-source/dist dist
+          mv /tmp/pinball-playtest-dist dist/playtest
+          (cd dist && sha256sum -c "$GITHUB_WORKSPACE/.github/pages/stable-039d558.sha256")
+          mkdir -p /tmp/pinball-dual-root
+          ln -s "$GITHUB_WORKSPACE/dist" /tmp/pinball-dual-root/roll4sanity-cthulhu-pinball
+          python3 -m http.server 5222 --directory /tmp/pinball-dual-root >/tmp/dual-server.log 2>&1 &
+          server=$!
+          trap 'kill "$server"' EXIT
+          DUAL_PAGES_URL=http://127.0.0.1:5222/roll4sanity-cthulhu-pinball/ PINBALL_BASE_URL=http://127.0.0.1:5222/roll4sanity-cthulhu-pinball/ npx playwright test tests/browser/dual-pages.spec.js
 
       - name: Upload the static site
         uses: actions/upload-pages-artifact@v3
@@ -113,6 +144,12 @@ jobs:
           else
             npx playwright test tests/browser/play.spec.js tests/browser/feedback.spec.js --grep 'plays beyond the launch guide|Stage 1'
           fi
+
+      - name: Check both published versions on desktop and mobile
+        env:
+          DUAL_PAGES_URL: ${{ needs.deploy.outputs.page_url }}
+          PINBALL_BASE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: npx playwright test tests/browser/dual-pages.spec.js
 
       - name: Save live browser evidence
         if: always()
