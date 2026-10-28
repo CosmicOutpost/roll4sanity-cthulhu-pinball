@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const base = process.env.DUAL_PAGES_URL?.replace(/\/+$/, '') + '/';
 test.skip(!process.env.DUAL_PAGES_URL, 'Only run against the assembled dual Pages artifact');
-for (const [label, suffix, hasRitual] of [['live', '', false], ['playtest', 'playtest/', true]]) {
+for (const [label, suffix, hasRitual] of [['live', '', false], ['playtest', 'playtest/', true], ['candidate', 'playtest-candidate/', true]]) {
   for (const [device, viewport] of [['desktop', { width: 1280, height: 900 }], ['mobile', { width: 390, height: 844 }]]) {
     test(`${label} ${device} loads local assets and launches`, async ({ page }, info) => {
       await page.setViewportSize(viewport);
@@ -14,6 +14,10 @@ for (const [label, suffix, hasRitual] of [['live', '', false], ['playtest', 'pla
       await expect(page.locator('canvas')).toBeVisible();
       await expect(page.locator('#ritual-progress')).toHaveCount(hasRitual ? 1 : 0);
       expect(await page.evaluate(() => window.pinballPresentation.table.artLayers.logo.visible)).toBe(true);
+      if (hasRitual) {
+        const positions = await page.evaluate(() => window.pinball.stones.map(({position}) => [position.x, position.y]));
+        expect(positions).toEqual(label === 'candidate' ? [[145,495],[250,545],[355,495]] : [[135,395],[250,430],[365,395]]);
+      }
       await page.keyboard.press('d');
       if (device === 'mobile') {
         const launch = await page.locator('#launch').boundingBox();
