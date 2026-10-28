@@ -1,0 +1,3234 @@
+{
+  "original": [
+    {
+      "routes": [
+        "left-ramp",
+        "right-ramp",
+        "left-ramp",
+        "left-ramp",
+        "right-orbit",
+        "left-orbit"
+      ],
+      "threshold": 710,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 14250,
+      "elapsed": 79342,
+      "violations": [],
+      "approaches": [
+        5,
+        6,
+        3
+      ],
+      "contacts": [
+        2,
+        3,
+        1
+      ],
+      "front": [
+        0,
+        0,
+        1
+      ],
+      "afterFlip": [
+        0,
+        0,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78891.66666666653
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "left-ramp",
+        "right-ramp"
+      ],
+      "threshold": 710,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 8950,
+      "elapsed": 65042,
+      "violations": [],
+      "approaches": [
+        1,
+        4,
+        3
+      ],
+      "contacts": [
+        0,
+        2,
+        1
+      ],
+      "front": [
+        0,
+        0,
+        1
+      ],
+      "afterFlip": [
+        0,
+        0,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 64591.66666667402
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit",
+        "left-ramp",
+        "left-ramp",
+        "left-orbit",
+        "right-ramp",
+        "right-orbit"
+      ],
+      "threshold": 710,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 14650,
+      "elapsed": 77200,
+      "violations": [],
+      "approaches": [
+        3,
+        6,
+        0
+      ],
+      "contacts": [
+        2,
+        3,
+        0
+      ],
+      "front": [
+        1,
+        1,
+        0
+      ],
+      "afterFlip": [
+        1,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 76775.00000000109
+    },
+    {
+      "routes": [
+        "right-orbit",
+        "right-ramp",
+        "left-ramp"
+      ],
+      "threshold": 710,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 7125,
+      "elapsed": 62942,
+      "violations": [],
+      "approaches": [
+        0,
+        1,
+        2
+      ],
+      "contacts": [
+        0,
+        0,
+        0
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 62491.66666667341
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "left-ramp",
+        "left-ramp",
+        "right-orbit"
+      ],
+      "threshold": 725,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 14000,
+      "elapsed": 81517,
+      "violations": [],
+      "approaches": [
+        1,
+        10,
+        2
+      ],
+      "contacts": [
+        1,
+        4,
+        0
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 81066.66666666526
+    },
+    {
+      "routes": [
+        "right-ramp"
+      ],
+      "threshold": 725,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 4625,
+      "elapsed": 53658,
+      "violations": [],
+      "approaches": [
+        2,
+        6,
+        1
+      ],
+      "contacts": [
+        1,
+        3,
+        0
+      ],
+      "front": [
+        0,
+        1,
+        0
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 53450.00000000411
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit",
+        "left-ramp",
+        "right-ramp",
+        "right-orbit",
+        "right-ramp"
+      ],
+      "threshold": 725,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 13225,
+      "elapsed": 81233,
+      "violations": [],
+      "approaches": [
+        0,
+        1,
+        2
+      ],
+      "contacts": [
+        0,
+        1,
+        1
+      ],
+      "front": [
+        0,
+        0,
+        1
+      ],
+      "afterFlip": [
+        0,
+        0,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 80791.66666666542
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "right-ramp",
+        "right-ramp",
+        "right-ramp"
+      ],
+      "threshold": 725,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 11825,
+      "elapsed": 79242,
+      "violations": [],
+      "approaches": [
+        0,
+        5,
+        1
+      ],
+      "contacts": [
+        0,
+        2,
+        1
+      ],
+      "front": [
+        0,
+        1,
+        0
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78799.99999999991
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit",
+        "left-ramp",
+        "left-orbit",
+        "right-ramp"
+      ],
+      "threshold": 740,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 11175,
+      "elapsed": 63408,
+      "violations": [],
+      "approaches": [
+        2,
+        4,
+        1
+      ],
+      "contacts": [
+        1,
+        3,
+        0
+      ],
+      "front": [
+        1,
+        1,
+        0
+      ],
+      "afterFlip": [
+        1,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 62958.33333334021
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "right-ramp",
+        "right-orbit",
+        "right-orbit",
+        "left-ramp",
+        "left-orbit"
+      ],
+      "threshold": 740,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 15225,
+      "elapsed": 80950,
+      "violations": [],
+      "approaches": [
+        1,
+        3,
+        3
+      ],
+      "contacts": [
+        1,
+        0,
+        1
+      ],
+      "front": [
+        1,
+        0,
+        0
+      ],
+      "afterFlip": [
+        1,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 80399.99999999898
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit",
+        "right-ramp",
+        "right-orbit",
+        "right-ramp",
+        "right-orbit",
+        "right-ramp"
+      ],
+      "threshold": 740,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 14525,
+      "elapsed": 73758,
+      "violations": [],
+      "approaches": [
+        2,
+        3,
+        0
+      ],
+      "contacts": [
+        0,
+        2,
+        0
+      ],
+      "front": [
+        0,
+        2,
+        0
+      ],
+      "afterFlip": [
+        0,
+        2,
+        0
+      ],
+      "empowered": [
+        0,
+        1,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 73316.66666666977
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "left-ramp",
+        "left-ramp",
+        "right-orbit",
+        "right-ramp",
+        "right-ramp"
+      ],
+      "threshold": 740,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 15775,
+      "elapsed": 77917,
+      "violations": [],
+      "approaches": [
+        1,
+        7,
+        1
+      ],
+      "contacts": [
+        0,
+        2,
+        0
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77441.66666666737
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp"
+      ],
+      "threshold": 755,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 7000,
+      "elapsed": 78067,
+      "violations": [],
+      "approaches": [
+        1,
+        4,
+        2
+      ],
+      "contacts": [
+        0,
+        2,
+        1
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77575.00000000063
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp"
+      ],
+      "threshold": 755,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 7500,
+      "elapsed": 81375,
+      "violations": [],
+      "approaches": [
+        2,
+        6,
+        0
+      ],
+      "contacts": [
+        0,
+        5,
+        0
+      ],
+      "front": [
+        0,
+        1,
+        0
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 80924.99999999868
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "right-orbit",
+        "right-ramp",
+        "left-ramp",
+        "right-ramp"
+      ],
+      "threshold": 755,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 14900,
+      "elapsed": 78900,
+      "violations": [],
+      "approaches": [
+        0,
+        4,
+        0
+      ],
+      "contacts": [
+        0,
+        1,
+        0
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78475.0000000001
+    },
+    {
+      "routes": [
+        "left-ramp"
+      ],
+      "threshold": 755,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 5325,
+      "elapsed": 78508,
+      "violations": [],
+      "approaches": [
+        4,
+        5,
+        0
+      ],
+      "contacts": [
+        2,
+        2,
+        0
+      ],
+      "front": [
+        0,
+        1,
+        0
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78058.33333333368
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-ramp",
+        "right-orbit",
+        "right-ramp",
+        "left-ramp",
+        "left-ramp",
+        "left-orbit",
+        "left-ramp"
+      ],
+      "threshold": 770,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 19725,
+      "elapsed": 77517,
+      "violations": [],
+      "approaches": [
+        4,
+        17,
+        4
+      ],
+      "contacts": [
+        0,
+        9,
+        3
+      ],
+      "front": [
+        0,
+        1,
+        0
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77058.33333333426
+    },
+    {
+      "routes": [
+        "left-orbit",
+        "right-ramp",
+        "left-ramp",
+        "left-ramp"
+      ],
+      "threshold": 770,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 10375,
+      "elapsed": 77992,
+      "violations": [],
+      "approaches": [
+        4,
+        16,
+        0
+      ],
+      "contacts": [
+        3,
+        11,
+        0
+      ],
+      "front": [
+        1,
+        0,
+        0
+      ],
+      "afterFlip": [
+        1,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77441.66666666737
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "left-ramp",
+        "right-ramp"
+      ],
+      "threshold": 770,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 12000,
+      "elapsed": 76675,
+      "violations": [],
+      "approaches": [
+        1,
+        7,
+        2
+      ],
+      "contacts": [
+        1,
+        4,
+        1
+      ],
+      "front": [
+        1,
+        2,
+        0
+      ],
+      "afterFlip": [
+        1,
+        2,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 76258.33333333473
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "left-ramp"
+      ],
+      "threshold": 770,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 9450,
+      "elapsed": 62600,
+      "violations": [],
+      "approaches": [
+        0,
+        4,
+        0
+      ],
+      "contacts": [
+        0,
+        3,
+        0
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 62400.000000006716
+    },
+    {
+      "routes": [
+        "right-orbit",
+        "left-ramp",
+        "left-ramp",
+        "left-ramp"
+      ],
+      "threshold": 785,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 10400,
+      "elapsed": 78450,
+      "violations": [],
+      "approaches": [
+        0,
+        3,
+        0
+      ],
+      "contacts": [
+        0,
+        0,
+        0
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77933.33333333375
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "right-ramp"
+      ],
+      "threshold": 785,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 6275,
+      "elapsed": 66183,
+      "violations": [],
+      "approaches": [
+        2,
+        5,
+        0
+      ],
+      "contacts": [
+        1,
+        2,
+        0
+      ],
+      "front": [
+        1,
+        0,
+        0
+      ],
+      "afterFlip": [
+        1,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 65741.66666667418
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "left-ramp"
+      ],
+      "threshold": 785,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 9550,
+      "elapsed": 78200,
+      "violations": [],
+      "approaches": [
+        2,
+        9,
+        0
+      ],
+      "contacts": [
+        2,
+        2,
+        0
+      ],
+      "front": [
+        1,
+        0,
+        0
+      ],
+      "afterFlip": [
+        1,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77708.33333333388
+    },
+    {
+      "routes": [
+        "left-orbit",
+        "right-ramp",
+        "right-ramp",
+        "left-orbit"
+      ],
+      "threshold": 785,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 9450,
+      "elapsed": 75008,
+      "violations": [],
+      "approaches": [
+        3,
+        7,
+        2
+      ],
+      "contacts": [
+        1,
+        1,
+        1
+      ],
+      "front": [
+        1,
+        0,
+        0
+      ],
+      "afterFlip": [
+        1,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 74833.33333333555
+    }
+  ],
+  "B": [
+    {
+      "routes": [
+        "left-orbit",
+        "right-ramp"
+      ],
+      "threshold": 710,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 5575,
+      "elapsed": 68933,
+      "violations": [],
+      "approaches": [
+        9,
+        14,
+        8
+      ],
+      "contacts": [
+        5,
+        5,
+        5
+      ],
+      "front": [
+        1,
+        2,
+        4
+      ],
+      "afterFlip": [
+        1,
+        2,
+        4
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 68433.33333333928
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-orbit",
+        "left-ramp"
+      ],
+      "threshold": 710,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 9200,
+      "elapsed": 76258,
+      "violations": [],
+      "approaches": [
+        16,
+        27,
+        19
+      ],
+      "contacts": [
+        11,
+        8,
+        5
+      ],
+      "front": [
+        1,
+        1,
+        2
+      ],
+      "afterFlip": [
+        1,
+        1,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 75800.00000000166
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit",
+        "left-orbit"
+      ],
+      "threshold": 710,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 7225,
+      "elapsed": 78208,
+      "violations": [],
+      "approaches": [
+        9,
+        13,
+        10
+      ],
+      "contacts": [
+        7,
+        1,
+        6
+      ],
+      "front": [
+        0,
+        0,
+        3
+      ],
+      "afterFlip": [
+        0,
+        0,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77750.00000000052
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "left-ramp"
+      ],
+      "threshold": 710,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 7775,
+      "elapsed": 81433,
+      "violations": [],
+      "approaches": [
+        19,
+        20,
+        17
+      ],
+      "contacts": [
+        11,
+        4,
+        8
+      ],
+      "front": [
+        2,
+        0,
+        7
+      ],
+      "afterFlip": [
+        1,
+        0,
+        7
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 80974.99999999865
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-ramp",
+        "right-ramp",
+        "left-orbit"
+      ],
+      "threshold": 725,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 12250,
+      "elapsed": 85750,
+      "violations": [],
+      "approaches": [
+        20,
+        31,
+        22
+      ],
+      "contacts": [
+        15,
+        8,
+        9
+      ],
+      "front": [
+        3,
+        0,
+        6
+      ],
+      "afterFlip": [
+        3,
+        0,
+        6
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 85266.66666666282
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "right-ramp"
+      ],
+      "threshold": 725,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 9550,
+      "elapsed": 79058,
+      "violations": [],
+      "approaches": [
+        19,
+        28,
+        12
+      ],
+      "contacts": [
+        7,
+        14,
+        6
+      ],
+      "front": [
+        5,
+        4,
+        1
+      ],
+      "afterFlip": [
+        5,
+        2,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78000.00000000038
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-orbit"
+      ],
+      "threshold": 725,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 5450,
+      "elapsed": 57775,
+      "violations": [],
+      "approaches": [
+        6,
+        11,
+        7
+      ],
+      "contacts": [
+        3,
+        3,
+        3
+      ],
+      "front": [
+        0,
+        1,
+        0
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 57650.00000000533
+    },
+    {
+      "routes": [
+        "left-orbit",
+        "right-ramp",
+        "left-ramp",
+        "right-orbit",
+        "left-orbit"
+      ],
+      "threshold": 725,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 20700,
+      "elapsed": 85625,
+      "violations": [],
+      "approaches": [
+        8,
+        20,
+        12
+      ],
+      "contacts": [
+        4,
+        8,
+        5
+      ],
+      "front": [
+        3,
+        3,
+        2
+      ],
+      "afterFlip": [
+        3,
+        3,
+        2
+      ],
+      "empowered": [
+        3,
+        2,
+        1
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 85199.99999999619
+    },
+    {
+      "routes": [
+        "left-orbit"
+      ],
+      "threshold": 740,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 3775,
+      "elapsed": 74808,
+      "violations": [],
+      "approaches": [
+        9,
+        21,
+        13
+      ],
+      "contacts": [
+        7,
+        6,
+        6
+      ],
+      "front": [
+        4,
+        1,
+        5
+      ],
+      "afterFlip": [
+        4,
+        1,
+        5
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 74375.00000000249
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit",
+        "right-ramp",
+        "left-orbit"
+      ],
+      "threshold": 740,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 10125,
+      "elapsed": 77600,
+      "violations": [],
+      "approaches": [
+        13,
+        22,
+        11
+      ],
+      "contacts": [
+        4,
+        5,
+        8
+      ],
+      "front": [
+        4,
+        3,
+        3
+      ],
+      "afterFlip": [
+        4,
+        2,
+        3
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77133.33333333422
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-orbit"
+      ],
+      "threshold": 740,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 6075,
+      "elapsed": 71983,
+      "violations": [],
+      "approaches": [
+        10,
+        18,
+        12
+      ],
+      "contacts": [
+        7,
+        6,
+        6
+      ],
+      "front": [
+        1,
+        2,
+        2
+      ],
+      "afterFlip": [
+        1,
+        2,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 71550.00000000413
+    },
+    {
+      "routes": [
+        "left-orbit",
+        "right-orbit",
+        "left-orbit"
+      ],
+      "threshold": 740,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 6275,
+      "elapsed": 72183,
+      "violations": [],
+      "approaches": [
+        9,
+        20,
+        19
+      ],
+      "contacts": [
+        6,
+        5,
+        8
+      ],
+      "front": [
+        1,
+        0,
+        6
+      ],
+      "afterFlip": [
+        1,
+        0,
+        5
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 71733.33333333736
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "right-orbit"
+      ],
+      "threshold": 755,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 6150,
+      "elapsed": 68492,
+      "violations": [],
+      "approaches": [
+        11,
+        20,
+        14
+      ],
+      "contacts": [
+        7,
+        7,
+        7
+      ],
+      "front": [
+        2,
+        1,
+        3
+      ],
+      "afterFlip": [
+        2,
+        1,
+        3
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 68016.66666667286
+    },
+    {
+      "routes": [
+        "right-orbit"
+      ],
+      "threshold": 755,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 3925,
+      "elapsed": 77967,
+      "violations": [],
+      "approaches": [
+        15,
+        22,
+        13
+      ],
+      "contacts": [
+        8,
+        9,
+        3
+      ],
+      "front": [
+        5,
+        0,
+        0
+      ],
+      "afterFlip": [
+        5,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77541.66666666731
+    },
+    {
+      "routes": [],
+      "threshold": 755,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 2025,
+      "elapsed": 77633,
+      "violations": [],
+      "approaches": [
+        8,
+        15,
+        11
+      ],
+      "contacts": [
+        3,
+        7,
+        8
+      ],
+      "front": [
+        0,
+        0,
+        1
+      ],
+      "afterFlip": [
+        0,
+        0,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77208.33333333417
+    },
+    {
+      "routes": [
+        "left-orbit",
+        "right-orbit"
+      ],
+      "threshold": 755,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 4550,
+      "elapsed": 76733,
+      "violations": [],
+      "approaches": [
+        8,
+        20,
+        18
+      ],
+      "contacts": [
+        8,
+        5,
+        12
+      ],
+      "front": [
+        1,
+        1,
+        5
+      ],
+      "afterFlip": [
+        1,
+        1,
+        5
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 76291.66666666804
+    },
+    {
+      "routes": [
+        "right-orbit"
+      ],
+      "threshold": 770,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 3925,
+      "elapsed": 78425,
+      "violations": [],
+      "approaches": [
+        14,
+        22,
+        16
+      ],
+      "contacts": [
+        9,
+        5,
+        11
+      ],
+      "front": [
+        2,
+        1,
+        4
+      ],
+      "afterFlip": [
+        2,
+        1,
+        4
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78000.00000000038
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "right-ramp",
+        "left-ramp"
+      ],
+      "threshold": 770,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 10925,
+      "elapsed": 79433,
+      "violations": [],
+      "approaches": [
+        12,
+        26,
+        9
+      ],
+      "contacts": [
+        6,
+        13,
+        4
+      ],
+      "front": [
+        1,
+        6,
+        1
+      ],
+      "afterFlip": [
+        1,
+        6,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78991.66666666647
+    },
+    {
+      "routes": [],
+      "threshold": 770,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 2125,
+      "elapsed": 78550,
+      "violations": [],
+      "approaches": [
+        12,
+        19,
+        14
+      ],
+      "contacts": [
+        4,
+        11,
+        9
+      ],
+      "front": [
+        0,
+        1,
+        1
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78100.00000000032
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "left-ramp"
+      ],
+      "threshold": 770,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 7200,
+      "elapsed": 81025,
+      "violations": [],
+      "approaches": [
+        8,
+        20,
+        14
+      ],
+      "contacts": [
+        5,
+        6,
+        7
+      ],
+      "front": [
+        1,
+        1,
+        5
+      ],
+      "afterFlip": [
+        1,
+        1,
+        5
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 80549.9999999989
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "right-ramp",
+        "right-ramp",
+        "right-ramp",
+        "left-ramp"
+      ],
+      "threshold": 785,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 15725,
+      "elapsed": 76625,
+      "violations": [],
+      "approaches": [
+        4,
+        21,
+        9
+      ],
+      "contacts": [
+        3,
+        10,
+        6
+      ],
+      "front": [
+        2,
+        8,
+        1
+      ],
+      "afterFlip": [
+        1,
+        8,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 76183.33333333477
+    },
+    {
+      "routes": [
+        "right-orbit",
+        "right-orbit",
+        "right-ramp",
+        "right-ramp"
+      ],
+      "threshold": 785,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 10650,
+      "elapsed": 77142,
+      "violations": [],
+      "approaches": [
+        6,
+        23,
+        7
+      ],
+      "contacts": [
+        3,
+        15,
+        4
+      ],
+      "front": [
+        0,
+        14,
+        0
+      ],
+      "afterFlip": [
+        0,
+        14,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 76700.00000000114
+    },
+    {
+      "routes": [
+        "right-ramp"
+      ],
+      "threshold": 785,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 6475,
+      "elapsed": 74492,
+      "violations": [],
+      "approaches": [
+        11,
+        24,
+        15
+      ],
+      "contacts": [
+        4,
+        14,
+        8
+      ],
+      "front": [
+        1,
+        5,
+        1
+      ],
+      "afterFlip": [
+        0,
+        5,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 74316.66666666919
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "right-orbit",
+        "right-ramp",
+        "right-orbit"
+      ],
+      "threshold": 785,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 10075,
+      "elapsed": 78008,
+      "violations": [],
+      "approaches": [
+        17,
+        26,
+        12
+      ],
+      "contacts": [
+        9,
+        16,
+        5
+      ],
+      "front": [
+        0,
+        6,
+        2
+      ],
+      "afterFlip": [
+        0,
+        6,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77566.6666666673
+    }
+  ],
+  "D": [
+    {
+      "routes": [
+        "left-ramp",
+        "right-ramp",
+        "left-ramp",
+        "left-ramp"
+      ],
+      "threshold": 710,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 12425,
+      "elapsed": 80967,
+      "violations": [],
+      "approaches": [
+        7,
+        23,
+        4
+      ],
+      "contacts": [
+        3,
+        12,
+        1
+      ],
+      "front": [
+        2,
+        1,
+        0
+      ],
+      "afterFlip": [
+        1,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 80533.33333333224
+    },
+    {
+      "routes": [
+        "left-orbit",
+        "left-ramp",
+        "right-orbit",
+        "right-orbit"
+      ],
+      "threshold": 710,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 7625,
+      "elapsed": 77525,
+      "violations": [],
+      "approaches": [
+        7,
+        17,
+        1
+      ],
+      "contacts": [
+        0,
+        7,
+        0
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 76991.66666666763
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-ramp",
+        "right-orbit",
+        "right-orbit",
+        "right-orbit",
+        "right-ramp"
+      ],
+      "threshold": 710,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 12575,
+      "elapsed": 78275,
+      "violations": [],
+      "approaches": [
+        7,
+        16,
+        11
+      ],
+      "contacts": [
+        3,
+        6,
+        4
+      ],
+      "front": [
+        1,
+        0,
+        2
+      ],
+      "afterFlip": [
+        1,
+        0,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 77816.66666666715
+    },
+    {
+      "routes": [
+        "right-orbit",
+        "right-ramp"
+      ],
+      "threshold": 710,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 6050,
+      "elapsed": 66400,
+      "violations": [],
+      "approaches": [
+        2,
+        11,
+        8
+      ],
+      "contacts": [
+        1,
+        4,
+        4
+      ],
+      "front": [
+        0,
+        1,
+        2
+      ],
+      "afterFlip": [
+        0,
+        1,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 65950.00000000739
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-orbit",
+        "left-orbit",
+        "right-orbit",
+        "right-orbit"
+      ],
+      "threshold": 725,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 9550,
+      "elapsed": 81850,
+      "violations": [],
+      "approaches": [
+        15,
+        36,
+        10
+      ],
+      "contacts": [
+        5,
+        15,
+        2
+      ],
+      "front": [
+        2,
+        1,
+        0
+      ],
+      "afterFlip": [
+        2,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 81374.99999999841
+    },
+    {
+      "routes": [
+        "right-orbit",
+        "right-orbit",
+        "left-ramp"
+      ],
+      "threshold": 725,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 7575,
+      "elapsed": 83408,
+      "violations": [],
+      "approaches": [
+        7,
+        22,
+        14
+      ],
+      "contacts": [
+        6,
+        8,
+        6
+      ],
+      "front": [
+        0,
+        0,
+        1
+      ],
+      "afterFlip": [
+        0,
+        0,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 82974.99999999748
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "left-orbit",
+        "left-ramp",
+        "right-orbit"
+      ],
+      "threshold": 725,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 11525,
+      "elapsed": 77033,
+      "violations": [],
+      "approaches": [
+        4,
+        8,
+        3
+      ],
+      "contacts": [
+        1,
+        1,
+        2
+      ],
+      "front": [
+        1,
+        1,
+        0
+      ],
+      "afterFlip": [
+        1,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 76558.33333333455
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-orbit",
+        "right-orbit",
+        "right-ramp",
+        "right-ramp"
+      ],
+      "threshold": 725,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 12350,
+      "elapsed": 78450,
+      "violations": [],
+      "approaches": [
+        3,
+        15,
+        16
+      ],
+      "contacts": [
+        1,
+        7,
+        7
+      ],
+      "front": [
+        0,
+        3,
+        2
+      ],
+      "afterFlip": [
+        0,
+        3,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78016.66666666704
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit",
+        "right-ramp",
+        "right-orbit",
+        "left-ramp",
+        "left-ramp",
+        "left-orbit",
+        "right-orbit",
+        "right-ramp"
+      ],
+      "threshold": 740,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 28950,
+      "elapsed": 79383,
+      "violations": [],
+      "approaches": [
+        9,
+        17,
+        8
+      ],
+      "contacts": [
+        3,
+        9,
+        5
+      ],
+      "front": [
+        1,
+        1,
+        3
+      ],
+      "afterFlip": [
+        1,
+        1,
+        3
+      ],
+      "empowered": [
+        1,
+        1,
+        2
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78908.33333333318
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "left-orbit",
+        "right-ramp",
+        "right-orbit"
+      ],
+      "threshold": 740,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 11075,
+      "elapsed": 69067,
+      "violations": [],
+      "approaches": [
+        5,
+        12,
+        5
+      ],
+      "contacts": [
+        5,
+        3,
+        2
+      ],
+      "front": [
+        1,
+        0,
+        1
+      ],
+      "afterFlip": [
+        1,
+        0,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 68600.00000000585
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-orbit",
+        "right-ramp",
+        "right-orbit",
+        "left-ramp",
+        "right-orbit",
+        "right-ramp",
+        "left-ramp"
+      ],
+      "threshold": 740,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 17650,
+      "elapsed": 80158,
+      "violations": [],
+      "approaches": [
+        6,
+        10,
+        7
+      ],
+      "contacts": [
+        2,
+        8,
+        3
+      ],
+      "front": [
+        1,
+        2,
+        2
+      ],
+      "afterFlip": [
+        1,
+        2,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 79716.66666666605
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "left-ramp",
+        "right-ramp",
+        "right-ramp"
+      ],
+      "threshold": 740,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 12275,
+      "elapsed": 66775,
+      "violations": [],
+      "approaches": [
+        4,
+        16,
+        10
+      ],
+      "contacts": [
+        3,
+        7,
+        5
+      ],
+      "front": [
+        1,
+        1,
+        2
+      ],
+      "afterFlip": [
+        1,
+        1,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 66400.00000000713
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-orbit",
+        "left-ramp",
+        "right-ramp",
+        "left-orbit"
+      ],
+      "threshold": 755,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 11775,
+      "elapsed": 77142,
+      "violations": [],
+      "approaches": [
+        5,
+        20,
+        7
+      ],
+      "contacts": [
+        1,
+        10,
+        4
+      ],
+      "front": [
+        0,
+        2,
+        0
+      ],
+      "afterFlip": [
+        0,
+        2,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 76700.00000000114
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "left-ramp",
+        "right-ramp"
+      ],
+      "threshold": 755,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 13175,
+      "elapsed": 69867,
+      "violations": [],
+      "approaches": [
+        8,
+        19,
+        7
+      ],
+      "contacts": [
+        2,
+        6,
+        4
+      ],
+      "front": [
+        2,
+        1,
+        2
+      ],
+      "afterFlip": [
+        2,
+        1,
+        2
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 69208.33333333883
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-ramp",
+        "right-ramp",
+        "right-ramp",
+        "right-ramp",
+        "right-ramp",
+        "right-ramp"
+      ],
+      "threshold": 755,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 18925,
+      "elapsed": 74475,
+      "violations": [],
+      "approaches": [
+        1,
+        7,
+        5
+      ],
+      "contacts": [
+        0,
+        1,
+        0
+      ],
+      "front": [
+        0,
+        1,
+        0
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 73958.33333333606
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "left-ramp",
+        "left-orbit",
+        "left-ramp",
+        "left-ramp",
+        "right-orbit",
+        "left-ramp"
+      ],
+      "threshold": 755,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 16700,
+      "elapsed": 79925,
+      "violations": [],
+      "approaches": [
+        7,
+        11,
+        7
+      ],
+      "contacts": [
+        2,
+        4,
+        3
+      ],
+      "front": [
+        0,
+        1,
+        0
+      ],
+      "afterFlip": [
+        0,
+        1,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 79499.9999999995
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "right-ramp"
+      ],
+      "threshold": 770,
+      "interval": 45,
+      "phase": "playing",
+      "score": 6800,
+      "elapsed": 62400,
+      "violations": [
+        "pocket 145.7,768.8"
+      ],
+      "approaches": [
+        1,
+        16,
+        6
+      ],
+      "contacts": [
+        0,
+        12,
+        3
+      ],
+      "front": [
+        0,
+        4,
+        1
+      ],
+      "afterFlip": [
+        0,
+        4,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 61658.33333333983
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit"
+      ],
+      "threshold": 770,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 6800,
+      "elapsed": 80925,
+      "violations": [],
+      "approaches": [
+        10,
+        32,
+        3
+      ],
+      "contacts": [
+        4,
+        18,
+        1
+      ],
+      "front": [
+        0,
+        4,
+        1
+      ],
+      "afterFlip": [
+        0,
+        3,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 80433.3333333323
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-ramp",
+        "right-ramp"
+      ],
+      "threshold": 770,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 9725,
+      "elapsed": 79392,
+      "violations": [],
+      "approaches": [
+        7,
+        28,
+        6
+      ],
+      "contacts": [
+        3,
+        13,
+        0
+      ],
+      "front": [
+        0,
+        0,
+        0
+      ],
+      "afterFlip": [
+        0,
+        0,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78941.6666666665
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "left-ramp"
+      ],
+      "threshold": 770,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 7325,
+      "elapsed": 63942,
+      "violations": [],
+      "approaches": [
+        2,
+        14,
+        3
+      ],
+      "contacts": [
+        0,
+        8,
+        0
+      ],
+      "front": [
+        0,
+        4,
+        0
+      ],
+      "afterFlip": [
+        0,
+        3,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 63616.66666667374
+    },
+    {
+      "routes": [
+        "right-ramp",
+        "right-orbit",
+        "right-ramp",
+        "left-ramp",
+        "left-orbit"
+      ],
+      "threshold": 785,
+      "interval": 45,
+      "phase": "gameover",
+      "score": 11575,
+      "elapsed": 80517,
+      "violations": [],
+      "approaches": [
+        9,
+        22,
+        10
+      ],
+      "contacts": [
+        8,
+        14,
+        5
+      ],
+      "front": [
+        3,
+        2,
+        0
+      ],
+      "afterFlip": [
+        3,
+        2,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 80008.33333333254
+    },
+    {
+      "routes": [
+        "right-orbit",
+        "left-ramp",
+        "right-ramp",
+        "left-ramp"
+      ],
+      "threshold": 785,
+      "interval": 75,
+      "phase": "gameover",
+      "score": 10900,
+      "elapsed": 73575,
+      "violations": [],
+      "approaches": [
+        9,
+        17,
+        5
+      ],
+      "contacts": [
+        4,
+        10,
+        2
+      ],
+      "front": [
+        1,
+        3,
+        0
+      ],
+      "afterFlip": [
+        1,
+        3,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 73425.00000000304
+    },
+    {
+      "routes": [
+        "left-orbit",
+        "left-ramp",
+        "left-orbit",
+        "left-ramp",
+        "left-orbit",
+        "right-orbit",
+        "left-ramp"
+      ],
+      "threshold": 785,
+      "interval": 120,
+      "phase": "gameover",
+      "score": 13250,
+      "elapsed": 78633,
+      "violations": [],
+      "approaches": [
+        16,
+        14,
+        1
+      ],
+      "contacts": [
+        6,
+        8,
+        1
+      ],
+      "front": [
+        0,
+        2,
+        1
+      ],
+      "afterFlip": [
+        0,
+        2,
+        1
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 78216.66666666692
+    },
+    {
+      "routes": [
+        "left-ramp",
+        "left-orbit",
+        "right-ramp",
+        "right-ramp",
+        "right-orbit"
+      ],
+      "threshold": 785,
+      "interval": 180,
+      "phase": "gameover",
+      "score": 11625,
+      "elapsed": 73725,
+      "violations": [],
+      "approaches": [
+        10,
+        17,
+        7
+      ],
+      "contacts": [
+        7,
+        8,
+        3
+      ],
+      "front": [
+        1,
+        2,
+        0
+      ],
+      "afterFlip": [
+        1,
+        2,
+        0
+      ],
+      "empowered": [
+        0,
+        0,
+        0
+      ],
+      "inside": [
+        false,
+        false,
+        false
+      ],
+      "lastFlip": 73058.33333333659
+    }
+  ]
+}
