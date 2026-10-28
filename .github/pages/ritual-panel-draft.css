@@ -1,0 +1,74 @@
+/* Candidate-only visual study: the existing ritual strip stays 48px tall. */
+#ritual-progress {
+  position: relative;
+  height: 48px;
+  padding: 3px 8px 2px;
+  border: 1px solid #9a8050;
+  border-top: 0;
+  color: #eee5c6;
+  font-family: 'Josefin Sans', 'Trebuchet MS', sans-serif;
+  background: linear-gradient(90deg, #092b1d 0%, #061b13 18%, #103c29 50%, #061b13 82%, #092b1d 100%);
+  box-shadow: inset 0 1px #c6a96244, inset 0 -2px #050e09, inset 3px 0 #b1934b33, inset -3px 0 #b1934b33;
+}
+.bind-lamps {
+  height: 23px;
+  gap: 0;
+  border-bottom: 1px solid #c6a86878;
+  align-items: center;
+}
+.bind-lamp {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  font: 600 10px/1 'Josefin Sans', 'Trebuchet MS', sans-serif;
+  letter-spacing: .1px;
+  color: #c8c6aa;
+}
+.bind-lamp small { display: none; }
+.bind-lamp i {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--bind-colour);
+  background: #0a1812;
+  box-shadow: 0 0 0 1px #c6a86866;
+}
+.bind-lamp.lit { color: #fff4d7; }
+.bind-lamp.lit i { background: var(--bind-colour); box-shadow: 0 0 0 1px #dcc78c, 0 0 7px var(--bind-colour); }
+.seal-progress { height: 18px; gap: 3px; }
+#ritual-status {
+  color: #e3d4ae;
+  font: 600 9px/1 'Josefin Sans', 'Trebuchet MS', sans-serif;
+  letter-spacing: .25px;
+}
+.stone-lamps { display: flex; align-items: center; gap: 5px; }
+.stone-lamps::before {
+  content: 'COVER STONES';
+  color: #cfbd90;
+  font: 600 8px/1 'Josefin Sans', 'Trebuchet MS', sans-serif;
+  letter-spacing: .35px;
+  white-space: nowrap;
+}
+.stone-lamps span {
+  width: 14px; height: 14px;
+  line-height: 12px;
+  border: 1px solid #a18a59;
+  border-radius: 50%;
+  background: #0a2118;
+  color: #c8b994;
+  font: 600 9px/12px 'Josefin Sans', 'Trebuchet MS', sans-serif;
+}
+.stone-lamps .empowered { background:#194a32; color:#ffebae; border-color:#dfc579; box-shadow:0 0 5px #47ce8455; }
+.stone-lamps .lit { background:#a58c4a; color:#fff8d8; border-color:#f4e1a6; box-shadow:0 0 6px #d4b95c88; }
+@media(max-width:650px) {
+  .bind-lamp { font-size:9px; gap:3px; }
+  #ritual-status { font-size:8px; }
+  .stone-lamps::before { font-size:7px; letter-spacing:0; }
+}
+@media(max-height:500px) {
+  .bind-lamp { font-size:7px; gap:2px; }
+  .bind-lamp i { width:6px; height:6px; }
+  #ritual-status { font-size:7px; }
+  .stone-lamps::before { font-size:6px; }
+  .stone-lamps span { width:11px; height:11px; font-size:7px; line-height:9px; }
+}
