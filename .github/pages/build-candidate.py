@@ -24,6 +24,31 @@ if source.count(old) != 1:
     raise SystemExit('Expected exactly one original stone face guard')
 physics.write_text(source.replace(old, new, 1))
 
+# Approved visual-only guide study. The physical rails use the same points
+# and widths; only the drawing colours and decorative engraving change.
+renderer = Path(sys.argv[1]) / 'src/game/render.js'
+source = renderer.read_text()
+old = '''      this.stroke(rail.points, rail.width + 5, 0x03111a, .8);
+      this.stroke(rail.points, rail.width, 0x456069);
+      this.stroke(rail.points, Math.max(2, rail.width - 5), 0x91aca3, .75);
+      this.stroke(rail.points, 1, 0xd5e7ca, .45);'''
+new = '''      this.stroke(rail.points, rail.width + 5, 0x081b17, .9);
+      this.stroke(rail.points, rail.width + 2, 0x927747, .72);
+      this.stroke(rail.points, rail.width, 0x364a3d);
+      this.stroke(rail.points, Math.max(2, rail.width - 4), 0x4a5946, .95);
+      this.stroke(rail.points, 1, 0xa39065, .48);
+      // Small etched strokes follow each existing visible rail segment.
+      for (let i = 1; i < rail.points.length; i++) {
+        const [ax, ay] = rail.points[i-1], [bx, by] = rail.points[i];
+        const dx=bx-ax, dy=by-ay, len=Math.hypot(dx,dy);
+        for (let d=23; d<len-14; d+=46) {
+          const x=ax+dx*d/len, y=ay+dy*d/len, nx=-dy/len, ny=dx/len;
+          this.stroke([[x-nx*2,y-ny*2],[x+nx*2,y+ny*2]], 1, 0xc9a96b, .4);
+        }
+      }'''
+if source.count(old) != 1: raise SystemExit('Candidate guide drawing hook not unique')
+renderer.write_text(source.replace(old, new, 1))
+
 # Install the isolated test-only UI into this archived build, never the prototype.
 import shutil
 base = Path(__file__).resolve().parent
