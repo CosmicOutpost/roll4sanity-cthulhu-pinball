@@ -65,6 +65,13 @@
   #ritual-status { font-size:8px; }
   .stone-lamps::before { font-size:7px; letter-spacing:0; }
 }
+@media(max-width:360px) {
+  .bind-lamp { font-size:7px; gap:2px; }
+  .bind-lamp i { width:6px; height:6px; }
+  .stone-lamps { gap:3px; }
+  footer { gap:0; font-size:5px; }
+  footer button { padding:0; font-size:6px; letter-spacing:0; }
+}
 @media(max-height:500px) {
   .bind-lamp { font-size:7px; gap:2px; }
   .bind-lamp i { width:6px; height:6px; }

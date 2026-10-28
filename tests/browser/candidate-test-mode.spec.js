@@ -5,6 +5,8 @@ for(const [device,viewport] of [['desktop',{width:1280,height:900}],['mobile',{w
  test.setTimeout(60000);await page.setViewportSize(viewport);const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(`${base}playtest-candidate/?debug=1`);await page.waitForFunction(()=>window.pinballPresentation);
  const toggle=page.locator('#test-toggle'), reset=page.locator('#test-reset'), counts=page.locator('#test-counts');
+ await expect(page.locator('#ritual-test-mode')).toBeHidden();
+ await page.locator('#test-tools').click(); await expect(page.locator('#ritual-test-mode')).toBeVisible();
  await expect(toggle).toHaveText('TEST MODE: OFF');await expect(reset).toBeDisabled();
  expect(await page.evaluate(()=>window.pinball.state.ritual.binds.size)).toBe(0);
  await toggle.click();await expect(toggle).toHaveText('TEST MODE: ON');await expect(page.locator('.bind-lamp.lit')).toHaveCount(4);
@@ -25,10 +27,12 @@ for(const [device,viewport] of [['desktop',{width:1280,height:900}],['mobile',{w
  await page.waitForTimeout(300);
  for(const id of [0,0,1,2])await hit(id);
  await expect(counts.locator('span')).toHaveText(['WEST CONTACT 3 · HIT 3','CENTRE CONTACT 1 · HIT 1','EAST CONTACT 1 · HIT 1']);
- await expect(page.locator('.stone-lamps .lit')).toHaveCount(3);await expect(page.locator('#ritual-status')).toHaveText('CTHULHU IS SEALED!');
+ await expect(page.locator('.stone-lamps .lit')).toHaveCount(3);await expect(page.locator('#ritual-status')).toHaveText('CTHULHU BOUND');
  expect(await page.evaluate(()=>window.pinball.state.ritual.sealed)).toBe(true);
  await page.screenshot({path:info.outputPath(`test-${device}.png`),fullPage:true});
  await reset.click();await expect(counts.locator('span')).toHaveText(['WEST CONTACT 0 · HIT 0','CENTRE CONTACT 0 · HIT 0','EAST CONTACT 0 · HIT 0']);await expect(page.locator('.stone-lamps .lit')).toHaveCount(0);await expect(page.locator('.bind-lamp.lit')).toHaveCount(4);
+ await page.locator('#test-tools').click(); await expect(page.locator('#ritual-test-mode')).toBeHidden(); await expect(page.locator('#test-tools')).toHaveText('TEST TOOLS · ON');
+ await page.locator('#test-tools').click(); await expect(page.locator('#ritual-test-mode')).toBeVisible();
  await page.keyboard.press('r');await expect(page.locator('.bind-lamp.lit')).toHaveCount(4);
  await toggle.click();await expect(toggle).toHaveText('TEST MODE: OFF');await expect(page.locator('.bind-lamp.lit')).toHaveCount(0);
  expect(await page.evaluate(()=>({score:window.pinball.state.score,ball:window.pinball.state.ballNumber}))).toEqual({score:0,ball:1});

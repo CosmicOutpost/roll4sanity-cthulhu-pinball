@@ -10,7 +10,7 @@ for (const [device,viewport] of [['desktop',{width:1280,height:900}],['mobile',{
   await page.keyboard.press('d'); // Keep the inspection hooks without drawing collision outlines.
   if(calm) await page.locator('#sound').click();
   if(calm) expect(await page.evaluate(()=>window.pinballPresentation.sound.muted)).toBe(true);
-  await page.locator('#test-toggle').click();
+  await page.locator('#test-tools').click(); await page.locator('#test-toggle').click();
   await page.keyboard.down('Space'); await page.waitForFunction(()=>window.pinball.charge===1); await page.keyboard.up('Space');
   await page.waitForFunction(()=>!window.pinball.shooter&&!window.pinball.travel);
   await page.evaluate(()=>{const r=window.pinballPresentation.sound.ritual; window.roarCount=0;const roar=r.roar.bind(r);r.roar=(...args)=>{window.roarCount++;return roar(...args);};});

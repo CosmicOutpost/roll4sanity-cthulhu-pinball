@@ -37,7 +37,16 @@ ritual = target / 'src/game/ritual-presentation.js'
 code = ritual.read_text()
 old = "    this.banner.setVisible(age>=0&&age<3500&&!sim.state.paused&&sim.state.phase==='playing');\n    if(age>=0&&age<2200){g.lineStyle(3,0xebd18e,(lights.reduced ? .12 : .35)*(1-age/2200)).strokeEllipse(270,391,120,55);}"
 if code.count(old) != 1: raise SystemExit('Candidate victory presentation hook not unique')
-ritual.write_text(code.replace(old, '    this.banner.setVisible(false);', 1))
+code = code.replace(old, '    this.banner.setVisible(false);', 1)
+old = "r.sealed ? 'CTHULHU IS SEALED!' : sim.state.phase==='gameover' ? `INCOMPLETE · B${r.binds.size}/4 · S${r.stones.size}/3` : r.empowered ? `STRIKE THE STONES · ${r.stones.size}/3` : `BIND ALL FOUR SHOTS · ${r.binds.size}/4`"
+new = "r.sealed ? 'CTHULHU BOUND' : sim.state.phase==='gameover' ? 'RITUAL INCOMPLETE' : r.empowered ? `STONES ${r.stones.size}/3` : `BINDS ${r.binds.size}/4`"
+if code.count(old) != 1: raise SystemExit('Candidate ritual progress label not unique')
+ritual.write_text(code.replace(old, new, 1))
+index = target / 'index.html'
+code = index.read_text()
+old = 'Once all Binds are lit, strike each stone’s front rubber face.'
+if code.count(old) != 1: raise SystemExit('Candidate stone instructions not unique')
+index.write_text(code.replace(old, 'Once all Binds are lit, strike each stone on any side.', 1))
 main = target / 'src/main.js'
 code = main.read_text()
 for old, new in [

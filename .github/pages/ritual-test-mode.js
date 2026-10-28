@@ -10,9 +10,18 @@ export class RitualTestMode {
     this.sim = sim; this.glow = scene.add.graphics().setDepth(3.1); this.enabled = false; this.counts = [0, 0, 0]; this.contacts = [0, 0, 0]; this.hitAt = [-Infinity, -Infinity, -Infinity];
     this.bar = document.createElement('section');
     this.bar.id = 'ritual-test-mode';
+    this.bar.hidden = true;
     this.bar.setAttribute('aria-label', 'Ritual test mode');
     this.bar.innerHTML = '<div class="test-actions"><button id="test-toggle" type="button" aria-pressed="false">TEST MODE: OFF</button><button id="test-reset" type="button" disabled>RESET TEST</button></div><div id="test-counts" aria-live="polite"></div>';
     document.querySelector('#ritual-progress').insertAdjacentElement('afterend', this.bar);
+    this.tools = document.createElement('button');
+    this.tools.id = 'test-tools'; this.tools.type = 'button';
+    this.tools.textContent = 'TEST TOOLS';
+    this.tools.setAttribute('aria-expanded', 'false');
+    this.tools.setAttribute('aria-controls', this.bar.id);
+    document.querySelector('footer').insertBefore(this.tools, document.querySelector('#restart'));
+    this.onTools = () => { this.bar.hidden = !this.bar.hidden; this.tools.setAttribute('aria-expanded', String(!this.bar.hidden)); };
+    this.tools.addEventListener('click', this.onTools);
     this.toggle = this.bar.querySelector('#test-toggle'); this.reset = this.bar.querySelector('#test-reset');
     this.onToggle = () => {
       // Never interrupt an in-progress normal game. Finish or restart first.
@@ -81,10 +90,12 @@ export class RitualTestMode {
     this.toggle.setAttribute('aria-pressed', String(this.enabled));
     this.reset.disabled = !this.enabled;
     this.bar.dataset.active = String(this.enabled);
+    this.tools.textContent = this.enabled ? 'TEST TOOLS · ON' : 'TEST TOOLS';
     this.updateCounts();
   }
   destroy() {
     this.toggle.removeEventListener('click', this.onToggle); this.reset.removeEventListener('click', this.onReset);
+    this.tools.removeEventListener('click', this.onTools); this.tools.remove();
     Matter.Events.off(this.sim.engine, 'collisionStart', this.onContact);
     this.restoreRestart(); this.restoreHitStone(); this.glow.destroy(); this.bar.remove();
   }
