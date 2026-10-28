@@ -2,6 +2,7 @@ import { BINDS } from './binding-ritual.js';
 import Matter from 'matter-js';
 import './ritual-test-mode.css';
 import './ritual-panel-draft.css';
+import './candidate-layout.css';
 
 // Included only in the separately built candidate. No persistent data or
 // changes to collision, scores, rules, saved preferences or the other builds.

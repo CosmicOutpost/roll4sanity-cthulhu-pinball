@@ -93,7 +93,7 @@ jobs:
           python3 -m http.server 5222 --directory /tmp/pinball-dual-root >/tmp/dual-server.log 2>&1 &
           server=$!
           trap 'kill "$server"' EXIT
-          DUAL_PAGES_URL=http://127.0.0.1:5222/roll4sanity-cthulhu-pinball/ PINBALL_BASE_URL=http://127.0.0.1:5222/roll4sanity-cthulhu-pinball/ npx playwright test tests/browser/dual-pages.spec.js tests/browser/candidate-test-mode.spec.js tests/browser/candidate-victory.spec.js
+          DUAL_PAGES_URL=http://127.0.0.1:5222/roll4sanity-cthulhu-pinball/ PINBALL_BASE_URL=http://127.0.0.1:5222/roll4sanity-cthulhu-pinball/ npx playwright test tests/browser/dual-pages.spec.js tests/browser/candidate-test-mode.spec.js tests/browser/candidate-victory.spec.js tests/browser/candidate-layout.spec.js
 
       - name: Upload the static site
         uses: actions/upload-pages-artifact@v3
@@ -163,7 +163,7 @@ jobs:
         env:
           DUAL_PAGES_URL: ${{ needs.deploy.outputs.page_url }}
           PINBALL_BASE_URL: ${{ needs.deploy.outputs.page_url }}
-        run: npx playwright test tests/browser/dual-pages.spec.js tests/browser/candidate-test-mode.spec.js tests/browser/candidate-victory.spec.js
+        run: npx playwright test tests/browser/dual-pages.spec.js tests/browser/candidate-test-mode.spec.js tests/browser/candidate-victory.spec.js tests/browser/candidate-layout.spec.js
 
       - name: Save live browser evidence
         if: always()

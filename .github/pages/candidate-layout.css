@@ -1,0 +1,18 @@
+/* Candidate-only responsive sizing; gameplay coordinates stay unchanged. */
+@media (min-width:651px) and (min-height:501px) {
+  :root { --machine-width:calc((var(--viewport-height) - 235px)*.5625 + 18px); }
+  body:has(#ritual-test-mode:not([hidden])) { --machine-width:calc((var(--viewport-height) - 279px)*.5625 + 18px); }
+  .cabinet { max-width:none; padding:6px 2% 4px; }
+  .masthead { position:absolute; top:6px; left:2%; right:2%; padding:0; border:0; }
+  .game-layout { grid-template-columns:minmax(0,1fr) minmax(0,var(--machine-width)) minmax(0,1fr); gap:2%; padding:4px 0; }
+  .machine { max-width:none; }
+  footer { padding-top:4px; }
+}
+@media (min-width:651px) and (max-width:1400px) and (min-height:501px) {
+  .game-layout { display:flex; justify-content:center; }
+  .machine { width:min(100%,var(--machine-width)); }
+  .intro, .instructions { display:none; }
+}
+@media (min-width:651px) and (max-width:1000px) and (min-height:501px) {
+  .masthead { display:none; }
+}

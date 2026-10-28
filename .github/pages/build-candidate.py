@@ -56,7 +56,7 @@ renderer.write_text(source.replace(old, '', 1))
 import shutil
 base = Path(__file__).resolve().parent
 target = Path(sys.argv[1])
-for name in ('ritual-test-mode.js', 'ritual-test-mode.css', 'ritual-panel-draft.css', 'binding-victory.js'):
+for name in ('ritual-test-mode.js', 'ritual-test-mode.css', 'ritual-panel-draft.css', 'candidate-layout.css', 'binding-victory.js'):
     shutil.copyfile(base / name, target / 'src/game' / name)
 shutil.copyfile(base / 'candidate-all-faces.test.js', target / 'tests/candidate-all-faces.test.js')
 # Replace only the old candidate victory caption/ellipse, preserving the
