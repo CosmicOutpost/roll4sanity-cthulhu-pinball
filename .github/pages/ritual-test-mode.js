@@ -29,7 +29,10 @@ export class RitualTestMode {
     const hitStone = sim.state.hitStone.bind(sim.state);
     sim.state.hitStone = (id, now) => {
       const accepted = hitStone(id, now);
-      if (accepted && this.enabled) { this.counts[id]++; this.hitAt[id] = sim.elapsed; this.updateCounts(); }
+      if (accepted) {
+        this.hitAt[id] = sim.elapsed;
+        if (this.enabled) { this.counts[id]++; this.updateCounts(); }
+      }
       return accepted;
     };
     this.restoreHitStone = () => { sim.state.hitStone = hitStone; };
@@ -53,16 +56,19 @@ export class RitualTestMode {
   }
   update() {
     this.glow.clear();
-    if (this.enabled) this.sim.stones.forEach((stone, id) => {
+    if (this.sim.state.ritual.empowered) this.sim.stones.forEach((stone, id) => {
       const g = this.glow, {x, y} = stone.position;
       const age = this.sim.elapsed - this.hitAt[id], flash = age >= 0 && age < 800 ? 1 - age / 800 : 0;
-      g.fillStyle(0x16d388, .19).fillCircle(x, y, 22);
-      g.lineStyle(4, 0x20e5a0, .85).strokeCircle(x, y, 19);
-      g.lineStyle(2, 0xffdf71, 1).strokeCircle(x, y, 15);
+      g.lineStyle(8, 0x16d388, .16).strokePoints(stone.vertices, true, true);
+      g.lineStyle(4, 0x20e5a0, .7).strokePoints(stone.vertices, true, true);
+      g.lineStyle(2, flash ? 0xffffff : 0xffdf71, 1).strokePoints(stone.vertices, true, true);
       g.lineStyle(2, flash ? 0xffffff : 0xffe8a0, 1);
-      for (let mark = 0; mark <= id; mark++) g.lineBetween(x + (mark-id/2)*4, y-4, x + (mark-id/2)*4, y+4);
+      for (let mark = 0; mark <= id; mark++) {
+        const dx = (mark-id/2)*4, c = Math.cos(stone.angle), s = Math.sin(stone.angle);
+        g.lineBetween(x + dx*c + 4*s, y + dx*s - 4*c, x + dx*c - 4*s, y + dx*s + 4*c);
+      }
       if (flash) {
-        g.fillStyle(0xffed98, .45 * flash).fillCircle(x, y, 14);
+        g.fillStyle(0xffed98, .45 * flash).fillPoints(stone.vertices, true);
         const u = 1-flash, px=x+(270-x)*u, py=y+(391-y)*u;
         g.lineStyle(3, 0xffdd70, .8*flash).lineBetween(x,y,px,py);
         g.fillStyle(0xffffff, .9*flash).fillCircle(px,py,5);

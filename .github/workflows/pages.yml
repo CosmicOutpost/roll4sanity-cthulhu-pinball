@@ -82,7 +82,7 @@ jobs:
           mkdir -p /tmp/pinball-candidate-source
           git archive "$prototype" | tar -x -C /tmp/pinball-candidate-source
           python3 .github/pages/build-candidate.py /tmp/pinball-candidate-source
-          (cd /tmp/pinball-candidate-source && npm ci && npm run build)
+          (cd /tmp/pinball-candidate-source && npm ci && node --test tests/candidate-all-faces.test.js && npm run build)
           mv /tmp/pinball-live-source/dist dist
           mv /tmp/pinball-playtest-dist dist/playtest
           mv /tmp/pinball-candidate-source/dist dist/playtest-candidate

@@ -18,12 +18,13 @@ for(const [device,viewport] of [['desktop',{width:1280,height:900}],['mobile',{w
   await page.evaluate(id=>{const s=window.pinball,b=s.stones[id],B=window.Phaser.Physics.Matter.Matter.Body,n={x:-Math.sin(b.angle),y:Math.cos(b.angle)};B.setPosition(s.ball,{x:b.position.x+30*n.x,y:b.position.y+30*n.y});B.setVelocity(s.ball,{x:-7*n.x,y:-7*n.y});s.flashes.delete(`stone:${id}`);},id);
   await page.keyboard.press('p');await page.waitForFunction(id=>window.pinball.flashes.has(`stone:${id}`),id);await page.waitForTimeout(300);
  }
- // A real back-face contact increments contacts but cannot qualify or score.
+ // A real back-face contact now counts and activates the west stone.
  await page.keyboard.press('p');
  await page.evaluate(()=>{const s=window.pinball,b=s.stones[0],B=window.Phaser.Physics.Matter.Matter.Body,n={x:-Math.sin(b.angle),y:Math.cos(b.angle)};B.setPosition(s.ball,{x:b.position.x-30*n.x,y:b.position.y-30*n.y});B.setVelocity(s.ball,{x:7*n.x,y:7*n.y});});
- await page.keyboard.press('p');await expect(counts.locator('span').first()).toHaveText('WEST CONTACT 1 · HIT 0');
+ await page.keyboard.press('p');await expect(counts.locator('span').first()).toHaveText('WEST CONTACT 1 · HIT 1');
+ await page.waitForTimeout(300);
  for(const id of [0,0,1,2])await hit(id);
- await expect(counts.locator('span')).toHaveText(['WEST CONTACT 3 · HIT 2','CENTRE CONTACT 1 · HIT 1','EAST CONTACT 1 · HIT 1']);
+ await expect(counts.locator('span')).toHaveText(['WEST CONTACT 3 · HIT 3','CENTRE CONTACT 1 · HIT 1','EAST CONTACT 1 · HIT 1']);
  await expect(page.locator('.stone-lamps .lit')).toHaveCount(3);await expect(page.locator('#ritual-status')).toHaveText('CTHULHU IS SEALED!');
  expect(await page.evaluate(()=>window.pinball.state.ritual.sealed)).toBe(true);
  await page.screenshot({path:info.outputPath(`test-${device}.png`),fullPage:true});
